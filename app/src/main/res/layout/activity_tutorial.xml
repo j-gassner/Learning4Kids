@@ -63,31 +63,35 @@
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:rotation="45"
+        android:rotation="135"
         android:id="@+id/button_point_letter"
         android:src="@drawable/button_arrow"
-        android:layout_marginLeft="690dp"
-        android:layout_marginStart="690dp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginLeft="480dp"
+        android:layout_marginStart="480dp"
+        android:layout_marginTop="90dp"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:rotation="-115"
         android:id="@+id/button_point_speaker"
         android:src="@drawable/button_arrow"
-        android:layout_marginLeft="700dp"
-        android:layout_marginStart="700dp"
-        android:layout_marginTop="690dp"/>
+        android:layout_marginLeft="500dp"
+        android:layout_marginStart="500dp"
+        android:layout_marginTop="610dp"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:rotation="45"
+        android:rotation="30"
         android:id="@+id/button_point_back"
         android:src="@drawable/button_arrow"
-        android:layout_marginLeft="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="110dp"/>
+        android:layout_marginLeft="130dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="80dp"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="120dp"
@@ -95,19 +99,21 @@
         android:rotation="-60"
         android:id="@+id/button_point_submarine"
         android:src="@drawable/button_arrow"
-        android:layout_marginLeft="250dp"
-        android:layout_marginStart="250dp"
-        android:layout_marginTop="350dp"/>
+        android:layout_marginLeft="280dp"
+        android:layout_marginStart="280dp"
+        android:layout_marginTop="350dp"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:rotation="-135"
+        android:rotation="-160"
         android:id="@+id/button_point_sign"
         android:src="@drawable/button_arrow"
-        android:layout_marginLeft="1020dp"
-        android:layout_marginStart="1020dp"
-        android:layout_marginTop="320dp"/>
+        android:layout_marginLeft="890dp"
+        android:layout_marginStart="890dp"
+        android:layout_marginTop="360dp"
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:id="@+id/left"
