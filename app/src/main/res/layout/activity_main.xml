@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center_vertical"
+    android:background="@drawable/blackboard_menu"
+    tools:context=".StartActivity">
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/logo"
+        android:src="@drawable/logo"
+        />
+
+</LinearLayout>

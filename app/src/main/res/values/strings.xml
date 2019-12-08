@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">DragDrop</string>
+    <string name="animal">DragDrop</string>
+    <string name="button_f">DragDrop</string>
+    <string name="button_l">DragDrop</string>
+    <string name="button_r">DragDrop</string>
+    <string name="button_m">DragDrop</string>
+    <string name="button_n">DragDrop</string>
+    <string name="button_i">DragDrop</string>
+    <string name="button_e">DragDrop</string>
+    <string name="button_a">DragDrop</string>
+    <string name="button_o">DragDrop</string>
+    <string name="button_s">DragDrop</string>
+    <string name="button_b">DragDrop</string>
+    <string name="button_t">DragDrop</string>
+    <string name="dino_f">DragDrop</string>
+    <string name="dino_l">DragDrop</string>
+    <string name="dino_r">DragDrop</string>
+    <string name="dino_m">DragDrop</string>
+    <string name="dino_n">DragDrop</string>
+    <string name="dino_i">DragDrop</string>
+    <string name="dino_e">DragDrop</string>
+    <string name="dino_a">DragDrop</string>
+    <string name="dino_o">DragDrop</string>
+    <string name="dino_s">DragDrop</string>
+    <string name="dino_b">DragDrop</string>
+    <string name="dino_t">DragDrop</string>
+    <string name="button_back">DragDrop</string>
+    <string name="button_dinos">DragDrop</string>
+    <string name="button_unlock">DragDrop</string>
+    <string name="button_museum">DragDrop</string>
+    <string name="button_tutorial">DragDrop</string>
+    <string name="button_animal">DragDrop</string>
+    <string name="button_letter">DragDrop</string>
+    <string name="button_letter_progress">DragDrop</string>
+    <string name="button_letter_progress_cover">DragDrop</string>
+    <string name="button_exit">DragDrop</string>
+    <string name="button_reset">DragDrop</string>
+    <string name="layout_progress">DragDrop</string>
+
+</resources>

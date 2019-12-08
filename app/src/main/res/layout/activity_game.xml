@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:soundEffectsEnabled="true"
+    tools:context=".GameActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/level_background"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:contentDescription="TODO" />
+
+    <ImageButton
+        android:layout_width="120dp"
+        android:layout_height="80dp"
+        android:layout_margin="30dp"
+        android:src="@drawable/button_back"
+        android:scaleType="fitStart"
+        android:background="@null"
+        android:id="@+id/button_back"
+        android:contentDescription="@string/button_back"
+        android:onClick="onClick" />
+
+    <RelativeLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter"
+        android:id="@+id/image_progress"
+        android:background="@null"
+        android:orientation="horizontal" />
+
+    <ImageButton
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter"
+        android:background="@null"
+        android:id="@+id/button_letter"
+        android:contentDescription="@string/button_letter"
+        android:onClick="onClick"
+        />
+
+    <ImageButton
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="680dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/button_speaker"
+        android:scaleType="fitCenter"
+        android:background="@null"
+        android:id="@+id/button_animal"
+        android:contentDescription="@string/button_animal"
+        android:onClick="onClick"
+        />
+
+    <LinearLayout
+        android:id="@+id/left"
+        android:layout_width="380dp"
+        android:layout_height="fill_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+
+        />
+
+    <LinearLayout
+        android:id="@+id/right"
+        android:layout_width="380dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+
+        />
+
+    <LinearLayout
+        android:id="@+id/middle"
+        android:layout_width="520dp"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/layout_top"/>
+
+    <ImageView
+        android:id="@+id/animal"
+        android:layout_height="300dp"
+        android:layout_width="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="370dp"
+        android:scaleType="matrix"
+        android:contentDescription="@string/animal"/>
+
+
+
+
+</FrameLayout>
