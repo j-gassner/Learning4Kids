@@ -1,14 +1,23 @@
 package com.example.dragdrop;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -32,6 +41,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     HorizontalScrollView hsv;
     private Character level;
     SharedPreferences availableLevels;
+    private Animation scale;
+
     //ArrayList<Character> buttons = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
     void writeInitialLevels() {
@@ -54,6 +65,12 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             editor.putInt("t", LOCKED);
             editor.apply();
         }
+
+        // Start tutorial on first start
+        /*if(!availableLevels.contains("Tutorial")) {
+            Intent intent = new Intent(this, TutorialActivity.class);
+            startActivity(intent);
+        }*/
     }
 
     void resetLevels() {
@@ -101,6 +118,30 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    void tutorialMuseum() {
+
+        // Disable buttons
+        findViewById(R.id.button_reset).setEnabled(false);
+        findViewById(R.id.button_tutorial).setEnabled(false);
+        findViewById(R.id.button_exit).setEnabled(false);
+        findViewById(R.id.button_f).setEnabled(false);
+        findViewById(R.id.button_museum).setEnabled(false);
+
+        // 7. Explain museum
+        ImageView arrow = findViewById(R.id.button_point_museum);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
+
+        // TODO Text audio
+
+        findViewById(R.id.button_reset).setEnabled(true);
+        findViewById(R.id.button_tutorial).setEnabled(true);
+        findViewById(R.id.button_exit).setEnabled(true);
+        findViewById(R.id.button_f).setEnabled(true);
+        findViewById(R.id.button_museum).setEnabled(true);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +151,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         writeInitialLevels();
         assignButtons();
 
-
+        Intent intent = getIntent();
+        boolean tutorial = intent.getBooleanExtra("Tutorial", false);
+        if (tutorial) {
+            tutorialMuseum();
+        }
 
         /*Globals globals =(Globals) getApplication();
         this.animalPool = globals.getAnimalPool();*/
@@ -132,6 +177,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void assignButtons() {
+        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
+
         //char[] buttons = {'f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'};
         for (char button : Globals.levels) {
             int idImage;
@@ -157,6 +204,37 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    void alertDialogue(){
+        int ui_flags =
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder
+                .setMessage("Alles zurücksetzen?")
+                .setPositiveButton("Ja", (dialog, id) -> resetLevels())
+                .setNegativeButton("Nein", (dialog, id) -> {
+                    // if this button is clicked, just close
+                    // the dialog box and do nothing
+                    dialog.cancel();
+                });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().
+                setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        // Set full-sreen mode (immersive sticky):
+        alertDialog.getWindow().getDecorView().setSystemUiVisibility(ui_flags);
+        // Show the alertDialog:
+        alertDialog.show();
+        // Set dialog focusable so we can avoid touching outside:
+        alertDialog.getWindow().
+                clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -165,29 +243,92 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(this, GameActivity.class);
-        switch (v.getId()) {
+    public void onClick(View view) {
+        switch (view.getId()) {
             // TODO Might be a bad idea
             case R.id.button_exit:
-                this.finishAffinity();
+                scale.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        finishAffinity();
+                    }
+                });
+                view.startAnimation(scale);
                 return;
             case R.id.button_reset:
-                resetLevels();
+                scale.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        alertDialogue();
+                    }
+                });
+                view.startAnimation(scale);
                 return;
+
             case R.id.button_unlock:
                 unlockLevels();
                 return;
             case R.id.button_tutorial:
-                intent = new Intent(this, TutorialActivity.class);
-                startActivity(intent);
+                Intent intentTut = new Intent(this, TutorialActivity.class);
+                scale.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        startActivity(intentTut);
+                    }
+                });
+                view.startAnimation(scale);
                 return;
+
             case R.id.button_museum:
-                intent = new Intent(this, DinosActivity.class);
-                startActivity(intent);
+                Intent intentDino = new Intent(this, DinosActivity.class);
+                scale.setAnimationListener(new Animation.AnimationListener() {
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        startActivity(intentDino);
+                    }
+                });
+                view.startAnimation(scale);
                 return;
+
             case R.id.button_a:
                 level = 'a';
                 break;
@@ -234,13 +375,32 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         intent.putExtras(extras);*/
 
 
-
         // Only playable levels
         if (availableLevels.getInt(level.toString(), 0) != LOCKED) {
-            ImageButton iB = findViewById(v.getId());
+            ImageButton iB = findViewById(view.getId());
+            iB.startAnimation(scale);
+            Intent intent = new Intent(this, GameActivity.class);
 
             intent.putExtra("LEVEL", level);
-            startActivity(intent);
+
+            scale.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    startActivity(intent);
+                }
+            });
+            view.startAnimation(scale);
+
+
         }
         //intent.putExtra("animalPool", animalPool);*/
 

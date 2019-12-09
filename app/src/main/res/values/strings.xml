@@ -37,5 +37,6 @@
     <string name="button_exit">DragDrop</string>
     <string name="button_reset">DragDrop</string>
     <string name="layout_progress">DragDrop</string>
+    <string name="reset">Spielstand zurücksetzen?</string>
 
 </resources>

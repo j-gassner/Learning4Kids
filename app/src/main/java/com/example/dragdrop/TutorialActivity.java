@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +53,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             R.color.blue, R.color.purple, R.color.pink));
     boolean letterClicked, animalClicked, dragCorrect, dragWrong, dragCorrectRIght, back;
     ImageButton buttonBack, buttonLetter, buttonAnimal;
+    AlphaAnimation buttonClick = new AlphaAnimation(1f, 0.5f);
+
 
     private final static int LOCKED = 0;
     private final static int UNLOCKED = 1;
@@ -114,6 +117,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         buttonLetter.setEnabled(true);
 
         buttonLetter.setOnClickListener(v -> {
+            buttonLetter.startAnimation(buttonClick);
             letterClicked = true;
             MediaPlayer mp = MediaPlayer.create(this, letterSound);
             mp.start();
@@ -133,14 +137,15 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         // 2. First animal
         arrow.setVisibility(View.INVISIBLE);
         // TODO Play sound
-        new Handler().postDelayed(() -> disPlayAnimal(0), 1000);
+        new Handler().postDelayed(() -> disPlayAnimal(0), 500);
         // 3. Animal sound
         // TODO Play sound
         buttonAnimal.setEnabled(true);
-        new Handler().postDelayed(() -> buttonAnimal.setAlpha(1.0f), 1000);
+        new Handler().postDelayed(() -> buttonAnimal.setAlpha(1.0f), 500);
         arrow = findViewById(R.id.button_point_speaker);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 1000);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         buttonAnimal.setOnClickListener(v -> {
+            buttonAnimal.startAnimation(buttonClick);
             animalClicked = true;
             MediaPlayer mp = MediaPlayer.create(this, animalSound);
             mp.start();
@@ -182,9 +187,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         arrow.setVisibility(View.INVISIBLE);
 
         dragCorrectRIght = true;
-        new Handler().postDelayed(() -> disPlayAnimal(1), 1000);
+        new Handler().postDelayed(() -> disPlayAnimal(1), 500);
         arrow = findViewById(R.id.button_point_sign);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 1000);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         // TODO Play sound
         animal.setOnTouchListener(this);
         noMatch.setOnDragListener(this);
@@ -202,9 +207,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         // 6. Drag wrong
         arrow.setVisibility(View.INVISIBLE);
 
-        new Handler().postDelayed(() -> disPlayAnimal(1), 1000);
+        new Handler().postDelayed(() -> disPlayAnimal(1), 500);
         arrow = findViewById(R.id.button_point_submarine);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 1000);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         // TODO Play sound
         animal.setOnTouchListener(this);
         match.setOnDragListener(this);
@@ -220,16 +225,18 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         back = true;
         buttonAnimal.setEnabled(false);
 
-        new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500); // Change the time for as little as long it works
+        //new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500); // Change the time for as little as long it works
 
         // 7. Back button
         // TODO Play sound
-        buttonBack.setAlpha(1.0f);
+        new Handler().postDelayed(() -> buttonBack.setAlpha(1.0f), 500);
         buttonBack.setEnabled(true);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         buttonBack.setOnClickListener(v -> {
+            buttonBack.startAnimation(buttonClick);
             Intent intent = new Intent(this, StartActivity.class);
+            intent.putExtra("Tutorial", true);
             startActivity(intent);
             //TODO Play sound every 10s
         });
@@ -464,8 +471,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                     MediaPlayer mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
                     mp.start();
                     drop(view, container);
-                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 1000);
-                    new Handler().postDelayed(this::tutorialDragCorrectRight, 1000);
+                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
+                    new Handler().postDelayed(this::tutorialDragCorrectRight, 500);
                 }
 
                 // No match
@@ -475,8 +482,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                     drop(view, container);
                     changeColor(0);
                     dragCorrectRIght = false;
-                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 1000);
-                    new Handler().postDelayed(this::tutorialDragFalse, 1000);
+                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
+                    new Handler().postDelayed(this::tutorialDragFalse, 500);
 
                 }
                 // Wrong
@@ -490,8 +497,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                     MediaPlayer mp = MediaPlayer.create(this, getResources().getIdentifier("sound_negative", "raw", this.getPackageName()));
                     mp.start();
                     drop(view, container);
-                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 1000);
-                    new Handler().postDelayed(this::tutorialBack, 1000);
+                    new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
+                    new Handler().postDelayed(this::tutorialBack, 500);
                     //tutorialBack();
                 }
 
