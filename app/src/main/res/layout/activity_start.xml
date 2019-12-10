@@ -36,7 +36,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="700dp"
-        android:src="@drawable/button_shape"
+        android:src="@null"
         android:scaleType="fitCenter"
         android:background="@null"
         android:id="@+id/button_unlock"
@@ -46,9 +46,9 @@
         android:layout_alignParentStart="true" />
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="700dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="670dp"
         android:src="@drawable/button_museum"
         android:scaleType="fitCenter"
         android:background="@null"
@@ -71,7 +71,7 @@
         android:onClick="onClick" />
 
     <ImageView
-        android:layout_width="300dp"
+        android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/logo"
         android:src="@drawable/logo"

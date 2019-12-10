@@ -20,14 +20,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -52,13 +56,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     ArrayList<Integer> colors = new ArrayList<>(Arrays.asList(R.color.red, R.color.orange, R.color.yellow, R.color.green,
             R.color.blue, R.color.purple, R.color.pink));
     boolean letterClicked, animalClicked, dragCorrect, dragWrong, dragCorrectRIght, back;
-    ImageButton buttonBack, buttonLetter, buttonAnimal;
-    AlphaAnimation buttonClick = new AlphaAnimation(1f, 0.5f);
+    ImageButton buttonBack, buttonLetter, buttonAnimal, buttonSkip;
+    private Animation scale;
 
-
-    private final static int LOCKED = 0;
-    private final static int UNLOCKED = 1;
-    private final static int COMPLETE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +100,32 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void tutorialLetter() {
         arrow = findViewById(R.id.button_point_letter);
+        buttonSkip = findViewById(R.id.button_skip);
         buttonBack = findViewById(R.id.button_back_tutorial);
         buttonLetter = findViewById(R.id.button_letter_tutorial);
         buttonAnimal = findViewById(R.id.button_animal_tutorial);
+        Intent intent = new Intent(this, StartActivity.class);
+        buttonSkip.setOnClickListener(v -> {
+            scale.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            buttonSkip.startAnimation(scale);
+        });
+
 
         buttonBack.setEnabled(false);
         buttonLetter.setEnabled(false);
@@ -117,11 +140,11 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         buttonLetter.setEnabled(true);
 
         buttonLetter.setOnClickListener(v -> {
-            buttonLetter.startAnimation(buttonClick);
+            buttonLetter.startAnimation(scale);
             letterClicked = true;
             MediaPlayer mp = MediaPlayer.create(this, letterSound);
             mp.start();
-            if(!buttonAnimal.isEnabled() && !back)
+            if (!buttonAnimal.isEnabled() && !back)
                 tutorialAnimal();
         });
 
@@ -145,13 +168,13 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         arrow = findViewById(R.id.button_point_speaker);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         buttonAnimal.setOnClickListener(v -> {
-            buttonAnimal.startAnimation(buttonClick);
+            buttonAnimal.startAnimation(scale);
             animalClicked = true;
             MediaPlayer mp = MediaPlayer.create(this, animalSound);
             mp.start();
-            while(mp.isPlaying()){
+            /*while (mp.isPlaying()) {
 
-            }
+            }*/
             tutorialDragCorrect();
             //TODO Play sound
         });
@@ -220,7 +243,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
     }
 
-    void tutorialBack(){
+    void tutorialBack() {
         arrow.setVisibility(View.INVISIBLE);
         back = true;
         buttonAnimal.setEnabled(false);
@@ -233,13 +256,28 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         buttonBack.setEnabled(true);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
+        Intent intent = new Intent(this, StartActivity.class);
+        intent.putExtra("Tutorial", true);
         buttonBack.setOnClickListener(v -> {
-            buttonBack.startAnimation(buttonClick);
-            Intent intent = new Intent(this, StartActivity.class);
-            intent.putExtra("Tutorial", true);
-            startActivity(intent);
-            //TODO Play sound every 10s
+            scale.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            buttonBack.startAnimation(scale);
         });
+
 
     }
 
@@ -264,6 +302,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
     protected void init() {
         //assignAnimals();
+        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         animal = findViewById(R.id.animal);
         match = findViewById(R.id.left);
         noMatch = findViewById(R.id.right);
@@ -326,10 +365,10 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         progress.removeView(fragment);
     }
 
-    void changeColor(int step){
-        if(step >= colors.size())
+    void changeColor(int step) {
+        if (step >= colors.size())
             step %= colors.size();
-        for(ImageView fragment : fragments){
+        for (ImageView fragment : fragments) {
             DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
         }
     }
@@ -355,7 +394,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
             fit = true;
 
-        } else if (step == 1){
+        } else if (step == 1) {
             animal.setImageResource(R.drawable.loewe_animal);
             animalID = getResources().getIdentifier("loewe_animal", "drawable", this.getPackageName());
             animalSound = R.raw.loewe_sound;
@@ -379,10 +418,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         float dHeight = draw.getIntrinsicHeight();
 
         float scalingFactor;
-        if(dWidth > dHeight){
+        if (dWidth > dHeight) {
             scalingFactor = vWidth / dWidth;
-        }
-        else
+        } else
             scalingFactor = vHeight / dHeight;
         //Log.d("Scaling ", scalingFactor + "");
         matrix.postScale(scalingFactor, scalingFactor);
@@ -476,7 +514,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 }
 
                 // No match
-                else if (!fit && container.getId() == noMatch.getId() && dragCorrectRIght){
+                else if (!fit && container.getId() == noMatch.getId() && dragCorrectRIght) {
                     MediaPlayer mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
                     mp.start();
                     drop(view, container);
@@ -487,7 +525,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 }
                 // Wrong
-                else if(container.getId() != middle.getId()){
+                else if (container.getId() != middle.getId()) {
                     if (correctMatches > 0) {
                         removeProgress(correctMatches);
                         correctMatches--;
@@ -514,5 +552,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
         return true;
     }
+
 
 }

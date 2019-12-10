@@ -3,6 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name ="red">#D10000</color>
+    <color name ="white">#FFFFFF</color>
     <color name ="orange">#D15400</color>
     <color name ="yellow">#FADD00</color>
     <color name ="green">#00BD07</color>

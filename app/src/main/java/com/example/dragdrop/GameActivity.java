@@ -70,6 +70,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private int step;
     MediaPlayer mp = new MediaPlayer();
     private Animation scale;
+    Animation zoom, flash;
 
 
     ArrayList<ImageView> fragments;
@@ -151,6 +152,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     protected void init() {
         //assignAnimals();
+        flash = AnimationUtils.loadAnimation(this, R.anim.flash);
+        zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         levels = new LevelCollection(this);
         animal = findViewById(R.id.animal);
@@ -247,21 +250,58 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     private void disPlayAnimal() {
+        boolean dino = false;
         animal.setOnTouchListener(this);
 
         // Level done
         if (correctMatches == WINNINGNUMBER) {
+            findViewById(R.id.button_back).setEnabled(false);
             findViewById(R.id.button_animal).setEnabled(false);
-            //animal.setAlpha(0.0f);
+            findViewById(R.id.button_letter).setEnabled(false);
             mp = MediaPlayer.create(this, R.raw.complete_sound);
             mp.start();
-
             // TODO Ugly
             while (mp.isPlaying()) {
             }
+
+
+            // White
+            ImageView layover = findViewById(R.id.flash);
+            new Handler().postDelayed(() -> layover.setVisibility(View.VISIBLE), 500);
+            mp = MediaPlayer.create(this, R.raw.camera);
+
+            flash.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    mp.start();
+
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    layover.setBackground(null);
+                }
+            });
+            layover.startAnimation(flash);
+
+
+            //mp.start();
+
+            // TODO Ugly
+            /*while (mp.isPlaying()) {
+
+            }
+*/
+
             availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-            if (availableLevels.getInt(level.toString(), 0) == UNLOCKED)
-                displayDino();
+            if (availableLevels.getInt(level.toString(), 0) == UNLOCKED) {
+                dino = true;
+                Handler handler = new Handler();
+                handler.postDelayed(() -> displayDino(), 2000);
+            }
+
             globals.getAnimalPool().reset();
             writePreferences(level, COMPLETE);
             if (level != 't') {
@@ -273,8 +313,18 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
 
             Intent intent = new Intent(this, StartActivity.class);
-            Handler handler = new Handler();
-            handler.postDelayed(() -> startActivity(intent), 5000);   //5 seconds
+
+            if(dino) {
+                Handler handler = new Handler();
+                handler.postDelayed(() -> startActivity(intent), 5000);
+                handler.postDelayed(() -> finish(), 5000);
+            }
+            else{
+                Handler handler = new Handler();
+                handler.postDelayed(() -> startActivity(intent), 1500);
+                handler.postDelayed(() -> finish(), 1500);
+                //startActivity(intent);
+            }
 
             return;
         }
@@ -397,7 +447,23 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         animal.setY(0);*/
 
         animal.setY(animal.getY() - 100);
-        animal.setAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom));
+        //animal.setAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom));
+        zoom.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+        });
+        animal.startAnimation(zoom);
     }
 
     //Implement long click and drag listener
@@ -598,6 +664,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 public void onAnimationEnd(Animation animation) {
                     animalPool.reset();
                     startActivity(intent);
+                    finish();
                 }
             });
             view.startAnimation(scale);
