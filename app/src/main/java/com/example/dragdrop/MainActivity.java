@@ -1,6 +1,7 @@
 package com.example.dragdrop;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
@@ -24,7 +25,12 @@ public class MainActivity extends AppCompatActivity {
         Globals globals = (Globals) getApplication();
         globals.setAnimalPool();
 
-        Intent intent = new Intent(this, StartActivity.class);
+        SharedPreferences availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        Intent intent;
+        if(availableLevels.getString("Name", "").equals("" ))
+            intent = new Intent(this, NameActivity.class);
+        else
+            intent = new Intent(this, StartActivity.class);
         //intent.putExtra("animalPool", animalPool);
         Handler handler = new Handler();
         handler.postDelayed(() -> startActivity(intent), 1000);

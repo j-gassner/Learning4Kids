@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
-    private final static int WINNINGNUMBER = 5;
+    private int WINNINGNUMBER = 5;
     private ImageView animal;
     private int animalSound;
     private int letterSound;
@@ -159,6 +159,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         animal = findViewById(R.id.animal);
         background = findViewById(R.id.level_background);
         background.setImageResource(levels.getLevel(level).getBackgroundID());
+        WINNINGNUMBER = levels.getLevel(level).getWinningNumber();
         //background.setBackgroundResource(levels.getLevel(level).getBackgroundID());
         findViewById(R.id.button_animal).setEnabled(true);
 

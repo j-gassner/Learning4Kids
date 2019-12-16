@@ -7,27 +7,32 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,8 +72,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             editor.apply();
         }
 
+        TextView name = findViewById(R.id.name_child);
+        name.setText(availableLevels.getString("Name", ""));
+
         // Start tutorial on first start
-        /*if(!availableLevels.contains("Tutorial")) {
+        /*if(!availableLevels.getBoolean("Tutorial", false)) {
             Intent intent = new Intent(this, TutorialActivity.class);
             startActivity(intent);
         }*/
@@ -91,6 +99,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         editor.putInt("s", LOCKED);
         editor.putInt("b", LOCKED);
         editor.putInt("t", LOCKED);
+        editor.putBoolean("Tutorial", false);
+        editor.putString("Name", "");
         editor.apply();
         assignButtons();
 
@@ -158,9 +168,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             tutorialMuseum();
         }
 
-        /*Globals globals =(Globals) getApplication();
-        this.animalPool = globals.getAnimalPool();*/
-
     }
 
     @Override
@@ -205,7 +212,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    void alertDialogue(){
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    void alertDialogue() {
         int ui_flags =
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
@@ -213,17 +221,19 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                         View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder
-                .setMessage("Alles zurücksetzen?")
+                .setMessage("Wirklich alles zurücksetzen?")
                 .setPositiveButton("Ja", (dialog, id) -> resetLevels())
                 .setNegativeButton("Nein", (dialog, id) -> {
                     // if this button is clicked, just close
-                    // the dialog box and do nothing
+                    // the dialog_shape box and do nothing
                     dialog.cancel();
                 });
-        // create alert dialog
+        // create alert dialog_shape
         AlertDialog alertDialog = alertDialogBuilder.create();
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.berton);
         alertDialog.getWindow().
                 setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
@@ -231,7 +241,26 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.getWindow().getDecorView().setSystemUiVisibility(ui_flags);
         // Show the alertDialog:
         alertDialog.show();
-        // Set dialog focusable so we can avoid touching outside:
+        TextView textView = alertDialog.findViewById(android.R.id.message);
+        Button buttonPositive = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        Button buttonNegative = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        textView.setTypeface(typeface, Typeface.BOLD);
+        buttonPositive.setTypeface(typeface, Typeface.BOLD);
+        buttonNegative.setTypeface(typeface, Typeface.BOLD);
+
+        Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
+        Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());
+
+
+
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
+        buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
+        buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
+
+        /*buttonPositive.setCompoundDrawablesWithIntrinsicBounds(yes, null, null, null);
+        buttonNegative.setCompoundDrawablesWithIntrinsicBounds(no, null, null, null);*/
+
+        // Set dialog_shape focusable so we can avoid touching outside:
         alertDialog.getWindow().
                 clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
@@ -280,6 +309,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     public void onAnimationRepeat(Animation animation) {
                     }
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         alertDialogue();

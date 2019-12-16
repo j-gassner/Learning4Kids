@@ -66,6 +66,14 @@ public class DinosActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
     void removeTint() {
         for (char level : Globals.levels) {
             int idImage = getResources().getIdentifier("dino_" + level, "drawable", this.getPackageName());
