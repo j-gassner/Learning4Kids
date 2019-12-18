@@ -23,7 +23,8 @@
         android:scaleType="fitStart"
         android:background="@null"
         android:id="@+id/button_back_tutorial"
-        android:contentDescription="@string/button_back" />
+        android:contentDescription="@string/button_back"
+        android:onClick="onClick"/>
 
     <ImageButton
         android:layout_width="120dp"
@@ -58,6 +59,7 @@
         android:id="@+id/button_letter_tutorial"
         android:src="@drawable/f_letter_outline"
         android:contentDescription="@string/button_letter"
+        android:onClick="onClick"
         />
 
     <ImageButton
@@ -70,6 +72,7 @@
         android:background="@null"
         android:id="@+id/button_animal_tutorial"
         android:contentDescription="@string/button_animal"
+        android:onClick="onClick"
         />
 
     <ImageView

@@ -80,6 +80,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             public void run() {
                 /*buttonLetter.setEnabled(false);*/
                 /*buttonAnimal.setEnabled(false);*/
+
                 mp = MediaPlayer.create(getApplicationContext(), currentInstruction);
                 mp.start();
                 startHandler();
@@ -96,7 +97,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     public void stopHandler() {
-        if(mp.isPlaying()) {
+        if (mp.isPlaying()) {
             mp.stop();
             mp.release();
         }
@@ -104,7 +105,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     public void startHandler() {
-        handleInactivity.postDelayed(runnable, 5000); //for 5 seconds
+        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -172,6 +173,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         buttonAnimal = findViewById(R.id.button_animal_tutorial);
         Intent intent = new Intent(this, StartActivity.class);
         buttonSkip.setOnClickListener(v -> {
+            buttonSkip.setEnabled(false);
             skip = true;
             stopHandler();
             scale.setAnimationListener(new Animation.AnimationListener() {
@@ -265,14 +267,17 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         }
 
 
-        buttonLetter.setOnClickListener(v -> {
-            if(!letterClicked)
+        /*buttonLetter.setOnClickListener(v -> {
+            if (!letterClicked)
                 stopHandler();
             RelativeLayout progress = findViewById(R.id.tutorial_progress);
             progress.startAnimation(scale);
             buttonLetter.startAnimation(scale);
+
+            if(!mp.isPlaying()) {
             mp = MediaPlayer.create(this, letterSound);
             mp.start();
+
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -284,13 +289,13 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                     }
 
                 }
-            });
+            });};*/
 
             /*if (!letterClicked && !back) {
                 letterClicked = true;
                 tutorialSubmarine();
             }*/
-        });
+        /*});*/
 
 
        /* while (!letterClicked) {
@@ -369,27 +374,27 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         new Handler().postDelayed(() -> buttonAnimal.setAlpha(1.0f), 2500);
         arrow = findViewById(R.id.button_point_speaker);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 2500);
-        buttonAnimal.setOnClickListener(v -> {
+        /*buttonAnimal.setOnClickListener(v -> {
             buttonAnimal.startAnimation(scale);
-            if(!animalClicked)
+            if (!animalClicked)
                 stopHandler();
-            MediaPlayer mpa = MediaPlayer.create(this, animalSound);
-            mpa.start();
-            /*while (mp.isPlaying()) {
 
-            }*/
-            mpa.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    if (!animalClicked) {
-                        //stopHandler();
-                        animalClicked = true;
-                        arrow.setVisibility(View.INVISIBLE);
-                        tutorialProgress();
+            if (!mp.isPlaying()) {
+                mp = MediaPlayer.create(this, animalSound);
+                mp.start();
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (!animalClicked) {
+                            //stopHandler();
+                            animalClicked = true;
+                            arrow.setVisibility(View.INVISIBLE);
+                            tutorialProgress();
+                        }
                     }
-                }
-            });
-        });
+                });
+            }
+        });*/
 
         // TODO Play sound incl. progress
         /*while(!animalClicked){
@@ -563,6 +568,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         Intent intent = new Intent(this, StartActivity.class);
         intent.putExtra("Tutorial", true);
         buttonBack.setOnClickListener(v -> {
+            buttonBack.setEnabled(false);
             stopHandler();
             scale.setAnimationListener(new Animation.AnimationListener() {
 
@@ -621,6 +627,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         editor.apply();
 
         letterSound = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
+        animalSound = getResources().getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
         // Letter "progress bar"
         int idImage = getResources().getIdentifier("f_letter", "drawable", this.getPackageName());
 
@@ -904,6 +911,99 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         }
 
         return true;
+    }
+
+    public void onClick(View view) {
+        // Letter button
+        if (view.getId() == findViewById(R.id.button_letter_tutorial).getId()) {
+            if (!letterClicked) {
+                buttonLetter.setEnabled(false);
+                stopHandler();
+            }
+            RelativeLayout progress = findViewById(R.id.tutorial_progress);
+            progress.startAnimation(scale);
+            buttonLetter.startAnimation(scale);
+
+            if(!mp.isPlaying()) {
+                mp = MediaPlayer.create(this, letterSound);
+                mp.start();
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (!letterClicked) {
+                            //buttonLetter.setEnabled(false);
+                            //stopHandler();
+                            arrow.setVisibility(View.INVISIBLE);
+                            letterClicked = true;
+                            tutorialSubmarine();
+                        }
+
+                    }
+                });}
+            /*RelativeLayout progress = findViewById(R.id.image_progress);
+            progress.startAnimation(scale);
+            view.startAnimation(scale);
+
+            //letterSound =  getResources().getIdentifier(level + "_sound", "raw", this.getPackageName());
+            if(!mp.isPlaying()) {
+                mp = MediaPlayer.create(this, letterSound);
+                mp.start();*/
+
+        } else if (view.getId() == findViewById(R.id.button_animal_tutorial).getId()) {
+            view.startAnimation(scale);
+            buttonAnimal.startAnimation(scale);
+            if (!animalClicked) {
+                buttonAnimal.setEnabled(false);
+                stopHandler();
+            }
+
+            if (!mp.isPlaying()) {
+                mp = MediaPlayer.create(this, animalSound);
+                mp.start();
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (!animalClicked) {
+                            //buttonAnimal.setEnabled(false);
+                            //stopHandler();
+                            animalClicked = true;
+                            arrow.setVisibility(View.INVISIBLE);
+                            tutorialProgress();
+                        }
+                    }
+                });}
+
+            /*if(!mp.isPlaying()) {
+                mp = MediaPlayer.create(this, animalSound);
+                mp.start();
+            }*/
+        }
+
+        // Back button
+        /*else {
+            // reset animal pool because we leave the level
+            Intent intent = new Intent(this, StartActivity.class);
+            scale.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    animalPool.reset();
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            view.startAnimation(scale);
+
+        }*/
     }
 
 

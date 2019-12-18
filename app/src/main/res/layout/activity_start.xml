@@ -74,11 +74,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:id="@+id/name_child"
-        android:text="Franz'"
+        android:text="Tierische"
         android:textStyle="bold"
         android:textColor="@color/white"
         android:fontFamily="@font/berton"
-        android:textSize="54dp"
+        android:textSize="58dp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 
@@ -86,11 +86,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:text="Tierische Weltreise"
+        android:text="Weltreise"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:fontFamily="@font/berton"
-        android:textSize="54dp"
+        android:textSize="58dp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 
@@ -107,9 +107,33 @@
         android:layout_marginTop="650dp"
         android:visibility="invisible"
         />
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:rotation="45"
+        android:id="@+id/button_point_reset"
+        android:src="@drawable/button_arrow"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="70dp"
+        android:visibility="invisible"
+
+        />
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:rotation="45"
+        android:id="@+id/button_point_tutorial"
+        android:src="@drawable/button_arrow"
+        android:layout_marginLeft="110dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="70dp"
+        android:visibility="invisible"
+
+        />
 
 <HorizontalScrollView
-    android:layout_marginTop="300dp"
+    android:layout_marginTop="250dp"
     android:layout_marginLeft="80dp"
     android:layout_marginRight="80dp"
     android:layout_centerHorizontal="true"

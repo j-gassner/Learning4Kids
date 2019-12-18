@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,6 +49,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private Character level;
     SharedPreferences availableLevels;
     private Animation scale;
+    MediaPlayer mp = new MediaPlayer();
 
     //ArrayList<Character> buttons = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
@@ -72,8 +74,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             editor.apply();
         }
 
-        TextView name = findViewById(R.id.name_child);
-        name.setText(availableLevels.getString("Name", ""));
+        /*TextView name = findViewById(R.id.name_child);
+        name.setText(availableLevels.getString("Name", ""));*/
 
         // Start tutorial on first start
         /*if(!availableLevels.getBoolean("Tutorial", false)) {
@@ -100,7 +102,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         editor.putInt("b", LOCKED);
         editor.putInt("t", LOCKED);
         editor.putBoolean("Tutorial", false);
-        editor.putString("Name", "");
+        //editor.putString("Name", "");
         editor.apply();
         assignButtons();
 
@@ -132,24 +134,89 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     void tutorialMuseum() {
 
         // Disable buttons
-        findViewById(R.id.button_reset).setEnabled(false);
+        /*findViewById(R.id.button_reset).setEnabled(false);
         findViewById(R.id.button_tutorial).setEnabled(false);
         findViewById(R.id.button_exit).setEnabled(false);
         findViewById(R.id.button_f).setEnabled(false);
-        findViewById(R.id.button_museum).setEnabled(false);
+        findViewById(R.id.button_museum).setEnabled(false);*/
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         // 7. Explain museum
         ImageView arrow = findViewById(R.id.button_point_museum);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
 
+        mp = MediaPlayer.create(this, R.raw.instruction_museum);
+        new Handler().postDelayed(() -> mp.start(), 500);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                tutorialReset();
+                arrow.setVisibility(View.INVISIBLE);
+            }
+        });
         // TODO Text audio
 
-        findViewById(R.id.button_reset).setEnabled(true);
+        /*findViewById(R.id.button_reset).setEnabled(true);
         findViewById(R.id.button_tutorial).setEnabled(true);
         findViewById(R.id.button_exit).setEnabled(true);
         findViewById(R.id.button_f).setEnabled(true);
         findViewById(R.id.button_museum).setEnabled(true);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);*/
+
+    }
+
+    void tutorialReset(){
+        ImageView arrow = findViewById(R.id.button_point_reset);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
+
+        mp = MediaPlayer.create(this, R.raw.instruction_reset);
+        mp.start();
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                arrow.setVisibility(View.INVISIBLE);
+                tutorialTutorial();
+            }
+        });
+
+    }
+
+    void tutorialTutorial(){
+        ImageView arrow = findViewById(R.id.button_point_tutorial);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
+
+        mp = MediaPlayer.create(this, R.raw.instruction_tutorial);
+        mp.start();
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                arrow.setVisibility(View.INVISIBLE);
+                tutorialNowYou();
+            }
+        });
+
+
+        //new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);
+
+    }
+
+    void tutorialNowYou(){
+        mp = MediaPlayer.create(this, R.raw.instruction_now_you);
+        mp.start();
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                /*findViewById(R.id.button_reset).setEnabled(true);
+                findViewById(R.id.button_tutorial).setEnabled(true);
+                findViewById(R.id.button_exit).setEnabled(true);
+                findViewById(R.id.button_f).setEnabled(true);
+                findViewById(R.id.button_museum).setEnabled(true);      */
+            }
+        });
+
+
 
     }
 
@@ -263,6 +330,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         // Set dialog_shape focusable so we can avoid touching outside:
         alertDialog.getWindow().
                 clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        findViewById(R.id.button_reset).setEnabled(true);
+
     }
 
     @Override
@@ -277,6 +346,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
+        view.setEnabled(false);
         switch (view.getId()) {
             // TODO Might be a bad idea
             case R.id.button_exit:

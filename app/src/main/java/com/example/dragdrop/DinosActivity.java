@@ -30,6 +30,7 @@ public class DinosActivity extends AppCompatActivity {
     private final static int COMPLETE = 2;
     private Animation scale;
     private Animation dino;
+    MediaPlayer mp = new MediaPlayer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +101,9 @@ public class DinosActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         Intent intent = new Intent(this, StartActivity.class);
-        MediaPlayer mp;
         switch (view.getId()) {
             case R.id.button_back:
+                mp.stop();
                 scale.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override
@@ -124,85 +125,109 @@ public class DinosActivity extends AppCompatActivity {
             case R.id.dino_a:
                 if (availableLevels.getInt("a", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_a);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_a);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_b:
                 if (availableLevels.getInt("b", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_b);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_b);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_e:
                 if (availableLevels.getInt("e", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_e);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_e);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_f:
                 if (availableLevels.getInt("f", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_f);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_f);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_i:
                 if (availableLevels.getInt("i", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_i);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_i);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_l:
                 if (availableLevels.getInt("l", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_l);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_l);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_m:
                 if (availableLevels.getInt("m", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_m);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_m);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_n:
                 if (availableLevels.getInt("n", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_n);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_n);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_o:
                 if (availableLevels.getInt("o", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_o);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_o);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_r:
                 if (availableLevels.getInt("r", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_r);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_r);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_s:
                 if (availableLevels.getInt("s", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_s);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_s);
+                        mp.start();
+                    }
                 }
                 break;
             case R.id.dino_t:
                 if (availableLevels.getInt("t", 0) == COMPLETE) {
                     view.startAnimation(dino);
-                    mp = MediaPlayer.create(this, R.raw.dino_sound_t);
-                    mp.start();
+                    if (!mp.isPlaying()) {
+                        mp = MediaPlayer.create(this, R.raw.dino_sound_t);
+                        mp.start();
+                    }
                 }
                 break;
             default:

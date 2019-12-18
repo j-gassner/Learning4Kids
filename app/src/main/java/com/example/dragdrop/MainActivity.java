@@ -27,8 +27,12 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         Intent intent;
-        if(availableLevels.getString("Name", "").equals("" ))
-            intent = new Intent(this, NameActivity.class);
+        /*if(availableLevels.getString("Name", "").equals("" ))
+            intent = new Intent(this, NameActivity.class);*/
+
+        // Start tutorial on first start
+        if(!availableLevels.getBoolean("Tutorial", false))
+            intent = new Intent(this, TutorialActivity.class);
         else
             intent = new Intent(this, StartActivity.class);
         //intent.putExtra("animalPool", animalPool);
