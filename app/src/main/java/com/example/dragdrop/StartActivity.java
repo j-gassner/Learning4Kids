@@ -18,6 +18,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -202,11 +203,14 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void tutorialNowYou(){
+        ImageView arrow = findViewById(R.id.button_point_f);
+        arrow.setVisibility(View.VISIBLE);
         mp = MediaPlayer.create(this, R.raw.instruction_now_you);
         mp.start();
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                arrow.setVisibility(View.INVISIBLE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 /*findViewById(R.id.button_reset).setEnabled(true);
                 findViewById(R.id.button_tutorial).setEnabled(true);
@@ -226,14 +230,45 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_start);
         hideSystemUI();
         hsv = findViewById(R.id.scroll_horizontal);
+        ImageView arrowRight = findViewById(R.id.scroll_right);
+        ImageView arrowLeft = findViewById(R.id.scroll_left);
+        arrowRight.setVisibility(View.VISIBLE);
+        View view  = hsv.getChildAt(hsv.getChildCount() - 1);
+        int diff = (view.getBottom()-(hsv.getWidth() + hsv.getScrollX()));
+        Log.d("MAXSCROLL", ""+diff);
+        hsv.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
+                Log.d("MAXSCROLL", ""+diff);
+                int scrollX = hsv.getScrollX();
+                if(scrollX > 0 && diff != 0){
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                }
+                else if(scrollX == 0){
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    arrowRight.setVisibility(View.INVISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
         writeInitialLevels();
         assignButtons();
-
         Intent intent = getIntent();
         boolean tutorial = intent.getBooleanExtra("Tutorial", false);
         if (tutorial) {
+            SharedPreferences.Editor editor = availableLevels.edit();
+                    editor.putBoolean("Tutorial", true);
+                    editor.apply();
             tutorialMuseum();
         }
+
 
     }
 
@@ -248,10 +283,12 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
+
     }
 
 
     public void assignButtons() {
+        findViewById(R.id.button_unlock).setEnabled(false);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
 
         //char[] buttons = {'f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'};
@@ -281,6 +318,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
+        mp = MediaPlayer.create(this, R.raw.question_reset);
+        mp.start();
         int ui_flags =
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
@@ -292,10 +331,14 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder
                 .setMessage("Wirklich alles zurücksetzen?")
-                .setPositiveButton("Ja", (dialog, id) -> resetLevels())
+                .setPositiveButton("Ja", (dialog, id) ->  {
+                    mp.stop();
+                    resetLevels();
+                })
                 .setNegativeButton("Nein", (dialog, id) -> {
                     // if this button is clicked, just close
                     // the dialog_shape box and do nothing
+                    mp.stop();
                     dialog.cancel();
                 });
         // create alert dialog_shape
@@ -313,7 +356,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Button buttonNegative = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         textView.setTypeface(typeface, Typeface.BOLD);
         buttonPositive.setTypeface(typeface, Typeface.BOLD);
+        buttonPositive.setTextColor(getResources().getColor(R.color.green));
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
+        buttonNegative.setTextColor(getResources().getColor(R.color.red));
 
         Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
         Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());

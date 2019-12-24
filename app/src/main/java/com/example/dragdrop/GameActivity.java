@@ -78,12 +78,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     MediaPlayer instr = new MediaPlayer();
     private Animation scale;
     Animation zoom, flash;
-    boolean stillThere;
+    boolean stillThere, isRunning;
     Handler handleInactivity;
     Runnable runnable;
     ArrayList<ImageView> fragments;
-    ArrayList<Integer> colors = new ArrayList<>(Arrays.asList(R.color.red, R.color.orange, R.color.yellow, R.color.green,
-            R.color.blue, R.color.purple, R.color.pink));
+    ArrayList<Integer> colors = new ArrayList<>(Arrays.asList(R.color.red,  R.color.yellow, R.color.green, R.color.orange,
+            R.color.blue, R.color.pink, R.color.purple));
     int counterCorrect, counterWrong;
     CountDownTimer mCountDown = new CountDownTimer(30000, 30000) {
 
@@ -141,8 +141,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         /*mph = MediaPlayer.create(this, R.raw.are_you_still_there);
         instr = MediaPlayer.create(this, getResources().getIdentifier("instruction_" + level, "raw", this.getPackageName()));*/
         // user interact cancel the timer and restart to countdown to next interaction
-        mCountDown.cancel();
-        mCountDown.start();
+        if(isRunning) {
+            mCountDown.cancel();
+            mCountDown.start();
+        }
 
     }
 
@@ -168,7 +170,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onStart() {
         super.onStart();
-        noTouchy();
+        //noTouchy();
         // Get Level and list of animals
         Intent intent = getIntent();
         level = intent.getCharExtra("LEVEL", 'f');
@@ -288,7 +290,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     new Handler().postDelayed(() -> disPlayAnimal(), 500);
                     /*startHandler();*/
                     mCountDown.start();
-                    touchy();
+                    isRunning = true;
+                    //touchy();
                 }
             });
 
@@ -543,6 +546,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         //stopHandler();
         globals.getAnimalPool().reset();
         writePreferences(level, COMPLETE);
+        SharedPreferences.Editor editor = availableLevels.edit();
+        editor.putBoolean("Tutorial", true);
+        editor.apply();
         if (level != 't') {
             int index = globals.getLevels().indexOf(level);
             Character nextLevel = globals.getLevels().get(index + 1);

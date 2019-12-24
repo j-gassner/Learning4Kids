@@ -31,6 +31,7 @@
             android:fontFamily="@font/berton"
             android:clickable="true"
             android:text="Ja"
+            android:textColor="@color/green"
             android:textSize="36dp"
 
             android:textStyle="bold" />
@@ -44,6 +45,7 @@
             android:fontFamily="@font/berton"
             android:clickable="true"
             android:text="Nein"
+            android:textColor="@color/red"
             android:textSize="36dp"
 
             android:textStyle="bold" />

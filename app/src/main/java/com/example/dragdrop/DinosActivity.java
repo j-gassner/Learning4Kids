@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,10 +38,38 @@ public class DinosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinos);
         hideSystemUI();
-        hsv = findViewById(R.id.scroll_horizontal_dinos);
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
+
+        hsv = findViewById(R.id.scroll_horizontal_dinos);
+        ImageView arrowRight = findViewById(R.id.scroll_right_dino);
+        ImageView arrowLeft = findViewById(R.id.scroll_left_dino);
+        arrowRight.setVisibility(View.VISIBLE);
+        View view  = hsv.getChildAt(hsv.getChildCount() - 1);
+        int diff = (view.getBottom()-(hsv.getWidth() + hsv.getScrollX()));
+        Log.d("MAXSCROLL", ""+diff);
+        hsv.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int diff = (view.getRight()-(hsv.getWidth() + hsv.getScrollX()));
+                Log.d("MAXSCROLL", ""+diff);
+                int scrollX = hsv.getScrollX();
+                if(scrollX > 0 && diff != 0){
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                }
+                else if(scrollX == 0){
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    arrowRight.setVisibility(View.INVISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
 
 
     }

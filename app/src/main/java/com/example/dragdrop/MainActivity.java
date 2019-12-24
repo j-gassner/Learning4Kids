@@ -31,13 +31,19 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent(this, NameActivity.class);*/
 
         // Start tutorial on first start
-        if(!availableLevels.getBoolean("Tutorial", false))
+        if(!availableLevels.getBoolean("Tutorial", false) && availableLevels.getInt("f", 1) != 2)
             intent = new Intent(this, TutorialActivity.class);
         else
             intent = new Intent(this, StartActivity.class);
         //intent.putExtra("animalPool", animalPool);
         Handler handler = new Handler();
         handler.postDelayed(() -> startActivity(intent), 1000);
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
 
     }
 

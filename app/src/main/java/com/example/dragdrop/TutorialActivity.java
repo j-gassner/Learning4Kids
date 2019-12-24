@@ -180,9 +180,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    SharedPreferences.Editor editor = availableLevels.edit();
-                    editor.putBoolean("Tutorial", true);
-                    editor.apply();
+
 
                 }
 
@@ -552,7 +550,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         // 7. Back button
         arrow.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(() -> buttonBack.setAlpha(1.0f), 500);
-        buttonBack.setEnabled(true);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         mp = MediaPlayer.create(this, R.raw.tutorial_back);
@@ -562,6 +559,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             public void onCompletion(MediaPlayer mp) {
                 currentInstruction = R.raw.instruction_back;
                 startHandler();
+                buttonBack.setEnabled(true);
                 buttonLetter.setEnabled(true);
             }
         });
@@ -574,6 +572,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 @Override
                 public void onAnimationStart(Animation animation) {
+
                 }
 
                 @Override
@@ -621,15 +620,15 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         middle = findViewById(R.id.middle);
 
         // Write to preferences that tutorial was started
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        /*availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
         editor.putBoolean("Tutorial", true);
-        editor.apply();
+        editor.apply();*/
 
         letterSound = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
         animalSound = getResources().getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
         // Letter "progress bar"
-        int idImage = getResources().getIdentifier("f_letter", "drawable", this.getPackageName());
+        int idImage = getResources().getIdentifier("f_letter_fill", "drawable", this.getPackageName());
 
         //Define a bitmap with the same size as the view
 
