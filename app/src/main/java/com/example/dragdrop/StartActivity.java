@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class StartActivity extends AppCompatActivity implements View.OnClickListener {
+
     public static int scrollX = 0;
     public static int scrollY = -1;
     private final static int LOCKED = 0;
@@ -51,6 +52,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     SharedPreferences availableLevels;
     private Animation scale;
     MediaPlayer mp = new MediaPlayer();
+    MediaPlayer reset = new MediaPlayer();
 
     //ArrayList<Character> buttons = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
@@ -141,7 +143,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.button_f).setEnabled(false);
         findViewById(R.id.button_museum).setEnabled(false);*/
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         // 7. Explain museum
         ImageView arrow = findViewById(R.id.button_point_museum);
@@ -167,7 +169,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    void tutorialReset(){
+    void tutorialReset() {
         ImageView arrow = findViewById(R.id.button_point_reset);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
 
@@ -183,7 +185,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    void tutorialTutorial(){
+    void tutorialTutorial() {
         ImageView arrow = findViewById(R.id.button_point_tutorial);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
 
@@ -197,12 +199,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-
         //new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);
 
     }
 
-    void tutorialNowYou(){
+    void tutorialNowYou() {
         ImageView arrow = findViewById(R.id.button_point_f);
         arrow.setVisibility(View.VISIBLE);
         mp = MediaPlayer.create(this, R.raw.instruction_now_you);
@@ -221,7 +222,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         });
 
 
-
     }
 
     @Override
@@ -233,30 +233,29 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         ImageView arrowRight = findViewById(R.id.scroll_right);
         ImageView arrowLeft = findViewById(R.id.scroll_left);
         arrowRight.setVisibility(View.VISIBLE);
-        View view  = hsv.getChildAt(hsv.getChildCount() - 1);
-        int diff = (view.getBottom()-(hsv.getWidth() + hsv.getScrollX()));
-        Log.d("MAXSCROLL", ""+diff);
-        hsv.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
-                Log.d("MAXSCROLL", ""+diff);
-                int scrollX = hsv.getScrollX();
-                if(scrollX > 0 && diff != 0){
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                }
-                else if(scrollX == 0){
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    arrowRight.setVisibility(View.INVISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                }
+        View view = hsv.getChildAt(hsv.getChildCount() - 1);
+        int diff = (view.getBottom() - (hsv.getWidth() + hsv.getScrollX()));
+        Log.d("MAXSCROLL", "" + diff);
+        hsv.getViewTreeObserver()
+            .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                @Override
+                public void onScrollChanged() {
+                    int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
+                    Log.d("MAXSCROLL", "" + diff);
+                    int scrollX = hsv.getScrollX();
+                    if (scrollX > 0 && diff != 0) {
+                        arrowRight.setVisibility(View.VISIBLE);
+                        arrowLeft.setVisibility(View.VISIBLE);
+                    } else if (scrollX == 0) {
+                        arrowRight.setVisibility(View.VISIBLE);
+                        arrowLeft.setVisibility(View.INVISIBLE);
+                    } else {
+                        arrowRight.setVisibility(View.INVISIBLE);
+                        arrowLeft.setVisibility(View.VISIBLE);
+                    }
 
-            }
-        });
+                }
+            });
 
         writeInitialLevels();
         assignButtons();
@@ -264,8 +263,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         boolean tutorial = intent.getBooleanExtra("Tutorial", false);
         if (tutorial) {
             SharedPreferences.Editor editor = availableLevels.edit();
-                    editor.putBoolean("Tutorial", true);
-                    editor.apply();
+            editor.putBoolean("Tutorial", true);
+            editor.apply();
             tutorialMuseum();
         }
 
@@ -283,6 +282,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
+        touchy();
 
     }
 
@@ -294,20 +294,25 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         //char[] buttons = {'f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'};
         for (char button : Globals.levels) {
             int idImage;
-            int idButton = getResources().getIdentifier("button_" + button, "id", this.getPackageName());
+            int idButton = getResources()
+                .getIdentifier("button_" + button, "id", this.getPackageName());
             Log.d("IDBUTTON", " " + idButton);
             ImageButton iB = findViewById(idButton);
             if (availableLevels.getInt(button + "", 0) == COMPLETE) {
 
-                idImage = getResources().getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
                 Log.d("IDIMAGE", " " + idImage);
 
             } else if (availableLevels.getInt(button + "", 0) == UNLOCKED) {
 
-                idImage = getResources().getIdentifier(button + "_polaroid_unlocked", "drawable", this.getPackageName());
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid_unlocked", "drawable",
+                        this.getPackageName());
                 Log.d("IDIMAGE", " " + idImage);
             } else {
-                idImage = getResources().getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
                 Log.d("IDIMAGE", " " + idImage);
             }
             iB.setImageResource(idImage);
@@ -316,37 +321,53 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
-        mp = MediaPlayer.create(this, R.raw.question_reset);
-        mp.start();
+        reset = MediaPlayer.create(this, R.raw.question_reset);
+        reset.start();
         int ui_flags =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder
-                .setMessage("Wirklich alles zurücksetzen?")
-                .setPositiveButton("Ja", (dialog, id) ->  {
-                    mp.stop();
-                    resetLevels();
-                })
-                .setNegativeButton("Nein", (dialog, id) -> {
-                    // if this button is clicked, just close
-                    // the dialog_shape box and do nothing
-                    mp.stop();
-                    dialog.cancel();
-                });
+            .setMessage("Wirklich alles zurücksetzen?")
+            .setPositiveButton("Ja", (dialog, id) -> {
+                reset.stop();
+                resetLevels();
+                touchy();
+            })
+            .setNegativeButton("Nein", (dialog, id) -> {
+                // if this button is clicked, just close
+                // the dialog_shape box and do nothing
+                reset.stop();
+                dialog.cancel();
+                touchy();
+            });
+
         // create alert dialog_shape
         AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setOnCancelListener(
+            new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (reset.isPlaying()) {
+                        reset.stop();
+                        touchy();
+                    }
+                }
+            }
+        );
         Typeface typeface = ResourcesCompat.getFont(this, R.font.berton);
         alertDialog.getWindow().
-                setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         // Set full-sreen mode (immersive sticky):
         alertDialog.getWindow().getDecorView().setSystemUiVisibility(ui_flags);
         // Show the alertDialog:
@@ -363,8 +384,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
         Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());
 
-
-
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
         buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
         buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
@@ -374,7 +393,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
         // Set dialog_shape focusable so we can avoid touching outside:
         alertDialog.getWindow().
-                clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         findViewById(R.id.button_reset).setEnabled(true);
 
     }
@@ -387,13 +406,22 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    void noTouchy() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    void touchy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
-        view.setEnabled(false);
+        noTouchy();
+        //view.setEnabled(false);
         switch (view.getId()) {
-            // TODO Might be a bad idea
             case R.id.button_exit:
                 scale.setAnimationListener(new Animation.AnimationListener() {
 
@@ -428,6 +456,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         alertDialogue();
+
                     }
                 });
                 view.startAnimation(scale);
@@ -435,6 +464,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.button_unlock:
                 unlockLevels();
+                touchy();
                 return;
             case R.id.button_tutorial:
                 Intent intentTut = new Intent(this, TutorialActivity.class);
@@ -451,6 +481,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         startActivity(intentTut);
+                        //touchy();
                     }
                 });
                 view.startAnimation(scale);
@@ -471,6 +502,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         startActivity(intentDino);
+                        //touchy();
                     }
                 });
                 view.startAnimation(scale);
@@ -516,11 +548,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
         }
+
         //Log.d("LEVEL ", level.toString());
         /*extras.putChar("LEVEL", level);
         extras.putSerializable("animalPool", animalPool);
         intent.putExtras(extras);*/
-
 
         // Only playable levels
         if (availableLevels.getInt(level.toString(), 0) != LOCKED) {
@@ -548,6 +580,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             view.startAnimation(scale);
 
 
+        } else {
+            touchy();
         }
         //intent.putExtra("animalPool", animalPool);*/
 
@@ -561,15 +595,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 
