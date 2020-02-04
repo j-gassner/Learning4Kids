@@ -315,7 +315,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         reset = MediaPlayer.create(this, R.raw.question_reset);
-        reset.start();
+        new Handler().postDelayed(() -> reset.start(), 500);
+
+        MediaPlayer bloop;
+        bloop = MediaPlayer.create(this, R.raw.button);
+
         int ui_flags =
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
@@ -328,6 +332,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         alertDialogBuilder
             .setMessage("Wirklich alles zurücksetzen?")
             .setPositiveButton("Ja", (dialog, id) -> {
+                bloop.start();
                 reset.stop();
                 resetLevels();
                 touchy();
@@ -335,6 +340,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             .setNegativeButton("Nein", (dialog, id) -> {
                 // if this button is clicked, just close
                 // the dialog_shape box and do nothing
+                bloop.start();
                 reset.stop();
                 dialog.cancel();
                 touchy();
@@ -410,6 +416,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         noTouchy();
+        MediaPlayer bloop = new MediaPlayer();
+        bloop = MediaPlayer.create(this, R.raw.button);
+        bloop.start();
         //view.setEnabled(false);
         switch (view.getId()) {
             case R.id.button_exit:

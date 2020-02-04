@@ -208,6 +208,10 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             buttonSkip.setEnabled(false);
             skip = true;
             stopHandler();
+
+            MediaPlayer bloop;
+            bloop = MediaPlayer.create(this, R.raw.button);
+            bloop.start();
             scale.setAnimationListener(new Animation.AnimationListener() {
 
                 @Override

@@ -10,16 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 public class DinosActivity extends AppCompatActivity {
     public static int scrollX = 0;
@@ -133,6 +130,11 @@ public class DinosActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.button_back:
                 mp.stop();
+
+                MediaPlayer bloop;
+                bloop = MediaPlayer.create(this, R.raw.button);
+                bloop.start();
+
                 scale.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override

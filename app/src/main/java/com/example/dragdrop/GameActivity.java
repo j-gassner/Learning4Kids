@@ -937,6 +937,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Back button
         else {
+            MediaPlayer bloop;
+            bloop = MediaPlayer.create(this, R.raw.button);
+            bloop.start();
+
             mCountDown.cancel();
             ImageButton back = findViewById(R.id.button_back);
             back.setEnabled(false);
