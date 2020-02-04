@@ -11,10 +11,9 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.MessageQueue;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
@@ -22,19 +21,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,8 +53,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     private Globals globals;
     private int animalID;
     ArrayList<ImageView> fragments;
-    ArrayList<Integer> colors = new ArrayList<>(Arrays.asList(R.color.red, R.color.orange, R.color.yellow, R.color.green,
-            R.color.blue, R.color.purple, R.color.pink));
+    ArrayList<Integer> colors = new ArrayList<>(
+        Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
+            R.color.green, R.color.orange, R.color.purple));
     boolean letterClicked, animalClicked, dragCorrect, dragWrong, dragCorrectRight, back, skip;
     ImageButton buttonBack, buttonLetter, buttonAnimal, buttonSkip;
     private Animation scale;
@@ -99,7 +96,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     public void stopHandler() {
         if (mp.isPlaying()) {
             mp.stop();
-            mp.release();
+            //mp.release();
         }
         handleInactivity.removeCallbacks(runnable);
     }
@@ -126,9 +123,44 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @Override
     protected void onResume() {
         super.onResume();
+        removeColor();
         hideSystemUI();
         tutorialIntro();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
+        stopHandler();
+        //mp.stop();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
+        stopHandler();
+        //mp.stop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
+        //mp.stop();
+        stopHandler();
+    }
+
+
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -180,7 +212,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-
 
                 }
 
@@ -688,6 +719,22 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         for (ImageView fragment : fragments) {
             DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
         }
+        // Change color of letter
+        ImageButton iB = findViewById(R.id.button_letter_tutorial);
+        DrawableCompat.setTint(iB.getDrawable(), ContextCompat
+            .getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
+    }
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    void removeColor() {
+        for (ImageView fragment : fragments) {
+            //DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
+            fragment.getDrawable().setTintList(null);
+        }
+        // Change color of letter
+        ImageButton iB = findViewById(R.id.button_letter_tutorial);
+        iB.getDrawable().setTintList(null);
+        //DrawableCompat.setTint(iB.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
     }
 
     //Set position of animal image and display
@@ -857,6 +904,12 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 // Match
                 if (fit && container.getId() == match.getId() && !dragCorrectRight) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
+                    View letter = findViewById(R.id.button_letter_tutorial);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     stopHandler();
                     dragCorrect = true;
 
@@ -872,6 +925,12 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 // No match
                 else if (!fit && container.getId() == noMatch.getId() && dragCorrectRight) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
+                    View letter = findViewById(R.id.button_letter_tutorial);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     stopHandler();
                     mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
                     mp.start();
@@ -884,6 +943,12 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 }
                 // Wrong
                 else if (container.getId() != middle.getId()) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
+                    View letter = findViewById(R.id.button_letter_tutorial);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     stopHandler();
                     if (correctMatches > 0) {
                         removeProgress(correctMatches);

@@ -8,18 +8,18 @@ class LevelCollection {
 
     LevelCollection(Context context){
         levels = new HashMap<Character, Level>(){{
-            put('f', new Level('f', 90, true, 5, context));
-            put('l', new Level('l', 85, false, 5, context));
-            put('r', new Level('r', 80, false, 5, context));
-            put('m', new Level('m', 75, false, 5, context));
-            put('n', new Level('n', 70, true, 6, context));
-            put('i', new Level('i', 65, false, 6, context));
-            put('e', new Level('e', 60, false, 6, context));
-            put('a', new Level('a', 55, false, 6, context));
-            put('o', new Level('o', 50, false, 7, context));
-            put('s', new Level('s', 45, true, 7, context));
-            put('b', new Level('b', 40, false, 7, context));
-            put('t', new Level('t', 35, true, 7, context));
+            put('f', new Level('f', 50, true, 5, context));
+            put('l', new Level('l', 50, false, 5, context));
+            put('r', new Level('r', 45, false, 5, context));
+            put('m', new Level('m', 45, false, 5, context));
+            put('n', new Level('n', 40, true, 6, context));
+            put('i', new Level('i', 40, false, 6, context));
+            put('e', new Level('e', 35, false, 6, context));
+            put('a', new Level('a', 35, false, 6, context));
+            put('o', new Level('o', 30, false, 7, context));
+            put('s', new Level('s', 30, true, 7, context));
+            put('b', new Level('b', 25, false, 7, context));
+            put('t', new Level('t', 25, true, 7, context));
         }};
     }
 

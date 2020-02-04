@@ -1,6 +1,5 @@
 package com.example.dragdrop;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ public class Statistics {
     }
     void addToIDList(int id, String animal){
         animalIDs.put(id, animal);
+        // tp, tn, fp, fn
         animalStatistics.put(animal, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
         levelStatistics.put(animal, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
     }
@@ -31,6 +31,10 @@ public class Statistics {
         // levelList
         number = levelStatistics.get(animal).get(index);
         levelStatistics.get(animal).set(index, number + 1);
+    }
+
+    void writeToCSV() {
+
     }
 
 }

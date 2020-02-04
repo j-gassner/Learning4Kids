@@ -1,43 +1,30 @@
 package com.example.dragdrop;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class StartActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -142,8 +129,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.button_exit).setEnabled(false);
         findViewById(R.id.button_f).setEnabled(false);
         findViewById(R.id.button_museum).setEnabled(false);*/
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);*/
+        //noTouchy();
 
         // 7. Explain museum
         ImageView arrow = findViewById(R.id.button_point_museum);
@@ -212,7 +200,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onCompletion(MediaPlayer mp) {
                 arrow.setVisibility(View.INVISIBLE);
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                touchy();
+                //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 /*findViewById(R.id.button_reset).setEnabled(true);
                 findViewById(R.id.button_tutorial).setEnabled(true);
                 findViewById(R.id.button_exit).setEnabled(true);
@@ -262,6 +251,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = getIntent();
         boolean tutorial = intent.getBooleanExtra("Tutorial", false);
         if (tutorial) {
+            noTouchy();
             SharedPreferences.Editor editor = availableLevels.edit();
             editor.putBoolean("Tutorial", true);
             editor.apply();
@@ -282,13 +272,13 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
-        touchy();
+        //touchy();
 
     }
 
 
     public void assignButtons() {
-        findViewById(R.id.button_unlock).setEnabled(false);
+        //findViewById(R.id.button_unlock).setEnabled(false);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
 
         //char[] buttons = {'f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'};

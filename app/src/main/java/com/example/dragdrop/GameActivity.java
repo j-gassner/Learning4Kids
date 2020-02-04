@@ -1,59 +1,40 @@
 package com.example.dragdrop;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.Image;
 import android.media.MediaPlayer;
-import android.media.ToneGenerator;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
@@ -82,8 +63,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     Handler handleInactivity;
     Runnable runnable;
     ArrayList<ImageView> fragments;
-    ArrayList<Integer> colors = new ArrayList<>(Arrays.asList(R.color.red,  R.color.yellow, R.color.green, R.color.orange,
-            R.color.blue, R.color.pink, R.color.purple));
+    ArrayList<Integer> colors = new ArrayList<>(
+        Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
+            R.color.green, R.color.orange, R.color.purple));
     int counterCorrect, counterWrong;
     CountDownTimer mCountDown = new CountDownTimer(30000, 30000) {
 
@@ -123,10 +105,11 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
-
+        removeColor();
         //mCountDown.start();
     }
 
@@ -185,12 +168,30 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onPause() {
         super.onPause();
         mCountDown.cancel();
+        if (mph.isPlaying()) {
+            mph.stop();
+        }
+        if (instr.isPlaying()) {
+            instr.stop();
+        }
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
         //mp.stop();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        if (mph.isPlaying()) {
+            mph.stop();
+        }
+        if (instr.isPlaying()) {
+            instr.stop();
+        }
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
         //mp.stop();
         mCountDown.cancel();
         //stopHandler();
@@ -200,9 +201,19 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onDestroy() {
         super.onDestroy();
         mCountDown.cancel();
+        if (mph.isPlaying()) {
+            mph.stop();
+        }
+        if (instr.isPlaying()) {
+            instr.stop();
+        }
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
         //mp.stop();
         //stopHandler();
     }
+
 
     void noTouchy(){
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -341,9 +352,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         Log.d("HEIGHTORIG", image.getHeight() + "");
         for (int i = 0; i < WINNINGNUMBER; i++) {
             ImageView frag = new ImageView(getApplicationContext());
-            frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(), (int) Math.ceil(image.getHeight() / WINNINGNUMBER)));
+            frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(),
+                (int) (Math.ceil(image.getHeight() / WINNINGNUMBER))));
             fragments.add(frag);
-            y += (int) Math.ceil(image.getHeight() / WINNINGNUMBER);
+
+            // Avoid lines during animation
+            y += (int) (image.getHeight() / WINNINGNUMBER);
         }
 
     }
@@ -384,6 +398,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @SuppressLint("ClickableViewAccessibility")
     private void disPlayAnimal() {
         boolean dino = false;
+        findViewById(R.id.button_letter).setEnabled(true);
+        findViewById(R.id.button_animal).setEnabled(true);
         animal.setOnTouchListener(this);
         // Level done
         if (correctMatches == WINNINGNUMBER) {
@@ -689,6 +705,11 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Praise randomly
         if(counterCorrect == 3){
+            //
+            touchy();
+            findViewById(R.id.button_letter).setEnabled(false);
+            findViewById(R.id.button_animal).setEnabled(false);
+            //findViewById(R.id.button_back).setEnabled(true);
             counterCorrect = 0;
             int nr = rand.nextInt(6) + 1;
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
@@ -704,6 +725,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             });
         }
         else if(counterWrong == 3){
+            touchy();
+            findViewById(R.id.button_letter).setEnabled(false);
+            findViewById(R.id.button_animal).setEnabled(false);
             counterWrong = 0;
             int nr = rand.nextInt(4) + 1;
             int praise = getResources().getIdentifier("encourage" + nr, "raw", this.getPackageName());
@@ -734,6 +758,25 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         for (ImageView fragment : fragments) {
             DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
         }
+
+        // Change color of letter
+        ImageButton iB = findViewById(R.id.button_letter);
+        DrawableCompat.setTint(iB.getDrawable(), ContextCompat
+            .getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
+    }
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    void removeColor() {
+        for (ImageView fragment : fragments) {
+            //DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
+            fragment.getDrawable().setTintList(null);
+        }
+
+        // Change color of letter
+        ImageButton iB = findViewById(R.id.button_letter);
+        iB.getDrawable().setTintList(null);
+        //DrawableCompat.setTint(iB.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
+
     }
 
     // This is the method that the system calls when it dispatches a drag event to the
@@ -771,6 +814,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
                 // Match
                 if (fit && container.getId() == match.getId()) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.image_progress);
+                    View letter = findViewById(R.id.button_letter);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     animalPool.getAnimalMapCurrent().get(level).remove(new Integer(animalID));
                     counterCorrect++;
                     correctMatches++;
@@ -803,6 +852,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
                 // No Match
                 else if (!fit && container.getId() == noMatch.getId()) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.image_progress);
+                    View letter = findViewById(R.id.button_letter);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     counterCorrect++;
                     counterWrong = 0;
                     Character lvl = getResources().getResourceEntryName(animalID).charAt(0);
@@ -822,6 +877,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
                 // Wrong
                 else if (container.getId() != middle.getId()) {
+                    // Animation
+                    RelativeLayout progress = findViewById(R.id.image_progress);
+                    View letter = findViewById(R.id.button_letter);
+                    progress.startAnimation(scale);
+                    letter.startAnimation(scale);
+
                     counterWrong++;
                     counterCorrect = 0;
                     if (correctMatches > 0) {
@@ -879,12 +940,18 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             mCountDown.cancel();
             ImageButton back = findViewById(R.id.button_back);
             back.setEnabled(false);
+
             if(mph.isPlaying())
                 mph.stop();
             if(instr.isPlaying())
                 instr.stop();
             if(mp.isPlaying())
                 mp.stop();
+
+            // Release players
+            /*mph.release();
+            instr.release();
+            mp.release();*/
             Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
 
