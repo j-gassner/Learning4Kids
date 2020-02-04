@@ -601,6 +601,11 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         Intent intent = new Intent(this, StartActivity.class);
         intent.putExtra("Tutorial", true);
         buttonBack.setOnClickListener(v -> {
+
+            MediaPlayer bloop;
+            bloop = MediaPlayer.create(this, R.raw.button);
+            bloop.start();
+
             buttonBack.setEnabled(false);
             stopHandler();
             scale.setAnimationListener(new Animation.AnimationListener() {
