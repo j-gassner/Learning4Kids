@@ -37,7 +37,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener, View.OnClickListener {
+public class GameActivity extends AppCompatActivity implements View.OnTouchListener,
+    View.OnDragListener, View.OnClickListener {
+
     private int WINNINGNUMBER = 5;
     private ImageView animal;
     private int animalSound;
@@ -77,12 +79,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         @Override
         public void onFinish() {
-            if(stillThere) {
+            if (stillThere) {
                 mph.start();
                 stillThere = false;
-            }
-
-            else {
+            } else {
                 instr.start();
                 stillThere = true;
             }
@@ -117,14 +117,16 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     public void onUserInteraction() {
         super.onUserInteraction();
         //if(mCountDown)
-        if(mph.isPlaying())
+        if (mph.isPlaying()) {
             mph.stop();
-        if(instr.isPlaying())
+        }
+        if (instr.isPlaying()) {
             instr.stop();
+        }
         /*mph = MediaPlayer.create(this, R.raw.are_you_still_there);
         instr = MediaPlayer.create(this, getResources().getIdentifier("instruction_" + level, "raw", this.getPackageName()));*/
         // user interact cancel the timer and restart to countdown to next interaction
-        if(isRunning) {
+        if (isRunning) {
             mCountDown.cancel();
             mCountDown.start();
         }
@@ -215,12 +217,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
-    void noTouchy(){
+    void noTouchy() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
-    void touchy(){
+    void touchy() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
@@ -240,15 +242,15 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 
@@ -259,7 +261,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         ImageButton speaker = findViewById(R.id.button_animal);
         letterButton.setEnabled(false);
         speaker.setEnabled(false);
-        int intro = getResources().getIdentifier("instruction_" + level, "raw", this.getPackageName());
+        int intro = getResources()
+            .getIdentifier("instruction_" + level, "raw", this.getPackageName());
         instr = MediaPlayer.create(this, intro);
         //assignAnimals();
         flash = AnimationUtils.loadAnimation(this, R.anim.flash);
@@ -287,7 +290,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         AssetFileDescriptor afd = getResources().openRawResourceFd(intro);
         try {
             mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+                afd.getDeclaredLength());
             mp.prepareAsync();
 
             mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
@@ -320,13 +324,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     void setLetterButton() {
         letterSound = getResources().getIdentifier(level + "_sound", "raw", this.getPackageName());
         ImageButton iB = findViewById(R.id.button_letter);
-        int idImage = getResources().getIdentifier(level + "_letter_outline", "drawable", this.getPackageName());
+        int idImage = getResources()
+            .getIdentifier(level + "_letter_outline", "drawable", this.getPackageName());
         iB.setImageResource(idImage);
         iB.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-
         // Letter "progress bar"
-        idImage = getResources().getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());
+        idImage = getResources()
+            .getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());
         Log.d("IDIMAGENULL ", idImage + "");
 
         //Define a bitmap with the same size as the view
@@ -375,7 +380,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         Log.d("BITMAP", fragment.getHeight() + "");
         //ImageView frag = new ImageView(getApplicationContext());
         //frag.setImageBitmap(fragment);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(), (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(),
+            (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
         params.leftMargin = 0;
         params.topMargin = progress.getHeight() - chunkSize * step;
         progress.addView(fragment, params);
@@ -385,8 +391,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     void removeProgress(int step) {
-        if (step == 0)
+        if (step == 0) {
             return;
+        }
         RelativeLayout progress = findViewById(R.id.image_progress);
         ImageView fragment = fragments.get(fragments.size() - step);
         Log.d("BITMAP", fragment.getHeight() + "");
@@ -411,10 +418,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             findViewById(R.id.button_letter).setEnabled(false);
             mp = MediaPlayer.create(this, R.raw.complete_sound);
             mp.start();
-            // TODO Ugly
+            // TODO Replace with listener
             while (mp.isPlaying()) {
             }
-
 
             // White
             ImageView layover = findViewById(R.id.flash);
@@ -439,10 +445,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             });
             layover.startAnimation(flash);
 
-
             //mp.start();
-
-
 
             availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
             if (availableLevels.getInt(level.toString(), 0) == UNLOCKED) {
@@ -486,7 +489,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         owner.removeView(animal);
         middle.addView(animal);
 
-
         // n% chance correct letter
         if (rand.nextInt(100) < levels.getLevel(level).getDifficulty()) {
             animalID = animalPool.getAnimal(level);
@@ -498,12 +500,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             Log.d("Sound name ", name);
             name = name.replace("animal", "");
             Log.d("Sound name ", name);
-            animalSound = getResources().getIdentifier(name + "sound", "raw", this.getPackageName());
+            animalSound = getResources()
+                .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
 
             mp = MediaPlayer.create(this, animalSound);
             mp.start();
-
 
             fit = true;
         } else {
@@ -516,7 +518,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             Log.d("Sound name ", name);
             name = name.replace("animal", "");
             Log.d("Sound name ", name);
-            animalSound = getResources().getIdentifier(name + "sound", "raw", this.getPackageName());
+            animalSound = getResources()
+                .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
             mp = MediaPlayer.create(this, animalSound);
             mp.start();
@@ -540,8 +543,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         float scalingFactor;
         if (dWidth > dHeight) {
             scalingFactor = vWidth / dWidth;
-        } else
+        } else {
             scalingFactor = vHeight / dHeight;
+        }
         //Log.d("Scaling ", scalingFactor + "");
         matrix.postScale(scalingFactor, scalingFactor);
 
@@ -549,12 +553,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         dHeight *= scalingFactor;
         // Bottom center
         matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
-                Math.round((vHeight - dHeight)));
+            Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
         new Handler().postDelayed(this::touchy, 100);
         //touchy();
-
-
 
     }
 
@@ -568,10 +570,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (level != 't') {
             int index = globals.getLevels().indexOf(level);
             Character nextLevel = globals.getLevels().get(index + 1);
-            if (availableLevels.getInt(nextLevel.toString(), 0) == LOCKED)
+            if (availableLevels.getInt(nextLevel.toString(), 0) == LOCKED) {
                 writePreferences(nextLevel, UNLOCKED);
+            }
         }
-
 
         Intent intent = new Intent(this, StartActivity.class);
 
@@ -585,7 +587,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         handler.postDelayed(() -> startActivity(intent), 1500);
         handler.postDelayed(() -> finish(), 1500);
         //startActivity(intent);
-
 
     }
 
@@ -614,8 +615,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         float scalingFactor;
         if (dWidth > dHeight) {
             scalingFactor = vWidth / dWidth;
-        } else
+        } else {
             scalingFactor = vHeight / dHeight;
+        }
         //Log.d("Scaling ", scalingFactor + "");
         matrix.postScale(scalingFactor, scalingFactor);
 
@@ -623,7 +625,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         dHeight *= scalingFactor;
         // Bottom center
         matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
-                Math.round((vHeight - dHeight)));
+            Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
 
         //TODO: Remove hard coded coordinates
@@ -634,7 +636,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         animal.setY(animal.getY() - 100);
         //animal.setAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom));
         String packageName = this.getPackageName();
-        mp = MediaPlayer.create(this, getResources().getIdentifier("museum_" + level, "raw", packageName));
+        mp = MediaPlayer
+            .create(this, getResources().getIdentifier("museum_" + level, "raw", packageName));
         zoom.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
@@ -665,10 +668,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     @SuppressLint("ClickableViewAccessibility")
     private void implementEvents() {
-        //add or remove any view that you don't want to be dragged
+        //add or remove any view that you want to be dragged
         animal.setOnTouchListener(this);
 
-        //add or remove any layout view that you don't want to accept dragged view
+        //add or remove any layout view that you want to accept dragged view
         match.setOnDragListener(this);
         middle.setOnDragListener(this);
         noMatch.setOnDragListener(this);
@@ -676,16 +679,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
+    @RequiresApi(api = VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                view.startDragAndDrop(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
-            else
-                view.startDrag(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
-            view.setVisibility(View.INVISIBLE);
+            view.startDrag(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
+            //view.setVisibility(View.INVISIBLE);
             return true;
         } else {
             return false;
@@ -704,7 +705,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         view.setOnTouchListener(null);
 
         // Praise randomly
-        if(counterCorrect == 3){
+        if (counterCorrect == 3) {
             //
             touchy();
             findViewById(R.id.button_letter).setEnabled(false);
@@ -723,14 +724,16 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     //new Handler().postDelayed(() -> disPlayAnimal(), 0);
                 }
             });
-        }
-        else if(counterWrong == 3){
+
+            // encourage randomly
+        } else if (counterWrong == 3) {
             touchy();
             findViewById(R.id.button_letter).setEnabled(false);
             findViewById(R.id.button_animal).setEnabled(false);
             counterWrong = 0;
             int nr = rand.nextInt(4) + 1;
-            int praise = getResources().getIdentifier("encourage" + nr, "raw", this.getPackageName());
+            int praise = getResources()
+                .getIdentifier("encourage" + nr, "raw", this.getPackageName());
             mp = MediaPlayer.create(this, praise);
             new Handler().postDelayed(() -> mp.start(), 500);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -741,22 +744,24 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     //new Handler().postDelayed(() -> disPlayAnimal(), 0);
                 }
             });
-        }
-        else {
+        } else {
 
             view.postDelayed(this::disPlayAnimal, 1000);
         }
     }
 
     void changeColor() {
-        if (step >= colors.size())
+        if (step >= colors.size()) {
             step %= colors.size();
+        }
 
         // i is red per default
-        if(level == 'i' && step == 0)
+        if (level == 'i' && step == 0) {
             step++;
+        }
         for (ImageView fragment : fragments) {
-            DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
+            DrawableCompat.setTint(fragment.getDrawable(),
+                ContextCompat.getColor(getApplicationContext(), colors.get(step)));
         }
 
         // Change color of letter
@@ -790,15 +795,15 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
                 Log.d("drag", "Drag event started");
-                //view.setVisibility(View.INVISIBLE);
+                view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
                 Log.d("drag", "Drag event entered into " + layoutview.toString());
-                //view.setVisibility(View.INVISIBLE);
+                view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 Log.d("drag", "Drag event exited from " + layoutview.toString());
-                //view.setVisibility(View.INVISIBLE);
+                view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DROP:
                 Log.d("drag", "Dropped");
@@ -829,12 +834,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     globals.getStatistics().addToStatistics(animalID, 0);
                     showProgress(correctMatches);
 
-                    mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
+                    mp = MediaPlayer.create(this, getResources()
+                        .getIdentifier("sound_positive", "raw", this.getPackageName()));
                     mp.start();
                     drop(view, container);
 
-                    if (correctMatches == WINNINGNUMBER)
+                    if (correctMatches == WINNINGNUMBER) {
                         new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
+                    }
                     /*ViewGroup owner = (ViewGroup) view.getParent();
                     owner.removeView(view);
                     container.addView(view);
@@ -867,7 +874,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     globals.getStatistics().addToStatistics(animalID, 1);
                     /*correctMatches++;
                     showProgress(correctMatches);*/
-                    mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
+                    mp = MediaPlayer.create(this, getResources()
+                        .getIdentifier("sound_positive", "raw", this.getPackageName()));
                     mp.start();
                     changeColor();
                     step++;
@@ -891,12 +899,15 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     }
 
                     // False positive
-                    if (!fit && container.getId() == match.getId())
+                    if (!fit && container.getId() == match.getId()) {
                         globals.getStatistics().addToStatistics(animalID, 2);
-                    else
-                        // False negative
+                    } else
+                    // False negative
+                    {
                         globals.getStatistics().addToStatistics(animalID, 3);
-                    mp = MediaPlayer.create(this, getResources().getIdentifier("sound_negative", "raw", this.getPackageName()));
+                    }
+                    mp = MediaPlayer.create(this, getResources()
+                        .getIdentifier("sound_negative", "raw", this.getPackageName()));
                     mp.start();
                     drop(view, container);
                 }
@@ -945,12 +956,15 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             ImageButton back = findViewById(R.id.button_back);
             back.setEnabled(false);
 
-            if(mph.isPlaying())
+            if (mph.isPlaying()) {
                 mph.stop();
-            if(instr.isPlaying())
+            }
+            if (instr.isPlaying()) {
                 instr.stop();
-            if(mp.isPlaying())
+            }
+            if (mp.isPlaying()) {
                 mp.stop();
+            }
 
             // Release players
             /*mph.release();

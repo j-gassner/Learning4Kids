@@ -42,7 +42,7 @@
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/button_unlock"
         android:onClick="onClick"
-        android:layout_alignParentStart="true" />
+      android:layout_alignParentStart="true" />
 
     <ImageButton
         android:layout_width="120dp"
@@ -77,8 +77,8 @@
         android:text="Tierische"
         android:textStyle="bold"
         android:textColor="@color/white"
-        android:fontFamily="@font/berton"
-        android:textSize="58dp"
+      android:fontFamily="@font/chalk"
+      android:textSize="68dp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 
@@ -89,8 +89,8 @@
         android:text="Weltreise"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:fontFamily="@font/berton"
-        android:textSize="58dp"
+      android:fontFamily="@font/chalk"
+      android:textSize="68dp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 

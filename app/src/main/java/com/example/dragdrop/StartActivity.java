@@ -315,7 +315,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         reset = MediaPlayer.create(this, R.raw.question_reset);
-        new Handler().postDelayed(() -> reset.start(), 500);
+        //new Handler().postDelayed(() -> reset.start(), 500);
+        reset.start();
 
         MediaPlayer bloop;
         bloop = MediaPlayer.create(this, R.raw.button);
@@ -344,12 +345,21 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 reset.stop();
                 dialog.cancel();
                 touchy();
-            });
+            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (reset.isPlaying()) {
+                    reset.stop();
+                }
+                touchy();
+            }
+        });
 
         // create alert dialog_shape
         AlertDialog alertDialog = alertDialogBuilder.create();
 
-        alertDialog.setOnCancelListener(
+        /*alertDialog.setOnCancelListener(
             new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
@@ -359,8 +369,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }
             }
-        );
-        Typeface typeface = ResourcesCompat.getFont(this, R.font.berton);
+        );*/
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.chalk);
         alertDialog.getWindow().
             setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
@@ -380,9 +390,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
         Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());
 
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
-        buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
-        buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
+        buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
+        buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
 
         /*buttonPositive.setCompoundDrawablesWithIntrinsicBounds(yes, null, null, null);
         buttonNegative.setCompoundDrawablesWithIntrinsicBounds(no, null, null, null);*/
