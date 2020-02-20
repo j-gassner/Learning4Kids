@@ -1,16 +1,10 @@
 package com.example.dragdrop;
 
 import android.os.Build;
-
 import androidx.annotation.RequiresApi;
-
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -20,6 +14,7 @@ import java.util.TreeSet;
 // Faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
 @SuppressWarnings("serial")
 class Animals implements Serializable {
+
     private static Random rand = new Random();
 
     // HashMap Character -> ArrayList of animals
@@ -51,12 +46,12 @@ class Animals implements Serializable {
 
         //assert animals != null;
         // List for current level is empty
-        if(animals == null) {
+        if (animals == null) {
             reset();
             return getAnimal(currentLetter);
         }
 
-            return animals.get(rand.nextInt(animals.size()));
+        return animals.get(rand.nextInt(animals.size()));
     }
 
     // Get random distractor
@@ -80,13 +75,13 @@ class Animals implements Serializable {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void cleanUp(){
+    private void cleanUp() {
         animalMapCurrent.entrySet().removeIf(level -> level.getValue().size() == 0);
     }
 
     // Deepcopy of HashMap
     private static HashMap<Character, ArrayList<Integer>> copy(
-            HashMap<Character, ArrayList<Integer>> original) {
+        HashMap<Character, ArrayList<Integer>> original) {
         HashMap<Character, ArrayList<Integer>> copy = new HashMap<>();
         for (Map.Entry<Character, ArrayList<Integer>> entry : original.entrySet()) {
             copy.put(entry.getKey(), new ArrayList<>(entry.getValue()));

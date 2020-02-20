@@ -224,7 +224,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         arrowRight.setVisibility(View.VISIBLE);
         View view = hsv.getChildAt(hsv.getChildCount() - 1);
         int diff = (view.getBottom() - (hsv.getWidth() + hsv.getScrollX()));
-        Log.d("MAXSCROLL", "" + diff);
+        // Log.d("MAXSCROLL", "" + diff);
         hsv.getViewTreeObserver()
             .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
                 @Override
@@ -286,24 +286,24 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             int idImage;
             int idButton = getResources()
                 .getIdentifier("button_" + button, "id", this.getPackageName());
-            Log.d("IDBUTTON", " " + idButton);
+            //Log.d("IDBUTTON", " " + idButton);
             ImageButton iB = findViewById(idButton);
             if (availableLevels.getInt(button + "", 0) == COMPLETE) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
-                Log.d("IDIMAGE", " " + idImage);
+                //Log.d("IDIMAGE", " " + idImage);
 
             } else if (availableLevels.getInt(button + "", 0) == UNLOCKED) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid_unlocked", "drawable",
                         this.getPackageName());
-                Log.d("IDIMAGE", " " + idImage);
+                //Log.d("IDIMAGE", " " + idImage);
             } else {
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
-                Log.d("IDIMAGE", " " + idImage);
+                //Log.d("IDIMAGE", " " + idImage);
             }
             iB.setImageResource(idImage);
             //findViewById(idButton).setBackgroundResource(idImage);

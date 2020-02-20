@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,10 +18,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 public class DinosActivity extends AppCompatActivity {
+
     public static int scrollX = 0;
     public static int scrollY = -1;
     HorizontalScrollView hsv;
@@ -29,7 +34,10 @@ public class DinosActivity extends AppCompatActivity {
     private Animation scale;
     private Animation dino;
     MediaPlayer mp = new MediaPlayer();
+    SoundPool soundPool;
+    int button;
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,39 +51,40 @@ public class DinosActivity extends AppCompatActivity {
         ImageView arrowRight = findViewById(R.id.scroll_right_dino);
         ImageView arrowLeft = findViewById(R.id.scroll_left_dino);
         arrowRight.setVisibility(View.VISIBLE);
-        View view  = hsv.getChildAt(hsv.getChildCount() - 1);
-        int diff = (view.getBottom()-(hsv.getWidth() + hsv.getScrollX()));
-        Log.d("MAXSCROLL", ""+diff);
-        hsv.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                int diff = (view.getRight()-(hsv.getWidth() + hsv.getScrollX()));
-                Log.d("MAXSCROLL", ""+diff);
-                int scrollX = hsv.getScrollX();
-                if(scrollX > 0 && diff != 0){
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                }
-                else if(scrollX == 0){
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    arrowRight.setVisibility(View.INVISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                }
+        View view = hsv.getChildAt(hsv.getChildCount() - 1);
+        int diff = (view.getBottom() - (hsv.getWidth() + hsv.getScrollX()));
+        //Log.d("MAXSCROLL", "" + diff);
+        hsv.getViewTreeObserver()
+            .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                @Override
+                public void onScrollChanged() {
+                    int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
+                    Log.d("MAXSCROLL", "" + diff);
+                    int scrollX = hsv.getScrollX();
+                    if (scrollX > 0 && diff != 0) {
+                        arrowRight.setVisibility(View.VISIBLE);
+                        arrowLeft.setVisibility(View.VISIBLE);
+                    } else if (scrollX == 0) {
+                        arrowRight.setVisibility(View.VISIBLE);
+                        arrowLeft.setVisibility(View.INVISIBLE);
+                    } else {
+                        arrowRight.setVisibility(View.INVISIBLE);
+                        arrowLeft.setVisibility(View.VISIBLE);
+                    }
 
-            }
-        });
+                }
+            });
 
+        buttonSound();
 
     }
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
         super.onStart();
         assignDinos();
-
+        //buttonSound();
     }
 
     @Override
@@ -85,11 +94,13 @@ public class DinosActivity extends AppCompatActivity {
         scrollY = hsv.getScrollY();
     }
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
         removeTint();
         hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
+        buttonSound();
 
     }
 
@@ -103,7 +114,8 @@ public class DinosActivity extends AppCompatActivity {
 
     void removeTint() {
         for (char level : Globals.levels) {
-            int idImage = getResources().getIdentifier("dino_" + level, "drawable", this.getPackageName());
+            int idImage = getResources()
+                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
             Drawable draw = getResources().getDrawable(idImage);
             if (availableLevels.getInt(level + "", 0) == COMPLETE) {
                 draw.clearColorFilter();
@@ -114,31 +126,55 @@ public class DinosActivity extends AppCompatActivity {
     public void assignDinos() {
         for (char level : Globals.levels) {
             int idImage;
-            int idButton = getResources().getIdentifier("dino_" + level, "id", this.getPackageName());
+            int idButton = getResources()
+                .getIdentifier("dino_" + level, "id", this.getPackageName());
             ImageButton iB = findViewById(idButton);
-            idImage = getResources().getIdentifier("dino_" + level, "drawable", this.getPackageName());
+            idImage = getResources()
+                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
             Drawable draw = getResources().getDrawable(idImage);
             if (availableLevels.getInt(level + "", 0) != COMPLETE) {
-                draw.setColorFilter(ContextCompat.getColor(this, R.color.dark), PorterDuff.Mode.SRC_ATOP);
+                draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
+                    PorterDuff.Mode.SRC_ATOP);
             }
             iB.setImageResource(idImage);
         }
     }
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    void buttonSound() {
+        AudioAttributes attributes = new AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build();
+
+        soundPool = new SoundPool.Builder().setAudioAttributes(attributes).build();
+
+        soundPool.setOnLoadCompleteListener(
+            (soundPool, sampleId, status) -> Log.d("SOUNDPOOL", "COMPLETE " + button));
+        button = soundPool.load(this, R.raw.button, 1);
+
+    }
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     public void onClick(View view) {
         Intent intent = new Intent(this, StartActivity.class);
         switch (view.getId()) {
             case R.id.button_back:
-                mp.stop();
+                if (mp.isPlaying()) {
+                    mp.stop();
+                }
 
-                MediaPlayer bloop;
-                bloop = MediaPlayer.create(this, R.raw.button);
-                bloop.start();
-
+                // Sound loaded
+                if (button != 0) {
+                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                    Log.d("PLAYING", "PLAYING");
+                    //soundPool.release();
+                }
                 scale.setAnimationListener(new Animation.AnimationListener() {
 
                     @Override
                     public void onAnimationStart(Animation animation) {
+
                     }
 
                     @Override
@@ -147,6 +183,7 @@ public class DinosActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+                        //new Handler().postDelayed(() -> startActivity(intent), 500);
                         startActivity(intent);
                     }
                 });
@@ -187,6 +224,7 @@ public class DinosActivity extends AppCompatActivity {
                         mp = MediaPlayer.create(this, R.raw.dino_sound_f);
                         mp.start();
                     }
+
                 }
                 break;
             case R.id.dino_i:
@@ -274,15 +312,15 @@ public class DinosActivity extends AppCompatActivity {
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 }
