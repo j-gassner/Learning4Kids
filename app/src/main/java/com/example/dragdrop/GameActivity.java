@@ -60,7 +60,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private int animalID;
     private int step;
     MediaPlayer mp = new MediaPlayer();
-    private Animation scale;
+    private Animation scale, scaleHalf;
     Animation zoom, flash;
     boolean stillThere, isRunning;
     Handler handleInactivity;
@@ -92,6 +92,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             test = true;
             if (stillThere && !backPressed) {
                 //mph.start();
+                mp.reset();
                 mp = MediaPlayer.create(getApplicationContext(), R.raw.are_you_still_there);
                 mp.setVolume(0.5f, 0.5f);
                 mp.start();
@@ -100,6 +101,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 }*/
                 stillThere = false;
             } else if (!backPressed) {
+                mp.reset();
                 mp = MediaPlayer.create(getApplicationContext(), getResources()
                     .getIdentifier("instruction_" + level, "raw", getPackageName()));
                 mp.setVolume(0.5f, 0.5f);
@@ -291,6 +293,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         flash = AnimationUtils.loadAnimation(this, R.anim.flash);
         zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
+        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
         levels = new LevelCollection(this);
         animal = findViewById(R.id.animal);
         background = findViewById(R.id.level_background);
@@ -334,7 +337,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 public void onCompletion(MediaPlayer mp) {
                     //letterButton.setEnabled(true);
                     //speaker.setEnabled(true);
-                    //mp.release();
+                    //mp.reset();
                     new Handler().postDelayed(() -> disPlayAnimal(), 500);
                     /*startHandler();*/
                     mCountDown.start();
@@ -509,13 +512,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             //findViewById(R.id.button_back).setEnabled(false);
             /*findViewById(R.id.button_animal).setEnabled(false);
             findViewById(R.id.button_letter).setEnabled(false);*/
+            mp.reset();
             mp = MediaPlayer.create(this, R.raw.complete_sound);
             mp.setVolume(0.5f, 0.5f);
             mp.start();
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    //mp.release();
+                    //mp.reset();
                     //mp = null;
                     cameraFlash();
 
@@ -607,6 +611,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             fit = false;
         }
 
+        mp.reset();
         mp = MediaPlayer.create(this, animalSound);
         if (!backPressed) {
             mp.setVolume(0.5f, 0.5f);
@@ -732,6 +737,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         animal.setY(animal.getY() - 100);
         //animal.setAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom));
         String packageName = this.getPackageName();
+        mp.reset();
         mp = MediaPlayer
             .create(this, getResources().getIdentifier("museum_" + level, "raw", packageName));
         mp.setVolume(0.5f, 0.5f);
@@ -794,6 +800,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     void drop(View view, LinearLayout container) {
         sound = false;
+        mp.reset();
         //noTouchy();
         //mp.release();
         //mp = null;
@@ -814,6 +821,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             counterCorrect = 0;
             int nr = rand.nextInt(6) + 1;
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
+            //mp.reset();
             mp = MediaPlayer.create(this, praise);
             mp.setVolume(0.5f, 0.5f);
             new Handler().postDelayed(() -> mp.start(), 500);
@@ -821,7 +829,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    //mp.release();
+                    //mp.reset();
                     //mp = null;
                     disPlayAnimal();
                     //new Handler().postDelayed(() -> disPlayAnimal(), 0);
@@ -837,6 +845,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             int nr = rand.nextInt(4) + 1;
             int praise = getResources()
                 .getIdentifier("encourage" + nr, "raw", this.getPackageName());
+            //mp.reset();
             mp = MediaPlayer.create(this, praise);
             mp.setVolume(0.5f, 0.5f);
             new Handler().postDelayed(() -> mp.start(), 500);
@@ -844,7 +853,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    //mp.release();
+                    //mp.reset();
                     //mp = null;
                     disPlayAnimal();
                     //new Handler().postDelayed(() -> disPlayAnimal(), 0);
@@ -853,7 +862,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         } else {
             /*findViewById(R.id.button_letter).setEnabled(false);
             findViewById(R.id.button_animal).setEnabled(false);*/
-            //mp.release();
+            //mp.reset();
             //mp = null;
             view.postDelayed(this::disPlayAnimal, 1000);
         }
@@ -1048,25 +1057,36 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         // Letter button
         if (view.getId() == findViewById(R.id.button_letter).getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-            progress.startAnimation(scale);
-            view.startAnimation(scale);
 
-            letterSound = getResources()
-                .getIdentifier(level + "_sound", "raw", this.getPackageName());
+
             if (!mp.isPlaying() && sound) {
+                letterSound = getResources()
+                    .getIdentifier(level + "_sound", "raw", this.getPackageName());
+                progress.startAnimation(scale);
+                view.startAnimation(scale);
+                mp.reset();
                 mp = MediaPlayer.create(this, letterSound);
                 mp.setVolume(0.5f, 0.5f);
                 mp.start();
+            } else {
+                progress.startAnimation(scaleHalf);
+                view.startAnimation(scaleHalf);
             }
             /*if (loaded && !mp.isPlaying() && sound) {
                 soundPool.play(sounds[currentLetter], 1f, 1f, 1, 0, 1f);
             }*/
         } else if (view.getId() == findViewById(R.id.button_animal).getId()) {
-            view.startAnimation(scale);
+
             if (!mp.isPlaying() && sound) {
+                view.startAnimation(scale);
+                mp.reset();
                 mp = MediaPlayer.create(this, animalSound);
                 mp.setVolume(0.5f, 0.5f);
                 mp.start();
+            } else
+            // Button inactive / no sound
+            {
+                view.startAnimation(scaleHalf);
             }
         }
 
