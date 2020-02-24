@@ -36,7 +36,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TutorialActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener {
+public class TutorialActivity extends AppCompatActivity implements View.OnTouchListener,
+    View.OnDragListener {
+
     private final static int WINNINGNUMBER = 5;
     private ImageView animal, arrow;
     private int animalSound;
@@ -49,7 +51,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     ArrayList<Integer> colors = new ArrayList<>(
         Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
             R.color.green, R.color.orange, R.color.purple));
-    boolean letterClicked, animalClicked, dragCorrect, dragWrong, dragCorrectRight, back, skip, sound;
+    boolean letterClicked, speakerClicked, dragCorrectRight, sound, isRunning, handler, lastDrag;
     ImageButton buttonBack, buttonLetter, buttonAnimal, buttonSkip;
     private Animation scale, scaleHalf;
     MediaPlayer mp = new MediaPlayer();
@@ -66,65 +68,58 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sounds = new int[3];
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_tutorial);
         hideSystemUI();
         handleInactivity = new Handler();
-        runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                /*buttonLetter.setEnabled(false);*/
-                /*buttonAnimal.setEnabled(false);*/
-
+        runnable = () -> {
+            if (!mp.isPlaying()) {
+                // Make instruction interruptable
+                handler = true;
                 mp.reset();
                 mp = MediaPlayer.create(getApplicationContext(), currentInstruction);
                 mp.setVolume(0.5f, 0.5f);
                 mp.start();
-                //startHandler();
-                /*mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {*/
-                /*    @Override*/
-                /*    public void onCompletion(MediaPlayer mp) {*/
-                /*        //startHandler();*/
-                /*    }*/
-                /*});*/
+
+                // If user does nothing
+                startHandler();
             }
         };
     }
 
     public void stopHandler() {
+        isRunning = false;
         handleInactivity.removeCallbacks(runnable);
+    }
+
+    public void startHandler() {
+        isRunning = true;
+        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
     }
 
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
-        /*if (mp.isPlaying()) {
+        if (mp.isPlaying() && handler) {
             mp.stop();
-        }*/
-        stopHandler();
-        startHandler();
+            handler = false;
+        }
 
-    }
+        if (isRunning) {
+            stopHandler();
+            startHandler();
+        }
 
-    public void startHandler() {
-        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onStart() {
         super.onStart();
-        // Get Level and list of animals
         init();
         buttonSounds();
         hideSystemUI();
-        /*Handler handler = new Handler();
-        handler.postDelayed(this::disPlayAnimal, 500);*/
-        //implementEvents();
 
-        //new Handler().postDelayed(this::tutorialLetter, 5000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -140,11 +135,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     protected void onPause() {
         super.onPause();
         mp.setVolume(0f, 0f);
-        /*if (mp.isPlaying()) {
-            mp.stop();
-        }*/
         stopHandler();
-        //mp.stop();
     }
 
     @Override
@@ -152,22 +143,13 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         super.onStop();
         mp.release();
         mp = null;
-        //stopHandler();
-        //mp.stop();
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       /* if (mp.isPlaying()) {
-            mp.stop();
-        }*/
-        //mp.stop();
-        //stopHandler();
     }
-
-
 
 
     @Override
@@ -189,98 +171,50 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
         soundPool.setOnLoadCompleteListener(
             (soundPool, sampleId, status) -> loaded = true);
+        sounds = new int[3];
         sounds[button] = soundPool.load(this, R.raw.button, 1);
         sounds[correct] = soundPool.load(this, R.raw.sound_positive, 1);
         sounds[wrong] = soundPool.load(this, R.raw.sound_negative, 1);
     }
 
-    void playInstructions(int resID) {
-        AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
-        try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
-            mp.prepareAsync();
-
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
-
-            //mp.setOnCompletionListener(mp -> performOnEnd());
-
-            mp.setVolume(0.5f, 0.5f);
-            mp.start();
-            afd.close();
-
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        }
-
+    void playInstruction(int resID) {
+        sound = false;
+        mp.reset();
+        mp = MediaPlayer.create(this, resID);
+        mp.setVolume(0.5f, 0.5f);
+        mp.start();
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void tutorialIntro() {
+        // Find buttons
         arrow = findViewById(R.id.button_point_letter);
         buttonSkip = findViewById(R.id.button_skip);
         buttonBack = findViewById(R.id.button_back_tutorial);
         buttonLetter = findViewById(R.id.button_letter_tutorial);
         buttonAnimal = findViewById(R.id.button_animal_tutorial);
-        Intent intent = new Intent(this, StartActivity.class);
-        buttonSkip.setOnClickListener(v -> {
-            buttonSkip.setEnabled(false);
-            buttonLetter.setEnabled(false);
-            buttonAnimal.setEnabled(false);
-            buttonBack.setEnabled(false);
-            skip = true;
-            stopHandler();
 
-            /*MediaPlayer bloop;
-            bloop = MediaPlayer.create(this, R.raw.button);
-            bloop.start();*/
-            if (loaded) {
-                soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
-            }
-            scale.setAnimationListener(new Animation.AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-
-                    startActivity(intent);
-                    finish();
-                }
-            });
-            buttonSkip.startAnimation(scale);
-        });
-
-
+        // Disable buttons
         buttonBack.setEnabled(false);
         buttonLetter.setEnabled(false);
         buttonAnimal.setEnabled(false);
 
+        // Indicate buttons are disabled
         buttonLetter.setAlpha(0.3f);
         buttonAnimal.setAlpha(0.3f);
         buttonBack.setAlpha(0.3f);
-
-        // 1. Introduce letter
 
         // Intro
         AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_intro);
         try {
             mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+                afd.getDeclaredLength());
             mp.prepareAsync();
+
+            mp.setVolume(0.5f, 0.5f);
 
             mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
 
@@ -300,181 +234,67 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLetter() {
-
         arrow.setVisibility(View.VISIBLE);
         buttonLetter.setAlpha(1.0f);
+
         // Letter
-        AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_letter);
-        try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
-            mp.prepareAsync();
-
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    sound = true;
-                    currentInstruction = R.raw.instruction_letter;
-                    buttonLetter.setEnabled(true);
-                    startHandler();
-                }
-            });
-
-            afd.close();
-
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        }
-
+        playInstruction(R.raw.tutorial_letter);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            currentInstruction = R.raw.instruction_letter;
+            buttonLetter.setEnabled(true);
+            startHandler();
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialSubmarine() {
-        sound = false;
-        /*buttonLetter.setEnabled(false);
-        buttonAnimal.setEnabled(false);*/
-        AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_submarine);
-        try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
-            mp.prepareAsync();
-
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 1000));
-
-            mp.setOnCompletionListener(mp -> tutorialAnimal());
-
-            afd.close();
-
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        }
+        playInstruction(R.raw.tutorial_submarine);
+        mp.setOnCompletionListener(mp -> tutorialAnimal());
     }
 
     void tutorialSpeaker() {
-        sound = false;
-        AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_speaker);
-        try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
-            mp.prepareAsync();
-
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
-
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    sound = true;
-                    buttonAnimal.setEnabled(true);
-                    buttonLetter.setEnabled(true);
-                    currentInstruction = R.raw.instruction_speaker;
-                    startHandler();
-                }
-            });
-
-            afd.close();
-
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        }
+        playInstruction(R.raw.tutorial_speaker);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            buttonAnimal.setEnabled(true);
+            currentInstruction = R.raw.instruction_speaker;
+            startHandler();
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialAnimal() {
-        // 2. First animal
-
+        // First animal
         new Handler().postDelayed(() -> disPlayAnimal(0), 500);
-        // 3. Animal sound
-
-        //new Handler().postDelayed(() -> tutorialSpeaker(), 500);
-        //buttonAnimal.setEnabled(true);
         new Handler().postDelayed(() -> buttonAnimal.setAlpha(1.0f), 2500);
         arrow = findViewById(R.id.button_point_speaker);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 2500);
-        /*buttonAnimal.setOnClickListener(v -> {
-            buttonAnimal.startAnimation(scale);
-            if (!animalClicked)
-                stopHandler();
-
-            if (!mp.isPlaying()) {
-                mp = MediaPlayer.create(this, animalSound);
-                mp.start();
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if (!animalClicked) {
-                            //stopHandler();
-                            animalClicked = true;
-                            arrow.setVisibility(View.INVISIBLE);
-                            tutorialProgress();
-                        }
-                    }
-                });
-            }
-        });*/
-
-        // TODO Play sound incl. progress
-        /*while(!animalClicked){
-            // TODO Repeat every 10s
-        }*/
-
 
     }
 
     void tutorialProgress() {
-        /*buttonLetter.setEnabled(false);
-        buttonAnimal.setEnabled(false);*/
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_progress);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                tutorialFlug();
-            }
-        });
+        playInstruction(R.raw.tutorial_progress);
+        mp.setOnCompletionListener(mp -> tutorialFlug());
 
     }
 
     void tutorialFlug() {
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_flug);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                sound = true;
-                currentInstruction = R.raw.instruction_flug;
-                startHandler();
-                tutorialDragCorrect();
-            }
+        playInstruction(R.raw.tutorial_flug);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            currentInstruction = R.raw.instruction_flug;
+            startHandler();
+            tutorialDragCorrect();
         });
     }
 
     @SuppressLint("ClickableViewAccessibility")
     void tutorialDragCorrect() {
-        // 4. Drag to submarine
-
-        buttonLetter.setEnabled(true);
-        buttonAnimal.setEnabled(true);
+        // Drag to submarine
         arrow.setVisibility(View.INVISIBLE);
         arrow = findViewById(R.id.button_point_submarine);
         arrow.setVisibility(View.VISIBLE);
-        // TODO Play sound
         animal.setOnTouchListener(this);
         match.setOnDragListener(this);
 
@@ -482,165 +302,76 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialColorChange() {
-        /*buttonLetter.setEnabled(false);
-        buttonAnimal.setEnabled(false);*/
         arrow.setVisibility(View.INVISIBLE);
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_colorchange);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
+        playInstruction(R.raw.tutorial_colorchange);
         mp.setOnCompletionListener(mp -> disPlayAnimal(1));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLionRight() {
-        /*buttonLetter.setEnabled(false);
-        buttonAnimal.setEnabled(false);*/
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_loewe_correct);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                sound = true;
-                currentInstruction = R.raw.instruction_loewe_correct;
-                startHandler();
-                tutorialDragCorrectRight();
-
-            }
+        playInstruction(R.raw.tutorial_loewe_correct);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            currentInstruction = R.raw.instruction_loewe_correct;
+            startHandler();
+            tutorialDragCorrectRight();
         });
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void tutorialDragCorrectRight() {
-        // 5. Drag animal right
-
-        buttonLetter.setEnabled(true);
-        buttonAnimal.setEnabled(true);
+        // Drag animal to the right
         dragCorrectRight = true;
-        //new Handler().postDelayed(() -> disPlayAnimal(1), 500);
         arrow = findViewById(R.id.button_point_sign);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
-        // TODO Play sound
         animal.setOnTouchListener(this);
         noMatch.setOnDragListener(this);
         match.setOnDragListener(null);
-
-        /*while (!dragCorrect) {
-            // TODO Repeat every 10s
-        }*/
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialProgressLost() {
-        /*buttonLetter.setEnabled(false);
-        buttonAnimal.setEnabled(false);*/
         arrow.setVisibility(View.INVISIBLE);
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_progress_lost);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
+        playInstruction(R.raw.tutorial_progress_lost);
         mp.setOnCompletionListener(mp -> disPlayAnimal(1));
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialDragFalse() {
-        // 6. Drag wrong
-
+        // Drag wrong
 
         View.OnTouchListener ot = this;
         View.OnDragListener od = this;
-        //new Handler().postDelayed(() -> disPlayAnimal(1), 500);
         arrow = findViewById(R.id.button_point_submarine);
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.instruction_loewe_wrong);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                sound = true;
-                currentInstruction = R.raw.instruction_loewe_wrong;
-                startHandler();
-                buttonLetter.setEnabled(true);
-                buttonAnimal.setEnabled(true);
-                arrow.setVisibility(View.VISIBLE);
-                animal.setOnTouchListener(ot);
-                match.setOnDragListener(od);
-                noMatch.setOnDragListener(null);
-            }
+        playInstruction(R.raw.instruction_loewe_wrong);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            currentInstruction = R.raw.instruction_loewe_wrong;
+            startHandler();
+            arrow.setVisibility(View.VISIBLE);
+            animal.setOnTouchListener(ot);
+            match.setOnDragListener(od);
+            noMatch.setOnDragListener(null);
         });
-
     }
 
 
     void tutorialBack() {
-        back = true;
-        /*buttonAnimal.setEnabled(false);
-        buttonLetter.setEnabled(false);*/
-
-        //new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500); // Change the time for as little as long it works
-
-        // 7. Back button
+        // Back button
         arrow.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(() -> buttonBack.setAlpha(1.0f), 500);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.tutorial_back);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                currentInstruction = R.raw.instruction_back;
-                startHandler();
-                buttonBack.setEnabled(true);
-                buttonLetter.setEnabled(true);
-            }
+        playInstruction(R.raw.tutorial_back);
+        mp.setOnCompletionListener(mp -> {
+            currentInstruction = R.raw.instruction_back;
+            startHandler();
+            buttonBack.setEnabled(true);
+            sound = true;
         });
-        Intent intent = new Intent(this, StartActivity.class);
-        intent.putExtra("Tutorial", true);
-        buttonBack.setOnClickListener(v -> {
-
-            /*MediaPlayer bloop;
-            bloop = MediaPlayer.create(this, R.raw.button);
-            bloop.start();*/
-            if (loaded) {
-                soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
-            }
-
-            buttonBack.setEnabled(false);
-            buttonSkip.setEnabled(false);
-            buttonLetter.setEnabled(false);
-            buttonAnimal.setEnabled(false);
-            stopHandler();
-            scale.setAnimationListener(new Animation.AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    startActivity(intent);
-                    finish();
-                }
-            });
-            buttonBack.startAnimation(scale);
-        });
-
-
     }
 
     private void hideSystemUI() {
@@ -650,41 +381,38 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 
 
     protected void init() {
-        //assignAnimals();
+        // Animations for buttons
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
+
+        // Get other components
         animal = findViewById(R.id.animal);
         match = findViewById(R.id.left);
         noMatch = findViewById(R.id.right);
         middle = findViewById(R.id.middle);
 
-        // Write to preferences that tutorial was started
-        /*availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-        SharedPreferences.Editor editor = availableLevels.edit();
-        editor.putBoolean("Tutorial", true);
-        editor.apply();*/
-
+        // Sounds
         letterSound = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
-        animalSound = getResources().getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
+        animalSound = getResources()
+            .getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
+
         // Letter "progress bar"
-        int idImage = getResources().getIdentifier("f_letter_fill", "drawable", this.getPackageName());
-
-        //Define a bitmap with the same size as the view
-
+        int idImage = getResources()
+            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());
         Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
         splitImage(bm);
     }
@@ -694,10 +422,11 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     void splitImage(Bitmap image) {
         fragments = new ArrayList<>(WINNINGNUMBER);
         int y = 0;
-        Log.d("HEIGHTORIG", image.getHeight() + "");
+        //Log.d("HEIGHTORIG", image.getHeight() + "");
         for (int i = 0; i < WINNINGNUMBER; i++) {
             ImageView frag = new ImageView(getApplicationContext());
-            frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(), (int) Math.ceil(image.getHeight() / WINNINGNUMBER)));
+            frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(),
+                (int) Math.ceil(image.getHeight() / WINNINGNUMBER)));
             fragments.add(frag);
             y += (int) Math.ceil(image.getHeight() / WINNINGNUMBER);
         }
@@ -709,15 +438,11 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         RelativeLayout progress = findViewById(R.id.tutorial_progress);
         int chunkSize = (int) Math.ceil(progress.getHeight() / WINNINGNUMBER);
         ImageView fragment = fragments.get(fragments.size() - step);
-        /*int color = step - 1;
-        if (color >= colors.size())
-            color %= colors.size();*/
-        //DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(color)));
 
-        Log.d("BITMAP", fragment.getHeight() + "");
-        //ImageView frag = new ImageView(getApplicationContext());
-        //frag.setImageBitmap(fragment);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(), (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
+        //Log.d("BITMAP", fragment.getHeight() + "");
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(),
+            (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
         params.leftMargin = 0;
         params.topMargin = progress.getHeight() - chunkSize * step;
         progress.addView(fragment, params);
@@ -727,8 +452,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     void removeProgress(int step) {
-        if (step == 0)
+        if (step == 0) {
             return;
+        }
         RelativeLayout progress = findViewById(R.id.tutorial_progress);
         ImageView fragment = fragments.get(fragments.size() - step);
         Log.d("BITMAP", fragment.getHeight() + "");
@@ -736,10 +462,12 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     void changeColor(int step) {
-        if (step >= colors.size())
+        if (step >= colors.size()) {
             step %= colors.size();
+        }
         for (ImageView fragment : fragments) {
-            DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
+            DrawableCompat.setTint(fragment.getDrawable(),
+                ContextCompat.getColor(getApplicationContext(), colors.get(step)));
         }
         // Change color of letter
         ImageButton iB = findViewById(R.id.button_letter_tutorial);
@@ -747,33 +475,22 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             .getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
     }
 
+
+    // Set letter back to initial look
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void removeColor() {
         for (ImageView fragment : fragments) {
-            //DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(step)));
             fragment.getDrawable().setTintList(null);
         }
         // Change color of letter
         ImageButton iB = findViewById(R.id.button_letter_tutorial);
         iB.getDrawable().setTintList(null);
-        //DrawableCompat.setTint(iB.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
     }
 
     //Set position of animal image and display
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     private void disPlayAnimal(int step) {
-        sound = false;
-        if (step != 0 && !dragCorrectRight) {
-            buttonAnimal.setEnabled(true);
-            buttonLetter.setEnabled(true);
-        }
-
-        // Avoid sound being played after leaving
-
-        //animal.setOnTouchListener(this);
-
-        Log.d("NEW ANIMAL", " METHOD CALLED");
         ViewGroup owner = (ViewGroup) animal.getParent();
         owner.removeView(animal);
         middle.addView(animal);
@@ -781,7 +498,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         // Correct animal
         if (step == 0) {
             animal.setImageResource(R.drawable.flughoernchen_animal);
-            animalID = getResources().getIdentifier("flughoernchen_animal", "drawable", this.getPackageName());
+            animalID = getResources()
+                .getIdentifier("flughoernchen_animal", "drawable", this.getPackageName());
             animalSound = R.raw.flughoernchen_sound;
             animal.setVisibility(View.VISIBLE);
 
@@ -789,7 +507,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
         } else if (step == 1) {
             animal.setImageResource(R.drawable.loewe_animal);
-            animalID = getResources().getIdentifier("loewe_animal", "drawable", this.getPackageName());
+            animalID = getResources()
+                .getIdentifier("loewe_animal", "drawable", this.getPackageName());
             animalSound = R.raw.loewe_sound;
             animal.setVisibility(View.VISIBLE);
             fit = false;
@@ -813,8 +532,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         float scalingFactor;
         if (dWidth > dHeight) {
             scalingFactor = vWidth / dWidth;
-        } else
+        } else {
             scalingFactor = vHeight / dHeight;
+        }
         //Log.d("Scaling ", scalingFactor + "");
         matrix.postScale(scalingFactor, scalingFactor);
 
@@ -822,49 +542,23 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         dHeight *= scalingFactor;
         // Bottom center
         matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
-                Math.round((vHeight - dHeight)));
+            Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
+        playInstruction(animalSound);
+        /*mp.reset();
+        mp = MediaPlayer.create(this, animalSound);
+        mp.start();*/
 
-
-        AssetFileDescriptor afd = getResources().openRawResourceFd(animalSound);
-        try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getDeclaredLength());
-            mp.prepareAsync();
-            mp.setVolume(0.5f, 0.5f);
-            mp.setOnPreparedListener(MediaPlayer -> mp.start());
-
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    sound = true;
-                    if (step == 0)
-                        tutorialSpeaker();
-                    else if (step == 1 && !dragCorrectRight)
-                        tutorialLionRight();
-                    else
-                        tutorialDragFalse();
-                }
-            });
-
-            afd.close();
-
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        }
-
-
-
-        /*animal.getLayoutParams().height = 300;
-
-        //TODO: Remove hard coded coordinates
-        // Bottom middle
-        animal.setX(0);
-        animal.setY(750);*/
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            if (step == 0) {
+                tutorialSpeaker();
+            } else if (step == 1 && !dragCorrectRight) {
+                tutorialLionRight();
+            } else {
+                tutorialDragFalse();
+            }
+        });
 
     }
 
@@ -885,15 +579,28 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     }
 
     void drop(View view, LinearLayout container) {
+        sound = false;
         ViewGroup owner = (ViewGroup) view.getParent();
         owner.removeView(view);
         container.addView(view);
 
         // Avoid animal being dragged away again
         view.setOnTouchListener(null);
-        //owner.removeView(animal);
-        //view.setVisibility(View.INVISIBLE);
-        //view.postDelayed(this::disPlayAnimal, 1000);
+
+    }
+
+    void dragAnimal(View view, LinearLayout container, int sound) {
+        // Animation
+        RelativeLayout progress = findViewById(R.id.tutorial_progress);
+        View letter = findViewById(R.id.button_letter_tutorial);
+        progress.startAnimation(scale);
+        letter.startAnimation(scale);
+
+        if (loaded) {
+            soundPool.play(sounds[sound], 1f, 1f, 1, 0, 1f);
+        }
+        drop(view, container);
+
     }
 
     // This is the method that the system calls when it dispatches a drag event to the
@@ -907,96 +614,50 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         View view = (View) dragevent.getLocalState();
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
-                Log.d("drag", "Drag event started");
-                view.setVisibility(View.INVISIBLE);
-                break;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                Log.d("drag", "Drag event entered into " + layoutview.toString());
-                view.setVisibility(View.INVISIBLE);
-                break;
             case DragEvent.ACTION_DRAG_EXITED:
-                Log.d("drag", "Drag event exited from " + layoutview.toString());
+            case DragEvent.ACTION_DRAG_ENTERED:
                 view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DROP:
-                //buttonAnimal.setEnabled(false);
-                Log.d("drag", "Dropped");
+                //Log.d("drag", "Dropped");
                 LinearLayout container = (LinearLayout) layoutview;
 
                 // Match
                 if (fit && container.getId() == match.getId() && !dragCorrectRight) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
-                    View letter = findViewById(R.id.button_letter_tutorial);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
-
-                    stopHandler();
-                    dragCorrect = true;
-
+                    //dragCorrect = true;
+                    dragAnimal(view, container, correct);
                     correctMatches++;
                     showProgress(correctMatches);
-
-                    /*mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
-                    mp.start();*/
-                    if (loaded) {
-                        soundPool.play(sounds[correct], 1f, 1f, 1, 0, 1f);
-                    }
-                    drop(view, container);
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialColorChange, 500);
                 }
 
                 // No match
                 else if (!fit && container.getId() == noMatch.getId() && dragCorrectRight) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
-                    View letter = findViewById(R.id.button_letter_tutorial);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
-
-                    stopHandler();
-                    /*mp = MediaPlayer.create(this, getResources().getIdentifier("sound_positive", "raw", this.getPackageName()));
-                    mp.start();*/
-                    if (loaded) {
-                        soundPool.play(sounds[correct], 1f, 1f, 1, 0, 1f);
-                    }
-                    drop(view, container);
+                    dragAnimal(view, container, correct);
                     changeColor(0);
-                    dragCorrectRight = true;
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialProgressLost, 500);
 
                 }
                 // Wrong
                 else if (container.getId() != middle.getId()) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.tutorial_progress);
-                    View letter = findViewById(R.id.button_letter_tutorial);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
+                    lastDrag = true;
+                    //dragWrong = true;
+                    dragAnimal(view, container, wrong);
 
-                    stopHandler();
-                    if (correctMatches > 0) {
-                        removeProgress(correctMatches);
-                        correctMatches--;
+                    removeProgress(correctMatches);
+                    // Doesn't matter at this point
+                    //correctMatches--;
 
-                    }
-                    dragWrong = true;
-                    /*mp = MediaPlayer.create(this, getResources().getIdentifier("sound_negative", "raw", this.getPackageName()));
-                    mp.start();*/
-                    if (loaded) {
-                        soundPool.play(sounds[wrong], 1f, 1f, 1, 0, 1f);
-                    }
-                    drop(view, container);
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialBack, 500);
-                    //tutorialBack();
+                    sound = true;
                 }
 
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                Log.d("drag", "Drag ended");
+                //Log.d("drag", "Drag ended");
                 view.setVisibility(View.VISIBLE);
                 break;
 
@@ -1007,88 +668,62 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         return true;
     }
 
+    @RequiresApi(api = VERSION_CODES.N)
     public void onClick(View view) {
         // Letter button
         if (view.getId() == findViewById(R.id.button_letter_tutorial).getId()) {
-            /*if (!letterClicked) {
-                buttonLetter.setEnabled(false);
-                stopHandler();
-            }*/
             RelativeLayout progress = findViewById(R.id.tutorial_progress);
 
             if (!mp.isPlaying() && sound) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
-                sound = false;
-                mp.reset();
-                mp = MediaPlayer.create(this, letterSound);
-                mp.setVolume(0.5f, 0.5f);
-                mp.start();
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if (!letterClicked) {
-                            //buttonLetter.setEnabled(false);
-                            //stopHandler();
-                            arrow.setVisibility(View.INVISIBLE);
-                            letterClicked = true;
-                            tutorialSubmarine();
-                        } else {
-                            sound = true;
-                        }
-
+                playInstruction(letterSound);
+                mp.setOnCompletionListener(mp -> {
+                    if (!letterClicked) {
+                        arrow.setVisibility(View.INVISIBLE);
+                        letterClicked = true;
+                        tutorialSubmarine();
+                    } else {
+                        sound = true;
                     }
-                });} else {
+
+                });
+            } else {
                 progress.startAnimation(scaleHalf);
                 view.startAnimation(scaleHalf);
             }
 
+            // Speaker button
         } else if (view.getId() == findViewById(R.id.button_animal_tutorial).getId()) {
-
-            /*if (!animalClicked) {
-                buttonAnimal.setEnabled(false);
-                stopHandler();
-            }*/
-
-            if (!mp.isPlaying() && sound) {
+            if (!mp.isPlaying() && sound && !lastDrag) {
                 view.startAnimation(scale);
-                //buttonAnimal.startAnimation(scale);
-                sound = false;
-                mp.reset();
-                mp = MediaPlayer.create(this, animalSound);
-                mp.setVolume(0.5f, 0.5f);
-                mp.start();
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if (!animalClicked) {
-                            //buttonAnimal.setEnabled(false);
-                            //stopHandler();
-                            animalClicked = true;
-                            arrow.setVisibility(View.INVISIBLE);
-                            tutorialProgress();
-                        } else {
-                            sound = true;
-                        }
+                playInstruction(animalSound);
+                mp.setOnCompletionListener(mp -> {
+                    if (!speakerClicked) {
+                        speakerClicked = true;
+                        arrow.setVisibility(View.INVISIBLE);
+                        tutorialProgress();
+                    } else {
+                        sound = true;
                     }
-                });} else {
+                });
+            } else {
                 view.startAnimation(scaleHalf);
-                //buttonAnimal.startAnimation(scaleHalf);
 
             }
 
-
-            /*if(!mp.isPlaying()) {
-                mp = MediaPlayer.create(this, animalSound);
-                mp.start();
-            }*/
-        }
-
-        // Back button
-        /*else {
-            // reset animal pool because we leave the level
+        } else if (view.getId() == buttonSkip.getId()) {
+            stopHandler();
+            buttonSkip.setEnabled(false);
+            buttonLetter.setEnabled(false);
+            buttonAnimal.setEnabled(false);
+            buttonBack.setEnabled(false);
+            //skip = true;
             Intent intent = new Intent(this, StartActivity.class);
+
+            if (loaded) {
+                soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
+            }
             scale.setAnimationListener(new Animation.AnimationListener() {
 
                 @Override
@@ -1101,15 +736,43 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    animalPool.reset();
                     startActivity(intent);
                     finish();
                 }
             });
-            view.startAnimation(scale);
+            buttonSkip.startAnimation(scale);
+        }
+        // Back
+        else {
+            stopHandler();
+            if (loaded) {
+                soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
+            }
 
-        }*/
+            buttonBack.setEnabled(false);
+            buttonSkip.setEnabled(false);
+            buttonLetter.setEnabled(false);
+            buttonAnimal.setEnabled(false);
+
+            Intent intent = new Intent(this, StartActivity.class);
+            intent.putExtra("Tutorial", true);
+            scale.setAnimationListener(new Animation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            buttonBack.startAnimation(scale);
+        }
     }
-
-
 }

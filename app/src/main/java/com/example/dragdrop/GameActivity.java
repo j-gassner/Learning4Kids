@@ -152,7 +152,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             mp.stop();
             test = false;
         }
-        soundPool.stop(streamID);
+        //soundPool.stop(streamID);
         if (isRunning) {
             mCountDown.cancel();
             mCountDown.start();
@@ -618,13 +618,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (!backPressed) {
             mp.setVolume(0.5f, 0.5f);
             mp.start();
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    sound = true;
-                /*findViewById(R.id.button_letter).setEnabled(true);
-                findViewById(R.id.button_animal).setEnabled(true);*/
-                }
+            mp.setOnCompletionListener(mp -> {
+                sound = true;
             });
         }
         // Center ImageView
