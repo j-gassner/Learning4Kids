@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -39,8 +42,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     SharedPreferences availableLevels;
     private Animation scale;
     MediaPlayer mp = new MediaPlayer();
-    MediaPlayer reset = new MediaPlayer();
-
+    SoundPool soundPool;
+    ;
+    int button;
     //ArrayList<Character> buttons = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
     void writeInitialLevels() {
@@ -121,6 +125,21 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    void buttonSound() {
+        AudioAttributes attributes = new AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build();
+
+        soundPool = new SoundPool.Builder().setAudioAttributes(attributes).build();
+
+        soundPool.setOnLoadCompleteListener(
+            (soundPool, sampleId, status) -> Log.d("SOUNDPOOL", "COMPLETE " + button));
+        button = soundPool.load(this, R.raw.button, 1);
+
+    }
+
     void tutorialMuseum() {
 
         // Disable buttons
@@ -137,7 +156,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         ImageView arrow = findViewById(R.id.button_point_museum);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
 
+        mp.reset();
         mp = MediaPlayer.create(this, R.raw.instruction_museum);
+        mp.setVolume(0.5f, 0.5f);
         new Handler().postDelayed(() -> mp.start(), 500);
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -161,8 +182,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         ImageView arrow = findViewById(R.id.button_point_reset);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
 
+        mp.reset();
         mp = MediaPlayer.create(this, R.raw.instruction_reset);
         mp.start();
+        mp.setVolume(0.5f, 0.5f);
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -177,8 +200,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         ImageView arrow = findViewById(R.id.button_point_tutorial);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
 
+        mp.reset();
         mp = MediaPlayer.create(this, R.raw.instruction_tutorial);
         mp.start();
+        mp.setVolume(0.5f, 0.5f);
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -194,7 +219,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     void tutorialNowYou() {
         ImageView arrow = findViewById(R.id.button_point_f);
         arrow.setVisibility(View.VISIBLE);
+        mp.reset();
         mp = MediaPlayer.create(this, R.raw.instruction_now_you);
+        mp.setVolume(0.5f, 0.5f);
         mp.start();
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -213,6 +240,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -248,6 +276,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
         writeInitialLevels();
         assignButtons();
+        buttonSound();
         Intent intent = getIntent();
         boolean tutorial = intent.getBooleanExtra("Tutorial", false);
         if (tutorial) {
@@ -266,6 +295,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         super.onPause();
         scrollX = hsv.getScrollX();
         scrollY = hsv.getScrollY();
+        mp.setVolume(0f, 0f);
     }
 
     @Override
@@ -273,6 +303,16 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         super.onResume();
         hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
         //touchy();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;
 
     }
 
@@ -314,12 +354,14 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
-        reset = MediaPlayer.create(this, R.raw.question_reset);
+        mp.reset();
+        mp = MediaPlayer.create(this, R.raw.question_reset);
         //new Handler().postDelayed(() -> reset.start(), 500);
-        reset.start();
+        mp.setVolume(0.5f, 0.5f);
+        mp.start();
 
-        MediaPlayer bloop;
-        bloop = MediaPlayer.create(this, R.raw.button);
+       /* MediaPlayer bloop;
+        bloop = MediaPlayer.create(this, R.raw.button);*/
 
         int ui_flags =
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
@@ -333,24 +375,28 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         alertDialogBuilder
             .setMessage("Wirklich alles zurücksetzen?")
             .setPositiveButton("Ja", (dialog, id) -> {
-                bloop.start();
-                reset.stop();
+                if (button != 0) {
+                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                }
+                mp.stop();
                 resetLevels();
                 touchy();
             })
             .setNegativeButton("Nein", (dialog, id) -> {
                 // if this button is clicked, just close
                 // the dialog_shape box and do nothing
-                bloop.start();
-                reset.stop();
+                if (button != 0) {
+                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                }
+                mp.stop();
                 dialog.cancel();
                 touchy();
             }).setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
-                if (reset.isPlaying()) {
-                    reset.stop();
+                if (mp.isPlaying()) {
+                    mp.stop();
                 }
                 touchy();
             }
@@ -426,9 +472,12 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         noTouchy();
-        MediaPlayer bloop = new MediaPlayer();
+        if (button != 0) {
+            soundPool.play(button, 1f, 1f, 1, 0, 1f);
+        }
+        /*MediaPlayer bloop = new MediaPlayer();
         bloop = MediaPlayer.create(this, R.raw.button);
-        bloop.start();
+        bloop.start();*/
         //view.setEnabled(false);
         switch (view.getId()) {
             case R.id.button_exit:

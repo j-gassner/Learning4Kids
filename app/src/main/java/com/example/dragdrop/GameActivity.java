@@ -219,6 +219,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         mCountDown.cancel();
         mp.release();
         mp = null;
+        soundPool.release();
+        soundPool = null;
 
     }
 
@@ -1057,7 +1059,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         // Letter button
         if (view.getId() == findViewById(R.id.button_letter).getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-
 
             if (!mp.isPlaying() && sound) {
                 letterSound = getResources()

@@ -90,8 +90,19 @@ public class DinosActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mp.setVolume(0f, 0f);
         scrollX = hsv.getScrollX();
         scrollY = hsv.getScrollY();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;
+
     }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
@@ -167,7 +178,6 @@ public class DinosActivity extends AppCompatActivity {
                 // Sound loaded
                 if (button != 0) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                    Log.d("PLAYING", "PLAYING");
                     //soundPool.release();
                 }
                 scale.setAnimationListener(new Animation.AnimationListener() {
@@ -194,7 +204,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("a", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_a);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -203,7 +215,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("b", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_b);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -212,7 +226,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("e", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_e);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -221,7 +237,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("f", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_f);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
 
@@ -231,7 +249,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("i", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_i);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -240,7 +260,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("l", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_l);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -249,7 +271,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("m", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_m);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -258,7 +282,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("n", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_n);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -267,7 +293,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("o", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_o);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -276,7 +304,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("r", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_r);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -285,7 +315,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("s", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_s);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
@@ -294,7 +326,9 @@ public class DinosActivity extends AppCompatActivity {
                 if (availableLevels.getInt("t", 0) == COMPLETE) {
                     view.startAnimation(dino);
                     if (!mp.isPlaying()) {
+                        mp.reset();
                         mp = MediaPlayer.create(this, R.raw.dino_sound_t);
+                        mp.setVolume(0.5f, 0.5f);
                         mp.start();
                     }
                 }
