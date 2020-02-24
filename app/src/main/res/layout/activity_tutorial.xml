@@ -35,7 +35,8 @@
         android:background="@null"
         android:id="@+id/button_skip"
         android:contentDescription="@string/button_back"
-        android:layout_marginStart="1150dp" />
+      android:layout_marginStart="1150dp"
+      android:onClick="onClick" />
 
     <RelativeLayout
         android:layout_width="120dp"

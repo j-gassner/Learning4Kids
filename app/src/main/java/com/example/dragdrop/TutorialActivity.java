@@ -422,7 +422,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     void splitImage(Bitmap image) {
         fragments = new ArrayList<>(WINNINGNUMBER);
         int y = 0;
-        //Log.d("HEIGHTORIG", image.getHeight() + "");
         for (int i = 0; i < WINNINGNUMBER; i++) {
             ImageView frag = new ImageView(getApplicationContext());
             frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(),
@@ -438,8 +437,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         RelativeLayout progress = findViewById(R.id.tutorial_progress);
         int chunkSize = (int) Math.ceil(progress.getHeight() / WINNINGNUMBER);
         ImageView fragment = fragments.get(fragments.size() - step);
-
-        //Log.d("BITMAP", fragment.getHeight() + "");
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(),
             (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
@@ -457,22 +454,20 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         }
         RelativeLayout progress = findViewById(R.id.tutorial_progress);
         ImageView fragment = fragments.get(fragments.size() - step);
-        Log.d("BITMAP", fragment.getHeight() + "");
         progress.removeView(fragment);
     }
 
-    void changeColor(int step) {
-        if (step >= colors.size()) {
-            step %= colors.size();
-        }
+    // More compact as step will always be 0 when called
+    void changeColor() {
         for (ImageView fragment : fragments) {
             DrawableCompat.setTint(fragment.getDrawable(),
-                ContextCompat.getColor(getApplicationContext(), colors.get(step)));
+                ContextCompat.getColor(getApplicationContext(), colors.get(0)));
         }
+
         // Change color of letter
         ImageButton iB = findViewById(R.id.button_letter_tutorial);
         DrawableCompat.setTint(iB.getDrawable(), ContextCompat
-            .getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
+            .getColor(getApplicationContext(), colors.get(1)));
     }
 
 
@@ -535,7 +530,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         } else {
             scalingFactor = vHeight / dHeight;
         }
-        //Log.d("Scaling ", scalingFactor + "");
         matrix.postScale(scalingFactor, scalingFactor);
 
         dWidth *= scalingFactor;
@@ -545,9 +539,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
         playInstruction(animalSound);
-        /*mp.reset();
-        mp = MediaPlayer.create(this, animalSound);
-        mp.start();*/
 
         mp.setOnCompletionListener(mp -> {
             sound = true;
@@ -635,7 +626,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 // No match
                 else if (!fit && container.getId() == noMatch.getId() && dragCorrectRight) {
                     dragAnimal(view, container, correct);
-                    changeColor(0);
+                    changeColor();
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialProgressLost, 500);
 
@@ -643,7 +634,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 // Wrong
                 else if (container.getId() != middle.getId()) {
                     lastDrag = true;
-                    //dragWrong = true;
                     dragAnimal(view, container, wrong);
 
                     removeProgress(correctMatches);
@@ -671,7 +661,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @RequiresApi(api = VERSION_CODES.N)
     public void onClick(View view) {
         // Letter button
-        if (view.getId() == findViewById(R.id.button_letter_tutorial).getId()) {
+        if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.tutorial_progress);
 
             if (!mp.isPlaying() && sound) {
@@ -694,7 +684,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             }
 
             // Speaker button
-        } else if (view.getId() == findViewById(R.id.button_animal_tutorial).getId()) {
+        } else if (view.getId() == buttonAnimal.getId()) {
             if (!mp.isPlaying() && sound && !lastDrag) {
                 view.startAnimation(scale);
                 playInstruction(animalSound);
@@ -709,21 +699,22 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 });
             } else {
                 view.startAnimation(scaleHalf);
-
             }
+        }
 
-        } else if (view.getId() == buttonSkip.getId()) {
+        // Skip
+        else if (view.getId() == buttonSkip.getId()) {
             stopHandler();
             buttonSkip.setEnabled(false);
             buttonLetter.setEnabled(false);
             buttonAnimal.setEnabled(false);
             buttonBack.setEnabled(false);
-            //skip = true;
-            Intent intent = new Intent(this, StartActivity.class);
 
             if (loaded) {
                 soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
             }
+
+            Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
 
                 @Override
@@ -773,6 +764,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
                 }
             });
             buttonBack.startAnimation(scale);
+
         }
     }
 }
