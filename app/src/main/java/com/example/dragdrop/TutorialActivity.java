@@ -58,9 +58,9 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     Handler handleInactivity;
     Runnable runnable;
     int currentInstruction;
-    static int button = 0;
-    static int correct = 1;
-    static int wrong = 2;
+    private static int button = 0;
+    private static int correct = 1;
+    private static int wrong = 2;
     static int[] sounds;
     boolean loaded;
     SoundPool soundPool;
@@ -143,6 +143,8 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         super.onStop();
         mp.release();
         mp = null;
+        soundPool.release();
+        soundPool = null;
 
     }
 
@@ -490,7 +492,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         owner.removeView(animal);
         middle.addView(animal);
 
-        // Correct animal
+        // Correct animal - Flughoernchen
         if (step == 0) {
             animal.setImageResource(R.drawable.flughoernchen_animal);
             animalID = getResources()
@@ -500,7 +502,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
 
             fit = true;
 
-        } else if (step == 1) {
+        } else {
             animal.setImageResource(R.drawable.loewe_animal);
             animalID = getResources()
                 .getIdentifier("loewe_animal", "drawable", this.getPackageName());
@@ -509,7 +511,26 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
             fit = false;
 
         }
+        positionAnimal();
 
+        // Animal sound
+        playInstruction(animalSound);
+
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            if (step == 0) {
+                tutorialSpeaker();
+            } else if (step == 1 && !dragCorrectRight) {
+                tutorialLionRight();
+            } else {
+                tutorialDragFalse();
+            }
+        });
+
+    }
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    void positionAnimal() {
         // Center ImageView
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) animal.getLayoutParams();
         params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -538,19 +559,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
             Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
-        playInstruction(animalSound);
-
-        mp.setOnCompletionListener(mp -> {
-            sound = true;
-            if (step == 0) {
-                tutorialSpeaker();
-            } else if (step == 1 && !dragCorrectRight) {
-                tutorialLionRight();
-            } else {
-                tutorialDragFalse();
-            }
-        });
-
     }
 
 
@@ -561,7 +569,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
             view.startDrag(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
-            //view.setVisibility(View.INVISIBLE);
             return true;
         } else {
             return false;

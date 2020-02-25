@@ -30,8 +30,6 @@
         <activity
             android:name=".TutorialActivity"
             android:screenOrientation="sensorLandscape"/>
-        <activity android:name=".NameActivity"
-            android:screenOrientation="sensorLandscape"/>
     </application>
 
 </manifest>

@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:text="Wirklich alles zurücksetzen?"
-        android:fontFamily="@font/berton"
+      android:fontFamily="@font/chalk"
         android:textSize="36dp"
         android:textStyle="bold"/>
 
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:fontFamily="@font/berton"
+          android:fontFamily="@font/chalk"
             android:clickable="true"
             android:text="Ja"
             android:textColor="@color/green"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:background="@android:color/white"
-            android:fontFamily="@font/berton"
+          android:fontFamily="@font/chalk"
             android:clickable="true"
             android:text="Nein"
             android:textColor="@color/red"

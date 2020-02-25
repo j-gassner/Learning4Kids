@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
@@ -13,10 +12,8 @@ import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -40,19 +37,18 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     HorizontalScrollView hsv;
     private Character level;
     SharedPreferences availableLevels;
-    private Animation scale;
+    private Animation scale, scaleHalf, locked;
     MediaPlayer mp = new MediaPlayer();
     SoundPool soundPool;
-    ;
+    boolean loaded, tutorialRunning;
     int button;
-    //ArrayList<Character> buttons = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
-    void writeInitialLevels() {
+    void writeInitialLevels(boolean reset) {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
 
         // Create SharedPreference
-        if (!availableLevels.contains("f")) {
+        if (!availableLevels.contains("f") || reset) {
             editor.putInt("f", UNLOCKED);
             editor.putInt("l", LOCKED);
             editor.putInt("r", LOCKED);
@@ -67,41 +63,18 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             editor.putInt("t", LOCKED);
             editor.apply();
         }
-
-        /*TextView name = findViewById(R.id.name_child);
-        name.setText(availableLevels.getString("Name", ""));*/
-
-        // Start tutorial on first start
-        /*if(!availableLevels.getBoolean("Tutorial", false)) {
-            Intent intent = new Intent(this, TutorialActivity.class);
-            startActivity(intent);
-        }*/
     }
 
     void resetLevels() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        writeInitialLevels(true);
         SharedPreferences.Editor editor = availableLevels.edit();
-
-        // Create SharedPreference
-        editor.putInt("f", UNLOCKED);
-        editor.putInt("l", LOCKED);
-        editor.putInt("r", LOCKED);
-        editor.putInt("m", LOCKED);
-        editor.putInt("n", LOCKED);
-        editor.putInt("i", LOCKED);
-        editor.putInt("e", LOCKED);
-        editor.putInt("a", LOCKED);
-        editor.putInt("o", LOCKED);
-        editor.putInt("s", LOCKED);
-        editor.putInt("b", LOCKED);
-        editor.putInt("t", LOCKED);
         editor.putBoolean("Tutorial", false);
-        //editor.putString("Name", "");
         editor.apply();
         assignButtons();
 
     }
 
+    // For testing only
     void unlockLevels() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -135,63 +108,38 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         soundPool = new SoundPool.Builder().setAudioAttributes(attributes).build();
 
         soundPool.setOnLoadCompleteListener(
-            (soundPool, sampleId, status) -> Log.d("SOUNDPOOL", "COMPLETE " + button));
+            (soundPool, sampleId, status) -> loaded = true);
         button = soundPool.load(this, R.raw.button, 1);
 
     }
 
+    void playInstruction(int resID) {
+        mp.reset();
+        mp = MediaPlayer.create(this, resID);
+        mp.setVolume(0.5f, 0.5f);
+        mp.start();
+
+    }
+
     void tutorialMuseum() {
-
-        // Disable buttons
-        /*findViewById(R.id.button_reset).setEnabled(false);
-        findViewById(R.id.button_tutorial).setEnabled(false);
-        findViewById(R.id.button_exit).setEnabled(false);
-        findViewById(R.id.button_f).setEnabled(false);
-        findViewById(R.id.button_museum).setEnabled(false);*/
-        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);*/
-        //noTouchy();
-
-        // 7. Explain museum
+        // Explain museum
         ImageView arrow = findViewById(R.id.button_point_museum);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
 
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.instruction_museum);
-        mp.setVolume(0.5f, 0.5f);
-        new Handler().postDelayed(() -> mp.start(), 500);
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                tutorialReset();
-                arrow.setVisibility(View.INVISIBLE);
-            }
+        playInstruction(R.raw.instruction_museum);
+        mp.setOnCompletionListener(mp -> {
+            tutorialReset();
+            arrow.setVisibility(View.INVISIBLE);
         });
-        // TODO Text audio
-
-        /*findViewById(R.id.button_reset).setEnabled(true);
-        findViewById(R.id.button_tutorial).setEnabled(true);
-        findViewById(R.id.button_exit).setEnabled(true);
-        findViewById(R.id.button_f).setEnabled(true);
-        findViewById(R.id.button_museum).setEnabled(true);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);*/
-
     }
 
     void tutorialReset() {
         ImageView arrow = findViewById(R.id.button_point_reset);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
-
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.instruction_reset);
-        mp.start();
-        mp.setVolume(0.5f, 0.5f);
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                arrow.setVisibility(View.INVISIBLE);
-                tutorialTutorial();
-            }
+        playInstruction(R.raw.instruction_reset);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            tutorialTutorial();
         });
 
     }
@@ -199,42 +147,21 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     void tutorialTutorial() {
         ImageView arrow = findViewById(R.id.button_point_tutorial);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
-
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.instruction_tutorial);
-        mp.start();
-        mp.setVolume(0.5f, 0.5f);
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                arrow.setVisibility(View.INVISIBLE);
-                tutorialNowYou();
-            }
+        playInstruction(R.raw.instruction_tutorial);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            tutorialNowYou();
         });
-
-        //new Handler().postDelayed(() -> arrow.setVisibility(View.INVISIBLE), 1000);
-
     }
 
     void tutorialNowYou() {
         ImageView arrow = findViewById(R.id.button_point_f);
         arrow.setVisibility(View.VISIBLE);
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.instruction_now_you);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                arrow.setVisibility(View.INVISIBLE);
-                touchy();
-                //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                /*findViewById(R.id.button_reset).setEnabled(true);
-                findViewById(R.id.button_tutorial).setEnabled(true);
-                findViewById(R.id.button_exit).setEnabled(true);
-                findViewById(R.id.button_f).setEnabled(true);
-                findViewById(R.id.button_museum).setEnabled(true);      */
-            }
+        playInstruction(R.raw.instruction_now_you);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            //touchy();
+            tutorialRunning = false;
         });
 
 
@@ -251,36 +178,33 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         ImageView arrowLeft = findViewById(R.id.scroll_left);
         arrowRight.setVisibility(View.VISIBLE);
         View view = hsv.getChildAt(hsv.getChildCount() - 1);
-        int diff = (view.getBottom() - (hsv.getWidth() + hsv.getScrollX()));
-        // Log.d("MAXSCROLL", "" + diff);
-        hsv.getViewTreeObserver()
-            .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                @Override
-                public void onScrollChanged() {
-                    int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
-                    Log.d("MAXSCROLL", "" + diff);
-                    int scrollX = hsv.getScrollX();
-                    if (scrollX > 0 && diff != 0) {
-                        arrowRight.setVisibility(View.VISIBLE);
-                        arrowLeft.setVisibility(View.VISIBLE);
-                    } else if (scrollX == 0) {
-                        arrowRight.setVisibility(View.VISIBLE);
-                        arrowLeft.setVisibility(View.INVISIBLE);
-                    } else {
-                        arrowRight.setVisibility(View.INVISIBLE);
-                        arrowLeft.setVisibility(View.VISIBLE);
-                    }
 
+        hsv.getViewTreeObserver()
+            .addOnScrollChangedListener(() -> {
+                int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
+                int scrollX = hsv.getScrollX();
+                if (scrollX > 0 && diff != 0) {
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                } else if (scrollX == 0) {
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.INVISIBLE);
+                } else {
+                    arrowRight.setVisibility(View.INVISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
                 }
+
             });
 
-        writeInitialLevels();
+        writeInitialLevels(false);
         assignButtons();
         buttonSound();
         Intent intent = getIntent();
         boolean tutorial = intent.getBooleanExtra("Tutorial", false);
+
+        // Activity comes from tutorial
         if (tutorial) {
-            noTouchy();
+            tutorialRunning = true;
             SharedPreferences.Editor editor = availableLevels.edit();
             editor.putBoolean("Tutorial", true);
             editor.apply();
@@ -320,33 +244,30 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     public void assignButtons() {
         //findViewById(R.id.button_unlock).setEnabled(false);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
+        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
+        locked = AnimationUtils.loadAnimation(this, R.anim.locked);
 
-        //char[] buttons = {'f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'};
+
         for (char button : Globals.levels) {
             int idImage;
             int idButton = getResources()
                 .getIdentifier("button_" + button, "id", this.getPackageName());
-            //Log.d("IDBUTTON", " " + idButton);
             ImageButton iB = findViewById(idButton);
             if (availableLevels.getInt(button + "", 0) == COMPLETE) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
-                //Log.d("IDIMAGE", " " + idImage);
 
             } else if (availableLevels.getInt(button + "", 0) == UNLOCKED) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid_unlocked", "drawable",
                         this.getPackageName());
-                //Log.d("IDIMAGE", " " + idImage);
             } else {
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
-                //Log.d("IDIMAGE", " " + idImage);
             }
             iB.setImageResource(idImage);
-            //findViewById(idButton).setBackgroundResource(idImage);
 
         }
     }
@@ -354,14 +275,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
-        mp.reset();
-        mp = MediaPlayer.create(this, R.raw.question_reset);
-        //new Handler().postDelayed(() -> reset.start(), 500);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-
-       /* MediaPlayer bloop;
-        bloop = MediaPlayer.create(this, R.raw.button);*/
+        playInstruction(R.raw.question_reset);
 
         int ui_flags =
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
@@ -375,47 +289,37 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         alertDialogBuilder
             .setMessage("Wirklich alles zurücksetzen?")
             .setPositiveButton("Ja", (dialog, id) -> {
-                if (button != 0) {
+                if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                 }
-                mp.stop();
+                if (mp.isPlaying()) {
+                    mp.stop();
+                }
                 resetLevels();
                 touchy();
             })
             .setNegativeButton("Nein", (dialog, id) -> {
                 // if this button is clicked, just close
                 // the dialog_shape box and do nothing
-                if (button != 0) {
+                if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                 }
-                mp.stop();
+                if (mp.isPlaying()) {
+                    mp.stop();
+                }
                 dialog.cancel();
                 touchy();
-            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialog) {
+            }).setOnCancelListener(dialog -> {
                 if (mp.isPlaying()) {
                     mp.stop();
                 }
                 touchy();
-            }
         });
 
         // create alert dialog_shape
         AlertDialog alertDialog = alertDialogBuilder.create();
 
-        /*alertDialog.setOnCancelListener(
-            new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    if (reset.isPlaying()) {
-                        reset.stop();
-                        touchy();
-                    }
-                }
-            }
-        );*/
+
         Typeface typeface = ResourcesCompat.getFont(this, R.font.chalk);
         alertDialog.getWindow().
             setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -432,9 +336,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         buttonPositive.setTextColor(getResources().getColor(R.color.green));
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
         buttonNegative.setTextColor(getResources().getColor(R.color.red));
-
+/*
         Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
-        Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());
+        Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());*/
 
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
@@ -471,99 +375,126 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
+        // Avoid double clicks
         noTouchy();
-        if (button != 0) {
-            soundPool.play(button, 1f, 1f, 1, 0, 1f);
-        }
-        /*MediaPlayer bloop = new MediaPlayer();
-        bloop = MediaPlayer.create(this, R.raw.button);
-        bloop.start();*/
-        //view.setEnabled(false);
+
         switch (view.getId()) {
             case R.id.button_exit:
-                scale.setAnimationListener(new Animation.AnimationListener() {
+                if (!tutorialRunning) {
 
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+                    scale.setAnimationListener(new Animation.AnimationListener() {
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            if (loaded) {
+                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        finish();
-                        finishAffinity();
-                    }
-                });
-                view.startAnimation(scale);
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            finish();
+                            finishAffinity();
+                        }
+                    });
+                    view.startAnimation(scale);
+                } else {
+                    view.startAnimation(scaleHalf);
+                }
                 return;
             case R.id.button_reset:
-                scale.setAnimationListener(new Animation.AnimationListener() {
+                if (!tutorialRunning) {
 
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+                    scale.setAnimationListener(new Animation.AnimationListener() {
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            if (loaded) {
+                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            }
+                        }
 
-                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        alertDialogue();
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
 
-                    }
-                });
-                view.startAnimation(scale);
+                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            alertDialogue();
+
+                        }
+                    });
+                    view.startAnimation(scale);
+                } else {
+                    view.startAnimation(scaleHalf);
+                    touchy();
+                }
                 return;
 
+            // Testing only
             case R.id.button_unlock:
                 unlockLevels();
                 touchy();
                 return;
             case R.id.button_tutorial:
-                Intent intentTut = new Intent(this, TutorialActivity.class);
-                scale.setAnimationListener(new Animation.AnimationListener() {
+                if (!tutorialRunning) {
+                    Intent intentTut = new Intent(this, TutorialActivity.class);
+                    scale.setAnimationListener(new Animation.AnimationListener() {
 
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            if (loaded) {
+                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            }
+                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        startActivity(intentTut);
-                        //touchy();
-                    }
-                });
-                view.startAnimation(scale);
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            startActivity(intentTut);
+                        }
+                    });
+                    view.startAnimation(scale);
+                } else {
+                    view.startAnimation(scaleHalf);
+                    touchy();
+                }
                 return;
 
             case R.id.button_museum:
-                Intent intentDino = new Intent(this, DinosActivity.class);
-                scale.setAnimationListener(new Animation.AnimationListener() {
+                if (!tutorialRunning) {
+                    Intent intentDino = new Intent(this, DinosActivity.class);
+                    scale.setAnimationListener(new Animation.AnimationListener() {
 
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            if (loaded) {
+                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            }
+                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        startActivity(intentDino);
-                        //touchy();
-                    }
-                });
-                view.startAnimation(scale);
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            startActivity(intentDino);
+                        }
+                    });
+                    view.startAnimation(scale);
+                } else {
+                    view.startAnimation(scaleHalf);
+                    touchy();
+                }
                 return;
 
             case R.id.button_a:
@@ -607,23 +538,18 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
-        //Log.d("LEVEL ", level.toString());
-        /*extras.putChar("LEVEL", level);
-        extras.putSerializable("animalPool", animalPool);
-        intent.putExtras(extras);*/
-
         // Only playable levels
-        if (availableLevels.getInt(level.toString(), 0) != LOCKED) {
-            ImageButton iB = findViewById(view.getId());
-            iB.startAnimation(scale);
+
+        if (availableLevels.getInt(level.toString(), 0) != LOCKED && !tutorialRunning) {
             Intent intent = new Intent(this, GameActivity.class);
-
             intent.putExtra("LEVEL", level);
-
-            scale.setAnimationListener(new Animation.AnimationListener() {
+            scaleHalf.setAnimationListener(new Animation.AnimationListener() {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
+                    if (loaded) {
+                        soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                    }
                 }
 
                 @Override
@@ -635,16 +561,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     startActivity(intent);
                 }
             });
-            view.startAnimation(scale);
+            view.startAnimation(scaleHalf);
 
 
         } else {
+            view.startAnimation(locked);
             touchy();
         }
-        //intent.putExtra("animalPool", animalPool);*/
 
     }
-
 
     private void hideSystemUI() {
         // Enables regular immersive mode.
