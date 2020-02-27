@@ -244,15 +244,18 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             // 45 coord distance between polaroids
             //Log.d("COORDS", i + " " + hitRect.left +" " + hitRect.right);
             // Cover entire space
+
             hitRect.right += 22;
             hitRect.left -= 23;
+
             //Log.d("COORDS", " " + (scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight()));
             //Log.d("WIDTH", "" + child.getWidth());
             if (hitRect.contains(centerX, centerY)) {
-                int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
                 if (left) {
+                    int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
                     hsv.smoothScrollTo(x - (child.getWidth() + distancePolaroids), 0);
                 } else {
+                    int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
                     hsv.smoothScrollTo(x + (child.getWidth() + distancePolaroids), 0);
                 }
                 break;
@@ -319,6 +322,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    // DialogFragment is deprecated now
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         playInstruction(R.raw.question_reset);
@@ -356,16 +360,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 dialog.cancel();
                 touchy();
             }).setOnCancelListener(dialog -> {
-                if (mp.isPlaying()) {
-                    mp.stop();
-                }
-                touchy();
+            if (mp.isPlaying()) {
+                mp.stop();
+            }
+            touchy();
         });
 
         // create alert dialog_shape
         AlertDialog alertDialog = alertDialogBuilder.create();
-
-
+        assert (alertDialog != null);
         Typeface typeface = ResourcesCompat.getFont(this, R.font.chalk);
         alertDialog.getWindow().
             setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -382,8 +385,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         buttonPositive.setTextColor(getResources().getColor(R.color.green));
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
         buttonNegative.setTextColor(getResources().getColor(R.color.red));
-/*
-        Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
+
+        // Icons
+        /*Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
         Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());*/
 
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
