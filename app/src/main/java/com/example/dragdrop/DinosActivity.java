@@ -11,7 +11,6 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -37,6 +36,7 @@ public class DinosActivity extends AppCompatActivity {
     MediaPlayer mp = new MediaPlayer();
     SoundPool soundPool;
     int button;
+    boolean loaded;
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -85,25 +85,20 @@ public class DinosActivity extends AppCompatActivity {
         int horizontalHeight = hsv.getMeasuredHeight();
         int centerX = hsv.getScrollX() + horizontalWidth / 2;
         int centerY = horizontalHeight / 2;
-        int distancePolaroids = scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight();
-        Log.d("COORDSMIDDLE", centerX + " " + centerY);
+        //Log.d("COORDSMIDDLE", centerX + " " + centerY);
         Rect hitRect = new Rect();
         for (int i = 0; i < scroll.getChildCount(); i++) {
             View child = scroll.getChildAt(i);
             child.getHitRect(hitRect);
-            // 45 coord distance between polaroids
+            // Correct scrolling to the left
             if (left) {
                 hitRect.right += 1;
             }
-            Log.d("COORDS", i + " " + hitRect.left + " " + hitRect.right);
-            /*hitRect.right += Math.floor(distancePolaroids / 2);
-            hitRect.left -= Math.ceil(distancePolaroids / 2);*/
-            //Log.d("DIST", " " + (scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight()));
-            //Log.d("WIDTH", "" + child.getWidth());
+            //Log.d("COORDS", i + " " + hitRect.left + " " + hitRect.right);
             if (hitRect.contains(centerX, centerY)) {
                 if (left) {
                     int x = (child.getRight() - (horizontalWidth / 2));
-                    Log.d("LEFT", "" + child.getRight() + " " + horizontalWidth / 2);
+                    //Log.d("LEFT", "" + child.getRight() + " " + horizontalWidth / 2);
 
                     hsv.smoothScrollTo(x - (child.getWidth()), 0);
                 } else {
@@ -205,7 +200,7 @@ public class DinosActivity extends AppCompatActivity {
         soundPool = new SoundPool.Builder().setAudioAttributes(attributes).build();
 
         soundPool.setOnLoadCompleteListener(
-            (soundPool, sampleId, status) -> Log.d("SOUNDPOOL", "COMPLETE " + button));
+            (soundPool, sampleId, status) -> loaded = true);
         button = soundPool.load(this, R.raw.button, 1);
 
     }
@@ -220,7 +215,7 @@ public class DinosActivity extends AppCompatActivity {
                 }
 
                 // Sound loaded
-                if (button != 0) {
+                if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                     //soundPool.release();
                 }

@@ -15,7 +15,6 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
@@ -79,10 +78,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     static int streamID;
     boolean sound;
     ImageButton letterButton, speakerButton, backButton;
-    boolean test, backPressed;
+    boolean test, backPressed, handler;
 
     // 30s
-    CountDownTimer mCountDown = new CountDownTimer(30000, 30000) {
+    /*CountDownTimer mCountDown = new CountDownTimer(30000, 30000) {
         @Override
         public void onTick(long millisUntilFinished) {
         }
@@ -96,9 +95,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 mp = MediaPlayer.create(getApplicationContext(), R.raw.are_you_still_there);
                 mp.setVolume(0.5f, 0.5f);
                 mp.start();
-                /*if (loaded) {
+                *//*if (loaded) {
                     streamID = soundPool.play(sounds[still], 1f, 1f, 1, 0, 1f);
-                }*/
+                }*//*
                 stillThere = false;
             } else if (!backPressed) {
                 mp.reset();
@@ -113,7 +112,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             mCountDown.cancel();
             mCountDown.start();
         }
-    };
+    };*/
 
     private final static int LOCKED = 0;
     private final static int UNLOCKED = 1;
@@ -127,6 +126,34 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         hideSystemUI();
         sounds = new int[4];
 
+        handleInactivity = new Handler();
+        runnable = () -> {
+            if (stillThere) {
+                // Make instruction interruptable
+                handler = true;
+                playInstruction(R.raw.are_you_still_there);
+                stillThere = false;
+            } else {
+                playInstruction(getResources()
+                    .getIdentifier("instruction_" + level, "raw", getPackageName()));
+                handler = true;
+                stillThere = true;
+
+                // If user does nothing
+            }
+            startHandler();
+        };
+
+    }
+
+    public void stopHandler() {
+        isRunning = false;
+        handleInactivity.removeCallbacks(runnable);
+    }
+
+    public void startHandler() {
+        isRunning = true;
+        handleInactivity.postDelayed(runnable, 10000); //for 30 seconds
     }
 
 
@@ -148,7 +175,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (instr.isPlaying()) {
             instr.stop();
         }*/
-        if (mp.isPlaying() && test) {
+        /*if (mp.isPlaying() && test) {
             mp.stop();
             test = false;
         }
@@ -156,6 +183,17 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (isRunning) {
             mCountDown.cancel();
             mCountDown.start();
+        }
+
+    }*/
+        if (mp.isPlaying() && handler) {
+            mp.stop();
+            handler = false;
+        }
+
+        if (isRunning) {
+            stopHandler();
+            startHandler();
         }
 
     }
@@ -198,8 +236,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onPause() {
         super.onPause();
-        mCountDown.cancel();
+        //mCountDown.cancel();
         mp.setVolume(0f, 0f);
+        stopHandler();
 
     }
 
@@ -207,7 +246,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onStop() {
         super.onStop();
 
-        mCountDown.cancel();
+        //mCountDown.cancel();
+        //stopHandler();
         mp.release();
         mp = null;
         soundPool.release();
@@ -218,7 +258,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mCountDown.cancel();
+        //mCountDown.cancel();
     }
 
 
@@ -316,8 +356,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     //speaker.setEnabled(true);
                     //mp.reset();
                     new Handler().postDelayed(() -> disPlayAnimal(), 500);
-                    /*startHandler();*/
-                    mCountDown.start();
+                    startHandler();
+                    //mCountDown.start();
                     isRunning = true;
                     //touchy();
                 }
@@ -482,7 +522,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         // Level done
         if (correctMatches == WINNINGNUMBER) {
             sound = false;
-            mCountDown.cancel();
+            //mCountDown.cancel();
+            stopHandler();
 
             playInstruction(R.raw.complete_sound);
             mp.setOnCompletionListener(mp -> cameraFlash());
