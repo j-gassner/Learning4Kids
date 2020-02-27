@@ -3,11 +3,11 @@
   android:interpolator="@android:anim/linear_interpolator">
   <scale
     android:fromXScale="1.0"
-    android:toXScale="1.05"
+    android:toXScale="1.025"
     android:fromYScale="1.0"
-    android:toYScale="1.05"
+    android:toYScale="1.0125"
     android:pivotX="50%"
-    android:pivotY="50%"
+    android:pivotY="100%"
     android:duration="50"
     android:repeatCount="1"
     android:repeatMode="reverse" />

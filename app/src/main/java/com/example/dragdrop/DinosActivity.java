@@ -3,6 +3,7 @@ package com.example.dragdrop;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -12,12 +13,12 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -31,7 +32,7 @@ public class DinosActivity extends AppCompatActivity {
     private final static int LOCKED = 0;
     private final static int UNLOCKED = 1;
     private final static int COMPLETE = 2;
-    private Animation scale;
+    private Animation scale, scaleHalf, locked;
     private Animation dino;
     MediaPlayer mp = new MediaPlayer();
     SoundPool soundPool;
@@ -45,38 +46,73 @@ public class DinosActivity extends AppCompatActivity {
         hideSystemUI();
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
+        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
         dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
+        locked = AnimationUtils.loadAnimation(this, R.anim.dino_locked_anim);
 
         hsv = findViewById(R.id.scroll_horizontal_dinos);
-        ImageView arrowRight = findViewById(R.id.scroll_right_dino);
-        ImageView arrowLeft = findViewById(R.id.scroll_left_dino);
+        ImageButton arrowRight = findViewById(R.id.scroll_right_dino);
+        ImageButton arrowLeft = findViewById(R.id.scroll_left_dino);
         arrowRight.setVisibility(View.VISIBLE);
         View view = hsv.getChildAt(hsv.getChildCount() - 1);
         int diff = (view.getBottom() - (hsv.getWidth() + hsv.getScrollX()));
         //Log.d("MAXSCROLL", "" + diff);
         hsv.getViewTreeObserver()
-            .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                @Override
-                public void onScrollChanged() {
-                    int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
-                    Log.d("MAXSCROLL", "" + diff);
-                    int scrollX = hsv.getScrollX();
-                    if (scrollX > 0 && diff != 0) {
-                        arrowRight.setVisibility(View.VISIBLE);
-                        arrowLeft.setVisibility(View.VISIBLE);
-                    } else if (scrollX == 0) {
-                        arrowRight.setVisibility(View.VISIBLE);
-                        arrowLeft.setVisibility(View.INVISIBLE);
-                    } else {
-                        arrowRight.setVisibility(View.INVISIBLE);
-                        arrowLeft.setVisibility(View.VISIBLE);
-                    }
-
+            .addOnScrollChangedListener(() -> {
+                int diff1 = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
+                //Log.d("MAXSCROLL", "" + diff1);
+                int scrollX = hsv.getScrollX();
+                if (scrollX > 0 && diff1 != 0) {
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
+                } else if (scrollX == 0) {
+                    arrowRight.setVisibility(View.VISIBLE);
+                    arrowLeft.setVisibility(View.INVISIBLE);
+                } else {
+                    arrowRight.setVisibility(View.INVISIBLE);
+                    arrowLeft.setVisibility(View.VISIBLE);
                 }
+
             });
 
         buttonSound();
 
+    }
+
+    void snap(boolean left) {
+        LinearLayout scroll = findViewById(R.id.layout_scroll_dinos);
+        int horizontalWidth = hsv.getMeasuredWidth();
+        int horizontalHeight = hsv.getMeasuredHeight();
+        int centerX = hsv.getScrollX() + horizontalWidth / 2;
+        int centerY = horizontalHeight / 2;
+        int distancePolaroids = scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight();
+        Log.d("COORDSMIDDLE", centerX + " " + centerY);
+        Rect hitRect = new Rect();
+        for (int i = 0; i < scroll.getChildCount(); i++) {
+            View child = scroll.getChildAt(i);
+            child.getHitRect(hitRect);
+            // 45 coord distance between polaroids
+            if (left) {
+                hitRect.right += 1;
+            }
+            Log.d("COORDS", i + " " + hitRect.left + " " + hitRect.right);
+            /*hitRect.right += Math.floor(distancePolaroids / 2);
+            hitRect.left -= Math.ceil(distancePolaroids / 2);*/
+            //Log.d("DIST", " " + (scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight()));
+            //Log.d("WIDTH", "" + child.getWidth());
+            if (hitRect.contains(centerX, centerY)) {
+                if (left) {
+                    int x = (child.getRight() - (horizontalWidth / 2));
+                    Log.d("LEFT", "" + child.getRight() + " " + horizontalWidth / 2);
+
+                    hsv.smoothScrollTo(x - (child.getWidth()), 0);
+                } else {
+                    int x = (child.getLeft() - (horizontalWidth / 2));
+                    hsv.smoothScrollTo(x + (child.getWidth()), 0);
+                }
+                break;
+            }
+        }
     }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
@@ -151,6 +187,14 @@ public class DinosActivity extends AppCompatActivity {
         }
     }
 
+    void playDino(int resID) {
+        mp.reset();
+        mp = MediaPlayer.create(this, resID);
+        mp.setVolume(0.5f, 0.5f);
+        mp.start();
+
+    }
+
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void buttonSound() {
         AudioAttributes attributes = new AudioAttributes.Builder()
@@ -200,142 +244,61 @@ public class DinosActivity extends AppCompatActivity {
                 view.startAnimation(scale);
                 break;
 
-            case R.id.dino_a:
-                if (availableLevels.getInt("a", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_a);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
-            case R.id.dino_b:
-                if (availableLevels.getInt("b", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_b);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
-            case R.id.dino_e:
-                if (availableLevels.getInt("e", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_e);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
-            case R.id.dino_f:
-                if (availableLevels.getInt("f", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_f);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+            case R.id.scroll_right_dino:
+                scaleHalf.setAnimationListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
                     }
 
-                }
-                break;
-            case R.id.dino_i:
-                if (availableLevels.getInt("i", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_i);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(false);
+
                     }
-                }
-                break;
-            case R.id.dino_l:
-                if (availableLevels.getInt("l", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_l);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
                     }
-                }
-                break;
-            case R.id.dino_m:
-                if (availableLevels.getInt("m", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_m);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+                });
+                view.startAnimation(scaleHalf);
+
+                return;
+            case R.id.scroll_left_dino:
+                scaleHalf.setAnimationListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
                     }
-                }
-                break;
-            case R.id.dino_n:
-                if (availableLevels.getInt("n", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_n);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(true);
+
                     }
-                }
-                break;
-            case R.id.dino_o:
-                if (availableLevels.getInt("o", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_o);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
                     }
-                }
-                break;
-            case R.id.dino_r:
-                if (availableLevels.getInt("r", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_r);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
-            case R.id.dino_s:
-                if (availableLevels.getInt("s", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_s);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
-            case R.id.dino_t:
-                if (availableLevels.getInt("t", 0) == COMPLETE) {
-                    view.startAnimation(dino);
-                    if (!mp.isPlaying()) {
-                        mp.reset();
-                        mp = MediaPlayer.create(this, R.raw.dino_sound_t);
-                        mp.setVolume(0.5f, 0.5f);
-                        mp.start();
-                    }
-                }
-                break;
+                });
+                view.startAnimation(scaleHalf);
+
+                return;
+
+            // Dino
             default:
+                String name = getResources().getResourceEntryName(view.getId());
+                String level = "" + name.charAt(5);
+                int id = getResources().getIdentifier(name + "_sound", "raw", getPackageName());
+                if (availableLevels.getInt(level, 0) == COMPLETE && !mp.isPlaying()) {
+                    view.startAnimation(dino);
+                    playDino(id);
+                } else {
+                    view.startAnimation(locked);
+                }
                 break;
-
         }
     }
 

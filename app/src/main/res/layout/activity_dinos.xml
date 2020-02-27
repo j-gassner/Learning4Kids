@@ -19,33 +19,40 @@
         android:contentDescription="@string/button_back"
         android:onClick="onClick" />
 
-    <ImageView
+    <ImageButton
         android:layout_width="80dp"
         android:layout_height="100dp"
         android:alpha="0.4"
         android:id="@+id/scroll_left_dino"
         android:src="@drawable/scroll_left"
+      android:background="@null"
+      android:scaleType="fitCenter"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="400dp"
         android:layout_alignParentStart="true"
-        android:visibility="invisible"/>
+      android:visibility="invisible"
+      android:onClick="onClick" />
 
-    <ImageView
+    <ImageButton
         android:layout_width="80dp"
         android:layout_height="100dp"
         android:alpha="0.4"
         android:id="@+id/scroll_right_dino"
         android:src="@drawable/scroll_right"
+      android:background="@null"
+      android:scaleType="fitCenter"
         android:layout_alignParentRight="true"
         android:layout_marginTop="400dp"
 
         android:layout_alignParentEnd="true"
-        android:visibility="invisible"/>
+      android:visibility="invisible"
+      android:onClick="onClick" />
 
 
         <HorizontalScrollView
         android:layout_marginTop="150dp"
-        android:layout_width="wrap_content"
+          android:layout_width="1100dp"
+          android:layout_centerHorizontal="true"
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/scroll_horizontal_dinos"
@@ -59,147 +66,134 @@
             >
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
+
                 android:id="@+id/dino_f"
                 android:contentDescription="@string/dino_f"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_l"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+
                 android:contentDescription="@string/dino_l"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_r"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+
                 android:contentDescription="@string/dino_r"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_m"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+
                 android:contentDescription="@string/dino_m"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_n"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+
                 android:contentDescription="@string/dino_n"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_i"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
+
                 android:contentDescription="@string/dino_i"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_e"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:contentDescription="@string/dino_e"
+
+              android:contentDescription="@string/dino_e"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_a"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:contentDescription="@string/dino_a"
+
+              android:contentDescription="@string/dino_a"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_o"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:contentDescription="@string/dino_o"
+
+              android:contentDescription="@string/dino_o"
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_s"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:contentDescription="@string/dino_s"
+
+              android:contentDescription="@string/dino_s"
 
                 android:onClick="onClick"/>
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_b"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:contentDescription="@string/dino_b"
+
+              android:contentDescription="@string/dino_b"
                 android:onClick="onClick" />
 
             <ImageButton
-                android:layout_width="600dp"
-                android:layout_height="600dp"
+              android:layout_width="550dp"
+              android:layout_height="580dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:id="@+id/dino_t"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
                 android:contentDescription="@string/dino_t"
                 android:onClick="onClick" />
 

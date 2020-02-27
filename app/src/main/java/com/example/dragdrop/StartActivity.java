@@ -1,9 +1,11 @@
 package com.example.dragdrop;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -16,11 +18,13 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -167,6 +171,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,8 +179,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_start);
         hideSystemUI();
         hsv = findViewById(R.id.scroll_horizontal);
-        ImageView arrowRight = findViewById(R.id.scroll_right);
-        ImageView arrowLeft = findViewById(R.id.scroll_left);
+        ImageButton arrowRight = findViewById(R.id.scroll_right);
+        ImageButton arrowLeft = findViewById(R.id.scroll_left);
         arrowRight.setVisibility(View.VISIBLE);
         View view = hsv.getChildAt(hsv.getChildCount() - 1);
 
@@ -196,6 +201,16 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
             });
 
+        // Works but doesn't really feel good when scrolling
+        /*hsv.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                snapCenter();
+                return true;
+            } else {
+                return false;
+            }
+        });*/
+
         writeInitialLevels(false);
         assignButtons();
         buttonSound();
@@ -212,6 +227,37 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
+    }
+
+    void snapCenter(boolean left) {
+        LinearLayout scroll = findViewById(R.id.layout_scroll);
+        int horizontalWidth = hsv.getMeasuredWidth();
+        int horizontalHeight = hsv.getMeasuredHeight();
+        int centerX = hsv.getScrollX() + horizontalWidth / 2;
+        int centerY = horizontalHeight / 2;
+        int distancePolaroids = scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight();
+        //Log.d("COORDSMIDDLE", centerX + " " + centerY);
+        Rect hitRect = new Rect();
+        for (int i = 0; i < scroll.getChildCount(); i++) {
+            View child = scroll.getChildAt(i);
+            child.getHitRect(hitRect);
+            // 45 coord distance between polaroids
+            //Log.d("COORDS", i + " " + hitRect.left +" " + hitRect.right);
+            // Cover entire space
+            hitRect.right += 22;
+            hitRect.left -= 23;
+            //Log.d("COORDS", " " + (scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight()));
+            //Log.d("WIDTH", "" + child.getWidth());
+            if (hitRect.contains(centerX, centerY)) {
+                int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
+                if (left) {
+                    hsv.smoothScrollTo(x - (child.getWidth() + distancePolaroids), 0);
+                } else {
+                    hsv.smoothScrollTo(x + (child.getWidth() + distancePolaroids), 0);
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -495,6 +541,50 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     view.startAnimation(scaleHalf);
                     touchy();
                 }
+                return;
+            case R.id.scroll_left:
+                scaleHalf.setAnimationListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snapCenter(true);
+                        touchy();
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                view.startAnimation(scaleHalf);
+
+                return;
+            case R.id.scroll_right:
+                scaleHalf.setAnimationListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snapCenter(false);
+                        touchy();
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                view.startAnimation(scaleHalf);
+
                 return;
 
             case R.id.button_a:
