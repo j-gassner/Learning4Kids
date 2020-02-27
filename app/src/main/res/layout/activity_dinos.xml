@@ -19,39 +19,12 @@
         android:contentDescription="@string/button_back"
         android:onClick="onClick" />
 
-    <ImageButton
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:alpha="0.4"
-        android:id="@+id/scroll_left_dino"
-        android:src="@drawable/scroll_left"
-      android:background="@null"
-      android:scaleType="fitCenter"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="400dp"
-        android:layout_alignParentStart="true"
-      android:visibility="invisible"
-      android:onClick="onClick" />
 
-    <ImageButton
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:alpha="0.4"
-        android:id="@+id/scroll_right_dino"
-        android:src="@drawable/scroll_right"
-      android:background="@null"
-      android:scaleType="fitCenter"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="400dp"
-
-        android:layout_alignParentEnd="true"
-      android:visibility="invisible"
-      android:onClick="onClick" />
 
 
         <HorizontalScrollView
         android:layout_marginTop="150dp"
-          android:layout_width="1100dp"
+          android:layout_width="match_parent"
           android:layout_centerHorizontal="true"
         android:layout_height="match_parent"
         android:orientation="horizontal"
@@ -66,8 +39,8 @@
             >
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -77,8 +50,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -88,8 +61,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -99,8 +72,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -110,8 +83,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -121,8 +94,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -132,8 +105,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -143,8 +116,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -154,8 +127,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -165,8 +138,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -177,8 +150,8 @@
                 android:onClick="onClick"/>
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -188,8 +161,8 @@
                 android:onClick="onClick" />
 
             <ImageButton
-              android:layout_width="550dp"
-              android:layout_height="580dp"
+              android:layout_width="640dp"
+              android:layout_height="600dp"
                 android:scaleType="fitEnd"
                 android:adjustViewBounds="true"
                 android:background="@null"
@@ -200,4 +173,33 @@
         </LinearLayout>
 
     </HorizontalScrollView>
+
+    <ImageButton
+      android:layout_width="80dp"
+      android:layout_height="100dp"
+      android:alpha="0.4"
+      android:id="@+id/scroll_left_dino"
+      android:src="@drawable/scroll_left"
+      android:background="@null"
+      android:scaleType="fitCenter"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="400dp"
+      android:layout_alignParentStart="true"
+      android:visibility="invisible"
+      android:onClick="onClick" />
+
+    <ImageButton
+      android:layout_width="80dp"
+      android:layout_height="100dp"
+      android:alpha="0.4"
+      android:id="@+id/scroll_right_dino"
+      android:src="@drawable/scroll_right"
+      android:background="@null"
+      android:scaleType="fitCenter"
+      android:layout_alignParentRight="true"
+      android:layout_marginTop="400dp"
+
+      android:layout_alignParentEnd="true"
+      android:visibility="invisible"
+      android:onClick="onClick" />
 </RelativeLayout>

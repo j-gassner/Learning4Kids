@@ -78,7 +78,7 @@
         android:textStyle="bold"
         android:textColor="@color/white"
       android:fontFamily="@font/chalk"
-      android:textSize="68dp"
+      android:textSize="80sp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 
@@ -90,7 +90,7 @@
         android:textColor="@color/white"
         android:textStyle="bold"
       android:fontFamily="@font/chalk"
-      android:textSize="68dp"
+      android:textSize="80sp"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true" />
 

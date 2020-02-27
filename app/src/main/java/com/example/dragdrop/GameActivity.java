@@ -153,7 +153,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     public void startHandler() {
         isRunning = true;
-        handleInactivity.postDelayed(runnable, 10000); //for 30 seconds
+        handleInactivity.postDelayed(runnable, 30000); //for 30 seconds
     }
 
 

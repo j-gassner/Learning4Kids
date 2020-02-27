@@ -386,16 +386,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
         buttonNegative.setTextColor(getResources().getColor(R.color.red));
 
-        // Icons
-        /*Drawable yes = getResources().getDrawable(R.drawable.button_yes, getTheme());
-        Drawable no = getResources().getDrawable(R.drawable.button_exit, getTheme());*/
-
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
-
-        /*buttonPositive.setCompoundDrawablesWithIntrinsicBounds(yes, null, null, null);
-        buttonNegative.setCompoundDrawablesWithIntrinsicBounds(no, null, null, null);*/
 
         // Set dialog_shape focusable so we can avoid touching outside:
         alertDialog.getWindow().
