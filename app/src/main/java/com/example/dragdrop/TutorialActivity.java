@@ -141,16 +141,20 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @Override
     protected void onStop() {
         super.onStop();
-        mp.release();
+        /*mp.release();
         mp = null;
         soundPool.release();
-        soundPool = null;
+        soundPool = null;*/
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;
     }
 
 

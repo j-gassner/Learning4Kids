@@ -248,18 +248,22 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         //mCountDown.cancel();
         //stopHandler();
-        mp.release();
+        /*mp.release();
         mp = null;
         soundPool.release();
-        soundPool = null;
+        soundPool = null;*/
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //mCountDown.cancel();
+        mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;
     }
+
 
 
 

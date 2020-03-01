@@ -129,12 +129,22 @@ public class DinosActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        /*mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;*/
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mp.release();
         mp = null;
         soundPool.release();
         soundPool = null;
-
     }
+
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override

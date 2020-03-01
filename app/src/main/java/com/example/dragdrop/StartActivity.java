@@ -282,16 +282,25 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStop() {
         super.onStop();
+        /*mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;*/
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mp.release();
         mp = null;
         soundPool.release();
         soundPool = null;
-
     }
 
 
     public void assignButtons() {
-        //findViewById(R.id.button_unlock).setEnabled(false);
+        findViewById(R.id.button_unlock).setEnabled(false);
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
         locked = AnimationUtils.loadAnimation(this, R.anim.locked);
@@ -438,6 +447,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                         public void onAnimationRepeat(Animation animation) {
                         }
 
+                        @RequiresApi(api = VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             finish();
