@@ -21,7 +21,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -68,7 +67,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_tutorial);
         hideSystemUI();
         handleInactivity = new Handler();
@@ -127,7 +126,7 @@ public class TutorialActivity extends AppCompatActivity implements View.OnTouchL
     protected void onResume() {
         super.onResume();
         removeColor();
-        hideSystemUI();
+        //hideSystemUI();
         tutorialIntro();
     }
 

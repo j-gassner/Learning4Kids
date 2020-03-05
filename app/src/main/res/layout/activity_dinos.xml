@@ -28,14 +28,14 @@
           android:layout_centerHorizontal="true"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:id="@+id/scroll_horizontal_dinos"
+          android:id="@+id/scroll_horizontal"
         android:scrollbars="none">
 
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/layout_scroll_dinos"
+          android:id="@+id/layout_scroll"
             >
 
             <ImageButton
@@ -178,7 +178,7 @@
       android:layout_width="80dp"
       android:layout_height="100dp"
       android:alpha="0.4"
-      android:id="@+id/scroll_left_dino"
+      android:id="@+id/scroll_left"
       android:src="@drawable/scroll_left"
       android:background="@null"
       android:scaleType="fitCenter"
@@ -192,7 +192,7 @@
       android:layout_width="80dp"
       android:layout_height="100dp"
       android:alpha="0.4"
-      android:id="@+id/scroll_right_dino"
+      android:id="@+id/scroll_right"
       android:src="@drawable/scroll_right"
       android:background="@null"
       android:scaleType="fitCenter"

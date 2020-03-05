@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.media.AudioAttributes;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -21,50 +18,53 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener {
+public class StartActivity extends ScrollActivity implements View.OnClickListener {
 
-    public static int scrollX = 0;
-    public static int scrollY = -1;
-    private final static int LOCKED = 0;
-    private final static int UNLOCKED = 1;
-    private final static int COMPLETE = 2;
+    boolean tutorialRunning;
 
-    HorizontalScrollView hsv;
-    private Character level;
-    SharedPreferences availableLevels;
-    private Animation scale, scaleHalf, locked;
-    MediaPlayer mp = new MediaPlayer();
-    SoundPool soundPool;
-    boolean loaded, tutorialRunning;
-    int button;
+    @SuppressLint("ClickableViewAccessibility")
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_start);
+        writeInitialLevels(false);
+        assignScrollElements();
+        Intent intent = getIntent();
+        boolean tutorial = intent.getBooleanExtra("Tutorial", false);
 
+        // Activity comes from tutorial
+        if (tutorial) {
+            tutorialRunning = true;
+            SharedPreferences.Editor editor = availableLevels.edit();
+            editor.putBoolean("Tutorial", true);
+            editor.apply();
+            tutorialMuseum();
+        }
+    }
+
+    void loadAnimations() {
+        super.loadAnimations();
+        locked = AnimationUtils.loadAnimation(this, R.anim.locked);
+
+    }
     void writeInitialLevels(boolean reset) {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
 
         // Create SharedPreference
         if (!availableLevels.contains("f") || reset) {
-            editor.putInt("f", UNLOCKED);
-            editor.putInt("l", LOCKED);
-            editor.putInt("r", LOCKED);
-            editor.putInt("m", LOCKED);
-            editor.putInt("n", LOCKED);
-            editor.putInt("i", LOCKED);
-            editor.putInt("e", LOCKED);
-            editor.putInt("a", LOCKED);
-            editor.putInt("o", LOCKED);
-            editor.putInt("s", LOCKED);
-            editor.putInt("b", LOCKED);
-            editor.putInt("t", LOCKED);
+            for (char level : levels) {
+                editor.putInt(Character.toString(level), levelState.LOCKED.ordinal());
+            }
+            editor.putInt("f", levelState.UNLOCKED.ordinal());
             editor.apply();
         }
     }
@@ -74,54 +74,22 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         SharedPreferences.Editor editor = availableLevels.edit();
         editor.putBoolean("Tutorial", false);
         editor.apply();
-        assignButtons();
+        assignScrollElements();
 
     }
-
     // For testing only
+
     void unlockLevels() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
 
         // Create SharedPreference
-        editor.putInt("f", COMPLETE);
-        editor.putInt("l", COMPLETE);
-        editor.putInt("r", COMPLETE);
-        editor.putInt("m", COMPLETE);
-        editor.putInt("n", COMPLETE);
-        editor.putInt("i", COMPLETE);
-        editor.putInt("e", COMPLETE);
-        editor.putInt("a", COMPLETE);
-        editor.putInt("o", COMPLETE);
-        editor.putInt("s", COMPLETE);
-        editor.putInt("b", COMPLETE);
-        editor.putInt("t", COMPLETE);
+        for (char level : levels) {
+            editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
+        }
+        editor.putInt("f", levelState.UNLOCKED.ordinal());
         editor.apply();
-        assignButtons();
-
-    }
-
-
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    void buttonSound() {
-        AudioAttributes attributes = new AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_MEDIA)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build();
-
-        soundPool = new SoundPool.Builder().setAudioAttributes(attributes).build();
-
-        soundPool.setOnLoadCompleteListener(
-            (soundPool, sampleId, status) -> loaded = true);
-        button = soundPool.load(this, R.raw.button, 1);
-
-    }
-
-    void playInstruction(int resID) {
-        mp.reset();
-        mp = MediaPlayer.create(this, resID);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
+        assignScrollElements();
 
     }
 
@@ -164,92 +132,28 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         playInstruction(R.raw.instruction_now_you);
         mp.setOnCompletionListener(mp -> {
             arrow.setVisibility(View.INVISIBLE);
-            //touchy();
             tutorialRunning = false;
         });
 
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
-        hideSystemUI();
-        hsv = findViewById(R.id.scroll_horizontal);
-        ImageButton arrowRight = findViewById(R.id.scroll_right);
-        ImageButton arrowLeft = findViewById(R.id.scroll_left);
-        arrowRight.setVisibility(View.VISIBLE);
-        View view = hsv.getChildAt(hsv.getChildCount() - 1);
-
-        hsv.getViewTreeObserver()
-            .addOnScrollChangedListener(() -> {
-                int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
-                int scrollX = hsv.getScrollX();
-                if (scrollX > 0 && diff != 0) {
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                } else if (scrollX == 0) {
-                    arrowRight.setVisibility(View.VISIBLE);
-                    arrowLeft.setVisibility(View.INVISIBLE);
-                } else {
-                    arrowRight.setVisibility(View.INVISIBLE);
-                    arrowLeft.setVisibility(View.VISIBLE);
-                }
-
-            });
-
-        // Works but doesn't really feel good when scrolling
-        /*hsv.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                snapCenter();
-                return true;
-            } else {
-                return false;
-            }
-        });*/
-
-        writeInitialLevels(false);
-        assignButtons();
-        buttonSound();
-        Intent intent = getIntent();
-        boolean tutorial = intent.getBooleanExtra("Tutorial", false);
-
-        // Activity comes from tutorial
-        if (tutorial) {
-            tutorialRunning = true;
-            SharedPreferences.Editor editor = availableLevels.edit();
-            editor.putBoolean("Tutorial", true);
-            editor.apply();
-            tutorialMuseum();
-        }
-
-
-    }
-
-    void snapCenter(boolean left) {
+    void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
         int horizontalWidth = hsv.getMeasuredWidth();
         int horizontalHeight = hsv.getMeasuredHeight();
         int centerX = hsv.getScrollX() + horizontalWidth / 2;
         int centerY = horizontalHeight / 2;
         int distancePolaroids = scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight();
-        //Log.d("COORDSMIDDLE", centerX + " " + centerY);
         Rect hitRect = new Rect();
         for (int i = 0; i < scroll.getChildCount(); i++) {
             View child = scroll.getChildAt(i);
             child.getHitRect(hitRect);
             // 45 coord distance between polaroids
-            //Log.d("COORDS", i + " " + hitRect.left +" " + hitRect.right);
             // Cover entire space
-
             hitRect.right += 22;
             hitRect.left -= 23;
 
-            //Log.d("COORDS", " " + (scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight()));
-            //Log.d("WIDTH", "" + child.getWidth());
             if (hitRect.contains(centerX, centerY)) {
                 if (left) {
                     int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
@@ -263,60 +167,19 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        scrollX = hsv.getScrollX();
-        scrollY = hsv.getScrollY();
-        mp.setVolume(0f, 0f);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        hsv.post(() -> hsv.scrollTo(scrollX, scrollY));
-        //touchy();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        /*mp.release();
-        mp = null;
-        soundPool.release();
-        soundPool = null;*/
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mp.release();
-        mp = null;
-        soundPool.release();
-        soundPool = null;
-    }
-
-
-    public void assignButtons() {
-        findViewById(R.id.button_unlock).setEnabled(false);
-        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
-        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
-        locked = AnimationUtils.loadAnimation(this, R.anim.locked);
-
-
-        for (char button : Globals.levels) {
+    public void assignScrollElements() {
+        //findViewById(R.id.button_unlock).setEnabled(false);
+        for (char button : levels) {
             int idImage;
             int idButton = getResources()
                 .getIdentifier("button_" + button, "id", this.getPackageName());
             ImageButton iB = findViewById(idButton);
-            if (availableLevels.getInt(button + "", 0) == COMPLETE) {
+            if (availableLevels.getInt(button + "", 0) == levelState.COMPLETED.ordinal()) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
 
-            } else if (availableLevels.getInt(button + "", 0) == UNLOCKED) {
+            } else if (availableLevels.getInt(button + "", 0) == levelState.UNLOCKED.ordinal()) {
 
                 idImage = getResources()
                     .getIdentifier(button + "_polaroid_unlocked", "drawable",
@@ -330,8 +193,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
-    // DialogFragment is deprecated now
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         playInstruction(R.raw.question_reset);
@@ -404,14 +265,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         findViewById(R.id.button_reset).setEnabled(true);
 
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemUI();
-        }
     }
 
     void noTouchy() {
@@ -558,7 +411,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        snapCenter(true);
+                        snap(true);
                         touchy();
 
                     }
@@ -580,7 +433,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        snapCenter(false);
+                        snap(false);
                         touchy();
 
                     }
@@ -594,50 +447,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
                 return;
 
-            case R.id.button_a:
-                level = 'a';
-                break;
-            case R.id.button_b:
-                level = 'b';
-                break;
-            case R.id.button_e:
-                level = 'e';
-                break;
-            case R.id.button_f:
-                level = 'f';
-                break;
-            case R.id.button_i:
-                level = 'i';
-                break;
-            case R.id.button_l:
-                level = 'l';
-                break;
-            case R.id.button_m:
-                level = 'm';
-                break;
-            case R.id.button_n:
-                level = 'n';
-                break;
-            case R.id.button_o:
-                level = 'o';
-                break;
-            case R.id.button_r:
-                level = 'r';
-                break;
-            case R.id.button_s:
-                level = 's';
-                break;
-            case R.id.button_t:
-                level = 't';
-                break;
             default:
-                break;
-
+                String name = getResources().getResourceEntryName(view.getId());
+                level = name.charAt(7);
         }
 
         // Only playable levels
 
-        if (availableLevels.getInt(level.toString(), 0) != LOCKED && !tutorialRunning) {
+        if (availableLevels.getInt(level.toString(), 0) != levelState.LOCKED.ordinal()
+            && !tutorialRunning) {
             Intent intent = new Intent(this, GameActivity.class);
             intent.putExtra("LEVEL", level);
             scaleHalf.setAnimationListener(new Animation.AnimationListener() {
@@ -667,24 +485,4 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Hide the nav bar and status bar
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        }
-    }
-
 }
