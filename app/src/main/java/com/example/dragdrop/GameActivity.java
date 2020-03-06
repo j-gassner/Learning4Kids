@@ -49,15 +49,13 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         runnable = () -> {
             if (stillThere) {
                 // Make instruction interruptable
-                handler = true;
                 playInstruction(areYouStillThere);
+                handler = true;
                 stillThere = false;
             } else {
                 playInstruction(currentInstruction);
                 handler = true;
                 stillThere = true;
-
-                // If user does nothing
             }
             startHandler();
         };
@@ -281,10 +279,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
     void leaveLevel() {
         globals.getAnimalPool().reset();
-        //levelCompleted();
-
         Intent intent = new Intent(this, StartActivity.class);
-
         Handler handler = new Handler();
         if (!backPressed) {
             handler.postDelayed(() -> startActivity(intent), 1000);

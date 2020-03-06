@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -47,17 +46,37 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         runnable = () -> {
             if (!mp.isPlaying()) {
                 // Make instruction interruptable
+                playInstruction(currentInstruction);
                 handler = true;
-                mp.reset();
-                mp = MediaPlayer.create(getApplicationContext(), currentInstruction);
-                mp.setVolume(0.5f, 0.5f);
-                mp.start();
 
                 // If user does nothing
                 startHandler();
             }
         };
 
+    }
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    protected void init() {
+        super.init();
+
+        WINNINGNUMBER = 5;
+        level = 'f';
+
+        // Get other components
+        match = findViewById(R.id.left);
+        noMatch = findViewById(R.id.right);
+
+        // Sounds
+        soundLetter = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
+        soundAnimal = getResources()
+            .getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
+
+        // Letter "progress bar"
+        int idImage = getResources()
+            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
+        splitImage(bm);
     }
 
     public void startHandler() {
@@ -134,18 +153,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialSubmarine() {
+        sound = false;
         playInstruction(R.raw.tutorial_submarine);
         mp.setOnCompletionListener(mp -> tutorialAnimal());
-    }
-
-    void tutorialSpeaker() {
-        playInstruction(R.raw.tutorial_speaker);
-        mp.setOnCompletionListener(mp -> {
-            sound = true;
-            buttonSpeaker.setEnabled(true);
-            currentInstruction = R.raw.instruction_speaker;
-            startHandler();
-        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -158,7 +168,18 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    void tutorialSpeaker() {
+        playInstruction(R.raw.tutorial_speaker);
+        mp.setOnCompletionListener(mp -> {
+            sound = true;
+            buttonSpeaker.setEnabled(true);
+            currentInstruction = R.raw.instruction_speaker;
+            startHandler();
+        });
+    }
+
     void tutorialProgress() {
+        sound = false;
         playInstruction(R.raw.tutorial_progress);
         mp.setOnCompletionListener(mp -> tutorialFlug());
 
@@ -188,12 +209,14 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialColorChange() {
         arrow.setVisibility(View.INVISIBLE);
+        sound = false;
         playInstruction(R.raw.tutorial_colorchange);
         mp.setOnCompletionListener(mp -> displayAnimal());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLionRight() {
+        sound = false;
         playInstruction(R.raw.tutorial_loewe_correct);
         mp.setOnCompletionListener(mp -> {
             sound = true;
@@ -219,6 +242,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialProgressLost() {
         arrow.setVisibility(View.INVISIBLE);
+        sound = false;
         playInstruction(R.raw.tutorial_progress_lost);
         mp.setOnCompletionListener(mp -> displayAnimal());
     }
@@ -227,18 +251,16 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialDragFalse() {
         // Drag wrong
-
-        View.OnTouchListener ot = this;
-        View.OnDragListener od = this;
         arrow = findViewById(R.id.button_point_submarine);
+        sound = false;
         playInstruction(R.raw.instruction_loewe_wrong);
         mp.setOnCompletionListener(mp -> {
             sound = true;
             currentInstruction = R.raw.instruction_loewe_wrong;
             startHandler();
             arrow.setVisibility(View.VISIBLE);
-            animal.setOnTouchListener(ot);
-            match.setOnDragListener(od);
+            animal.setOnTouchListener(this);
+            match.setOnDragListener(this);
             noMatch.setOnDragListener(null);
         });
     }
@@ -250,6 +272,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         new Handler().postDelayed(() -> buttonBack.setAlpha(1.0f), 500);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
+        sound = false;
         playInstruction(R.raw.tutorial_back);
         mp.setOnCompletionListener(mp -> {
             currentInstruction = R.raw.instruction_back;
@@ -259,29 +282,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
-
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    protected void init() {
-        super.init();
-
-        WINNINGNUMBER = 5;
-        level = 'f';
-
-        // Get other components
-        match = findViewById(R.id.left);
-        noMatch = findViewById(R.id.right);
-
-        // Sounds
-        soundLetter = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
-        soundAnimal = getResources()
-            .getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
-
-        // Letter "progress bar"
-        int idImage = getResources()
-            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
-        splitImage(bm);
-    }
 
 
 

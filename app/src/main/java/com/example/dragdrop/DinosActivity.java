@@ -24,8 +24,6 @@ public class DinosActivity extends ScrollActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinos);
-        /*loadAnimations();
-        loadButtonSound();*/
     }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
