@@ -6,7 +6,7 @@
   android:orientation="horizontal"
   android:soundEffectsEnabled="true"
   android:id="@+id/fl"
-  tools:context=".GameActivity">
+  tools:context="de.tum.in.l4k.weltreise.GameActivity">
 
     <ImageView
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.dragdrop">
+  xmlns:tools="http://schemas.android.com/tools"
+  package="de.tum.in.l4k.weltreise">
 
     <application
         android:allowBackup="true"
@@ -9,9 +10,11 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".Globals">
-        <activity android:name=".MainActivity"
-            android:screenOrientation="sensorLandscape">
+      android:name="de.tum.in.l4k.weltreise.Globals">
+        <activity
+          android:name="de.tum.in.l4k.weltreise.MainActivity"
+          android:screenOrientation="sensorLandscape"
+          tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,17 +22,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".StartActivity"
-            android:screenOrientation="sensorLandscape"/>
+          android:name="de.tum.in.l4k.weltreise.StartActivity"
+          android:screenOrientation="sensorLandscape"
+          tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".GameActivity"
-            android:screenOrientation="sensorLandscape"/>
+          android:name="de.tum.in.l4k.weltreise.GameActivity"
+          android:screenOrientation="sensorLandscape"
+          tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".DinosActivity"
-            android:screenOrientation="sensorLandscape"/>
+          android:name="de.tum.in.l4k.weltreise.DinosActivity"
+          android:screenOrientation="sensorLandscape"
+          tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".TutorialActivity"
-            android:screenOrientation="sensorLandscape"/>
+          android:name="de.tum.in.l4k.weltreise.TutorialActivity"
+          android:screenOrientation="sensorLandscape"
+          tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

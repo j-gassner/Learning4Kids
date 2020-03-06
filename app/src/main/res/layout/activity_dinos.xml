@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:background="@drawable/museum"
 
-    tools:context=".DinosActivity">
+  tools:context="de.tum.in.l4k.weltreise.DinosActivity">
 
     <ImageButton
         android:layout_width="120dp"

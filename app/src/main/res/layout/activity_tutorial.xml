@@ -5,7 +5,7 @@
   android:layout_height="fill_parent"
   android:orientation="horizontal"
   android:soundEffectsEnabled="true"
-  tools:context=".TutorialActivity">
+  tools:context="de.tum.in.l4k.weltreise.TutorialActivity">
 
     <ImageView
       android:id="@+id/tutorial_background"

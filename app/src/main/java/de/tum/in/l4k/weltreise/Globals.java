@@ -1,4 +1,4 @@
-package com.example.dragdrop;
+package de.tum.in.l4k.weltreise;
 
 import android.app.Application;
 import android.content.res.Resources;

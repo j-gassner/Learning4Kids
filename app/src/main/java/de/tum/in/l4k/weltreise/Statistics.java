@@ -1,4 +1,4 @@
-package com.example.dragdrop;
+package de.tum.in.l4k.weltreise;
 
 import java.util.ArrayList;
 import java.util.Arrays;

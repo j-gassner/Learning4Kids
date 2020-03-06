@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="horizontal"
     android:background="@drawable/blackboard_menu"
-    tools:context=".StartActivity">
+  tools:context="de.tum.in.l4k.weltreise.StartActivity">
 
     <ImageButton
         android:layout_width="60dp"
