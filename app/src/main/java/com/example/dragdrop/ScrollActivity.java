@@ -1,11 +1,8 @@
 package com.example.dragdrop;
 
-import android.annotation.SuppressLint;
 import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import androidx.annotation.RequiresApi;
@@ -26,16 +23,6 @@ public abstract class ScrollActivity extends BaseActivity {
     abstract void snap(boolean left);
 
     abstract void assignScrollElements();
-
-    @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        hideSystemUI();
-        loadButtonSounds();
-        loadAnimations();
-    }
 
     @Override
     protected void onStart() {
@@ -80,12 +67,6 @@ public abstract class ScrollActivity extends BaseActivity {
                 }
 
             });
-    }
-
-    void loadAnimations() {
-        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
-        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
-
     }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)

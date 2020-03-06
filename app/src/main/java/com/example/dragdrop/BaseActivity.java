@@ -1,13 +1,16 @@
 package com.example.dragdrop;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
@@ -25,6 +28,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     boolean loaded;
 
     enum levelState {LOCKED, UNLOCKED, COMPLETED}
+
+    @SuppressLint("ClickableViewAccessibility")
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        hideSystemUI();
+        loadButtonSounds();
+        loadAnimations();
+    }
 
     void playInstruction(int resID) {
         mp.reset();
@@ -44,6 +57,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         soundPool.setOnLoadCompleteListener(
             (soundPool, sampleId, status) -> loaded = true);
+    }
+
+    void loadAnimations() {
+        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
+        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
     }
 
     void hideSystemUI() {

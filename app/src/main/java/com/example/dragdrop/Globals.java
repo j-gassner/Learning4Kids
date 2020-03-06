@@ -2,9 +2,6 @@ package com.example.dragdrop;
 
 import android.app.Application;
 import android.content.res.Resources;
-import android.util.Log;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +39,6 @@ public class Globals extends Application {
 
                 if (id.contains("animal")) {
                     filenames.add(id);
-                    Log.d("NAMES", id);
                 }
             } catch (Exception e) {
 

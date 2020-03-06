@@ -6,82 +6,45 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
-import android.media.AudioAttributes;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.media.SoundPool;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
-public class GameActivity extends BaseActivity implements View.OnTouchListener,
+public class GameActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
-    private int WINNINGNUMBER = 5;
-    private ImageView animal;
-    private int animalSound;
-    private int letterSound;
-    private ImageView background;
-    private LinearLayout match, middle, noMatch;
     private Animals animalPool = new Animals();
-    private LevelCollection levels;
-    private boolean fit;
-    private int correctMatches;
+    private LevelCollection levelCollection;
     private static Random rand = new Random();
     private Globals globals;
-    private int animalID;
-    private int step;
-    Animation zoom, flash;
-    boolean stillThere, isRunning;
-    Handler handleInactivity;
-    Runnable runnable;
-    ArrayList<ImageView> fragments;
-    ArrayList<Integer> colors = new ArrayList<>(
-        Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
-            R.color.green, R.color.orange, R.color.purple));
+    boolean stillThere;
     int counterCorrect, counterWrong;
-    static int[] sounds;
-    boolean loaded;
-    static int button = 0;
-    static int camera = 1;
-    static int correct = 2;
-    static int wrong = 3;
-    boolean sound;
-    ImageButton letterButton, speakerButton, backButton;
-    boolean backPressed, handler;
-    int currentInstruction, areYouStillThere;
+    boolean backPressed;
+    int areYouStillThere;
 
 
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_game);
-        hideSystemUI();
-        sounds = new int[4];
+        inactivityHandler();
+    }
 
+    void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
             if (stillThere) {
@@ -102,147 +65,66 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
     }
 
     public void startHandler() {
-        isRunning = true;
+        super.startHandler();
         handleInactivity.postDelayed(runnable, 30000); //for 30 seconds
     }
 
-    public void stopHandler() {
-        isRunning = false;
-        handleInactivity.removeCallbacks(runnable);
-    }
-
-
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    @Override
-    protected void onResume() {
-        super.onResume();
-        removeColor();
-    }
-
-    @Override
-    public void onUserInteraction() {
-        super.onUserInteraction();
-
-        if (mp.isPlaying() && handler) {
-            mp.stop();
-            handler = false;
-        }
-
-        if (isRunning) {
-            stopHandler();
-            startHandler();
-        }
-
-    }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
-        super.onStart();
-        //noTouchy();
         // Get Level and list of animals
         Intent intent = getIntent();
         level = intent.getCharExtra("LEVEL", 'f');
-        Log.d("LEVEL", level.toString());
+        super.onStart();
         globals = (Globals) getApplication();
         animalPool = globals.getAnimalPool();
-        init();
-
-        implementEvents();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopHandler();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        //mCountDown.cancel();
-        //stopHandler();
-        /*mp.release();
-        mp = null;
-        soundPool.release();
-        soundPool = null;*/
-
     }
 
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
-        buttonSounds();
-
+        super.init();
+        levelCollection = new LevelCollection(this);
+        WINNINGNUMBER = levelCollection.getLevel(level).getWinningNumber();
         areYouStillThere = R.raw.are_you_still_there;
-
-        letterButton = findViewById(R.id.button_letter);
-        speakerButton = findViewById(R.id.button_animal);
-        backButton = findViewById(R.id.button_back);
-        //findViewById(R.id.button_back).setEnabled(false);
-        //new Handler().postDelayed(() -> findViewById(R.id.button_back).setEnabled(true), 100);
-        /*letterButton.setEnabled(false);
-        speaker.setEnabled(false);*/
+        soundLetter = getResources()
+            .getIdentifier(level + "_sound", "raw", this.getPackageName());
         currentInstruction = getResources()
             .getIdentifier("instruction_" + level, "raw", this.getPackageName());
-        //instr = MediaPlayer.create(this, intro);
-        //assignAnimals();
-        flash = AnimationUtils.loadAnimation(this, R.anim.flash);
-        zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
-        scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
-        scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
-        levels = new LevelCollection(this);
-        animal = findViewById(R.id.animal);
-        background = findViewById(R.id.level_background);
-        background.setImageResource(levels.getLevel(level).getBackgroundID());
-        WINNINGNUMBER = levels.getLevel(level).getWinningNumber();
-        //background.setBackgroundResource(levels.getLevel(level).getBackgroundID());
-        //findViewById(R.id.button_animal).setEnabled(true);
 
-        if (levels.getLevel(level).getIsLeft()) {
+        if (levelCollection.getLevel(level).getIsLeft()) {
             match = findViewById(R.id.left);
             noMatch = findViewById(R.id.right);
         } else {
             match = findViewById(R.id.right);
             noMatch = findViewById(R.id.left);
         }
-        middle = findViewById(R.id.middle);
+        ImageView background = findViewById(R.id.level_background);
+        background.setImageResource(levelCollection.getLevel(level).getBackgroundID());
         setLetterButton();
+        implementEvents();
 
         // Intro
         AssetFileDescriptor afd = getResources().openRawResourceFd(currentInstruction);
         try {
             mp.reset();
+            mp.setVolume(0.5f, 0.5f);
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
                 afd.getDeclaredLength());
             mp.prepareAsync();
 
-            //mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
-            mp.setOnPreparedListener(new OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    //prepared = true;
-                    new Handler().postDelayed(mp::start, 500);
+            mp.setOnPreparedListener(mp -> {
+                new Handler().postDelayed(mp::start, 500);
 
-                }
             });
-            //new Handler().postDelayed(() -> findViewById(R.id.button_back).setEnabled(true), 500);
 
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    //letterButton.setEnabled(true);
-                    //speaker.setEnabled(true);
-                    //mp.reset();
-                    new Handler().postDelayed(() -> disPlayAnimal(), 500);
-                    startHandler();
-                    //mCountDown.start();
-                    isRunning = true;
-                    //touchy();
-                }
+            mp.setOnCompletionListener(mp -> {
+
+                new Handler().postDelayed(this::displayAnimal, 500);
+
+                startHandler();
+                isRunning = true;
             });
 
             afd.close();
@@ -256,38 +138,17 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         }
     }
 
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    void buttonSounds() {
-        AudioAttributes attributes = new AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build();
-
-        soundPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(1).build();
-
-        soundPool.setOnLoadCompleteListener(
-            (soundPool, sampleId, status) -> loaded = true);
-        sounds[button] = soundPool.load(this, R.raw.button, 1);
-        sounds[camera] = soundPool.load(this, R.raw.camera, 1);
-        sounds[correct] = soundPool.load(this, R.raw.sound_positive, 1);
-        sounds[wrong] = soundPool.load(this, R.raw.sound_negative, 1);
-
-    }
 
     void setLetterButton() {
-        /*letterSound = getResources().getIdentifier(level + "_sound", "raw", this.getPackageName());
-        loaded = false;
-        sounds[currentLetter] = soundPool.load(this, letterSound, 1);*/
-        ImageButton iB = findViewById(R.id.button_letter);
+        buttonLetter = findViewById(R.id.button_letter);
         int idImage = getResources()
             .getIdentifier(level + "_letter_outline", "drawable", this.getPackageName());
-        iB.setImageResource(idImage);
-        iB.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        buttonLetter.setImageResource(idImage);
+        buttonLetter.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         // Letter "progress bar"
         idImage = getResources()
             .getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());
-        Log.d("IDIMAGENULL ", idImage + "");
 
         //Define a bitmap with the same size as the view
 
@@ -305,55 +166,6 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
     }
 
-    // Cut image horizontally
-    void splitImage(Bitmap image) {
-        fragments = new ArrayList<>(WINNINGNUMBER);
-        int y = 0;
-        Log.d("HEIGHTORIG", image.getHeight() + "");
-        for (int i = 0; i < WINNINGNUMBER; i++) {
-            ImageView frag = new ImageView(getApplicationContext());
-            frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(),
-                (int) (Math.ceil(image.getHeight() / WINNINGNUMBER))));
-            fragments.add(frag);
-
-            // Avoid lines during animation
-            y += (int) (image.getHeight() / WINNINGNUMBER);
-        }
-
-    }
-
-
-    void showProgress(int step) {
-        RelativeLayout progress = findViewById(R.id.image_progress);
-        int chunkSize = (int) Math.ceil(progress.getHeight() / WINNINGNUMBER);
-        ImageView fragment = fragments.get(fragments.size() - step);
-        /*int color = step - 1;
-        if(color >= colors.size())
-            color %= colors.size();
-        DrawableCompat.setTint(fragment.getDrawable(), ContextCompat.getColor(getApplicationContext(), colors.get(color)));
-*/
-        Log.d("BITMAP", fragment.getHeight() + "");
-        //ImageView frag = new ImageView(getApplicationContext());
-        //frag.setImageBitmap(fragment);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(),
-            (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
-        params.leftMargin = 0;
-        params.topMargin = progress.getHeight() - chunkSize * step;
-        progress.addView(fragment, params);
-
-        fragment.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-    }
-
-    void removeProgress(int step) {
-        if (step == 0) {
-            return;
-        }
-        RelativeLayout progress = findViewById(R.id.image_progress);
-        ImageView fragment = fragments.get(fragments.size() - step);
-        Log.d("BITMAP", fragment.getHeight() + "");
-        progress.removeView(fragment);
-    }
 
     public void cameraFlash() {
         // White
@@ -364,9 +176,8 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         flash.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                //mp.start();
                 if (loaded) {
-                    soundPool.play(sounds[camera], 1f, 1f, 1, 0, 1f);
+                    soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
                 }
 
             }
@@ -383,8 +194,6 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         });
         layover.startAnimation(flash);
 
-        //mp.start();
-
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         if (availableLevels.getInt(level.toString(), 0) == levelState.UNLOCKED.ordinal()) {
             Handler handler = new Handler();
@@ -398,59 +207,52 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
     //Set position of animal image and display
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
-    private void disPlayAnimal() {
+    void displayAnimal() {
 
         animal.setOnTouchListener(this);
         // Level done
         if (correctMatches == WINNINGNUMBER) {
+            //levelCompleted();
             sound = false;
-            //mCountDown.cancel();
             stopHandler();
 
-            playInstruction(R.raw.complete_sound);
+            if (!backPressed)
+                playInstruction(R.raw.complete_sound);
             mp.setOnCompletionListener(mp -> cameraFlash());
 
             return;
         }
-        //Log.d("NEW ANIMAL", " METHOD CALLED");
-
         ViewGroup owner = (ViewGroup) animal.getParent();
         owner.removeView(animal);
         middle.addView(animal);
 
         // n% chance correct letter
-        if (rand.nextInt(100) < levels.getLevel(level).getDifficulty()) {
+        if (rand.nextInt(100) < levelCollection.getLevel(level).getDifficulty()) {
             animalID = animalPool.getAnimal(level);
             animal.setImageResource(animalID);
-            //animal.setScaleType(ImageView.ScaleType.FIT_END);
 
             // Sound
             String name = getResources().getResourceEntryName(animalID);
-            Log.d("Sound name ", name);
             name = name.replace("animal", "");
-            Log.d("Sound name ", name);
-            animalSound = getResources()
+            soundAnimal = getResources()
                 .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
             fit = true;
         } else {
             animalID = animalPool.getDistractorAnimal(level);
             animal.setImageResource(animalID);
-            //animal.setScaleType(ImageView.ScaleType.FIT_END);
 
             // Sound
             String name = getResources().getResourceEntryName(animalID);
-            Log.d("Sound name ", name);
             name = name.replace("animal", "");
-            Log.d("Sound name ", name);
-            animalSound = getResources()
+            soundAnimal = getResources()
                 .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
             fit = false;
         }
 
         mp.reset();
-        mp = MediaPlayer.create(this, animalSound);
+        mp = MediaPlayer.create(this, soundAnimal);
         if (!backPressed) {
             mp.setVolume(0.5f, 0.5f);
             mp.start();
@@ -458,41 +260,10 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
                 sound = true;
             });
         }
-        positionAnimal();
+        positionAnimal(false);
 
     }
 
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    void positionAnimal() {
-        // Center ImageView
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) animal.getLayoutParams();
-        params.gravity = Gravity.CENTER_HORIZONTAL;
-        animal.setLayoutParams(params);
-
-        // Set image position inside ImageView
-        Matrix matrix = animal.getImageMatrix();
-        matrix.reset();
-        Drawable draw = getResources().getDrawable(animalID, getTheme());
-        float vWidth = animal.getWidth();
-        float vHeight = animal.getHeight();
-        float dWidth = draw.getIntrinsicWidth();
-        float dHeight = draw.getIntrinsicHeight();
-
-        float scalingFactor;
-        if (dWidth > dHeight) {
-            scalingFactor = vWidth / dWidth;
-        } else {
-            scalingFactor = vHeight / dHeight;
-        }
-        matrix.postScale(scalingFactor, scalingFactor);
-
-        dWidth *= scalingFactor;
-        dHeight *= scalingFactor;
-        // Bottom center
-        matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
-            Math.round((vHeight - dHeight)));
-        animal.setImageMatrix(matrix);
-    }
 
     void levelCompleted() {
         writePreferences(level, levelState.COMPLETED.ordinal());
@@ -510,13 +281,15 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
     void leaveLevel() {
         globals.getAnimalPool().reset();
-        levelCompleted();
+        //levelCompleted();
 
         Intent intent = new Intent(this, StartActivity.class);
 
         Handler handler = new Handler();
-        handler.postDelayed(() -> startActivity(intent), 1000);
-        handler.postDelayed(this::finish, 1000);
+        if (!backPressed) {
+            handler.postDelayed(() -> startActivity(intent), 1000);
+            handler.postDelayed(this::finish, 1000);
+        }
 
     }
 
@@ -532,31 +305,7 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         animalID = getResources().getIdentifier("dino_" + level, "drawable", getPackageName());
         animal.setImageResource(animalID);
 
-        // Set image position inside ImageView
-        Matrix matrix = animal.getImageMatrix();
-        matrix.reset();
-        Drawable draw = getResources().getDrawable(animalID, getTheme());
-        draw.clearColorFilter();
-        float vWidth = animal.getWidth();
-        float vHeight = animal.getHeight();
-        float dWidth = draw.getIntrinsicWidth();
-        float dHeight = draw.getIntrinsicHeight();
-
-        float scalingFactor;
-        if (dWidth > dHeight) {
-            scalingFactor = vWidth / dWidth;
-        } else {
-            scalingFactor = vHeight / dHeight;
-        }
-        //Log.d("Scaling ", scalingFactor + "");
-        matrix.postScale(scalingFactor, scalingFactor);
-
-        dWidth *= scalingFactor;
-        dHeight *= scalingFactor;
-        // Bottom center
-        matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
-            Math.round((vHeight - dHeight)));
-        animal.setImageMatrix(matrix);
+        positionAnimal(true);
 
         animal.setY(animal.getY() - 100);
         String packageName = this.getPackageName();
@@ -566,57 +315,20 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         animal.startAnimation(zoom);
     }
 
-    //Implement long click and drag listener
-    @SuppressLint("ClickableViewAccessibility")
-    private void implementEvents() {
-        //add or remove any view that you want to be dragged
-        animal.setOnTouchListener(this);
-
-        //add or remove any layout view that you want to accept dragged view
-        match.setOnDragListener(this);
-        middle.setOnDragListener(this);
-        noMatch.setOnDragListener(this);
-
-    }
-
-
-    @RequiresApi(api = VERSION_CODES.N)
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            view.startDrag(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
-            //view.setVisibility(View.INVISIBLE);
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
     @RequiresApi(api = VERSION_CODES.N)
     void drop(View view, LinearLayout container) {
-        sound = false;
-        mp.reset();
-
-        // Accept view
-        ViewGroup owner = (ViewGroup) view.getParent();
-        owner.removeView(view);
-        container.addView(view);
-        // Avoid animal being dragged away again
-        view.setOnTouchListener(null);
+        super.drop(view, container);
 
         // Praise randomly
         if (counterCorrect == 3) {
             counterCorrect = 0;
             int nr = rand.nextInt(6) + 1;
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
-            //mp.reset();
+            mp.reset();
             mp = MediaPlayer.create(this, praise);
             mp.setVolume(0.5f, 0.5f);
             new Handler().postDelayed(() -> mp.start(), 500);
-            mp.setOnCompletionListener(mp -> disPlayAnimal());
+            mp.setOnCompletionListener(mp -> displayAnimal());
 
             // encourage randomly
         } else if (counterWrong == 3) {
@@ -624,58 +336,18 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
             int nr = rand.nextInt(4) + 1;
             int praise = getResources()
                 .getIdentifier("encourage" + nr, "raw", this.getPackageName());
-            //mp.reset();
+            mp.reset();
             mp = MediaPlayer.create(this, praise);
             mp.setVolume(0.5f, 0.5f);
             new Handler().postDelayed(() -> mp.start(), 500);
             mp.setOnCompletionListener(mp -> {
-                disPlayAnimal();
+                displayAnimal();
             });
         } else {
-            view.postDelayed(this::disPlayAnimal, 1000);
+            view.postDelayed(this::displayAnimal, 1000);
         }
     }
 
-    void changeColor() {
-        if (step >= colors.size()) {
-            step %= colors.size();
-        }
-
-        // i is red per default
-        if (level == 'i' && step == 0) {
-            step++;
-        }
-        for (ImageView fragment : fragments) {
-            DrawableCompat.setTint(fragment.getDrawable(),
-                ContextCompat.getColor(getApplicationContext(), colors.get(step)));
-        }
-
-        // Change color of letter
-        ImageButton iB = findViewById(R.id.button_letter);
-        DrawableCompat.setTint(iB.getDrawable(), ContextCompat
-            .getColor(getApplicationContext(), colors.get((step + 1) % colors.size())));
-    }
-
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    void removeColor() {
-        for (ImageView fragment : fragments) {
-            fragment.getDrawable().setTintList(null);
-        }
-
-        // Change color of letter
-        ImageButton iB = findViewById(R.id.button_letter);
-        iB.getDrawable().setTintList(null);
-
-    }
-
-    void playInstruction(int resID) {
-        //sound = false;
-        mp.reset();
-        mp = MediaPlayer.create(this, resID);
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
-
-    }
 
     // This is the method that the system calls when it dispatches a drag event to the
     // listener.
@@ -696,27 +368,18 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
                 // Match
                 if (fit && container.getId() == match.getId()) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.image_progress);
-                    View letter = findViewById(R.id.button_letter);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
-
                     animalPool.getAnimalMapCurrent().get(level).remove(new Integer(animalID));
                     counterCorrect++;
                     correctMatches++;
                     counterWrong = 0;
+                    dragAnimal(view, container, shortSounds.CORRECT.ordinal());
 
                     // True positive
                     globals.getStatistics().addToStatistics(animalID, 0);
                     showProgress(correctMatches);
 
-                    if (loaded) {
-                        soundPool.play(sounds[correct], 1f, 1f, 1, 0, 1f);
-                    }
-                    drop(view, container);
-
                     if (correctMatches == WINNINGNUMBER) {
+                        levelCompleted();
                         new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     }
 
@@ -724,14 +387,9 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
                 // No Match
                 else if (!fit && container.getId() == noMatch.getId()) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.image_progress);
-                    View letter = findViewById(R.id.button_letter);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
-
                     counterCorrect++;
                     counterWrong = 0;
+                    dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     Character lvl = getResources().getResourceEntryName(animalID).charAt(0);
 
                     // valueOf does not work here
@@ -739,30 +397,19 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
                     // True negative
                     globals.getStatistics().addToStatistics(animalID, 1);
-
-                    if (loaded) {
-                        soundPool.play(sounds[correct], 1f, 1f, 1, 0, 1f);
-                    }
                     changeColor();
-                    step++;
-                    drop(view, container);
-
+                    colorChange++;
                 }
 
                 // Wrong
                 else if (container.getId() != middle.getId()) {
-                    // Animation
-                    RelativeLayout progress = findViewById(R.id.image_progress);
-                    View letter = findViewById(R.id.button_letter);
-                    progress.startAnimation(scale);
-                    letter.startAnimation(scale);
-
                     counterWrong++;
                     counterCorrect = 0;
                     if (correctMatches > 0) {
                         removeProgress(correctMatches);
                         correctMatches--;
                     }
+                    dragAnimal(view, container, shortSounds.WRONG.ordinal());
 
                     // False positive
                     if (!fit && container.getId() == match.getId()) {
@@ -773,15 +420,10 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
                         globals.getStatistics().addToStatistics(animalID, 3);
                     }
 
-                    if (loaded) {
-                        soundPool.play(sounds[wrong], 1f, 1f, 1, 0, 1f);
-                    }
-                    drop(view, container);
                 }
 
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                Log.d("drag", "Drag ended");
                 view.setVisibility(View.VISIBLE);
                 break;
 
@@ -795,26 +437,24 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
 
     public void onClick(View view) {
         // Letter button
-        if (view.getId() == letterButton.getId()) {
+        if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
 
             if (!mp.isPlaying() && sound) {
-                letterSound = getResources()
-                    .getIdentifier(level + "_sound", "raw", this.getPackageName());
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
-                playInstruction(letterSound);
+                playInstruction(soundLetter);
 
             } else {
                 progress.startAnimation(scaleHalf);
                 view.startAnimation(scaleHalf);
             }
 
-        } else if (view.getId() == speakerButton.getId()) {
+        } else if (view.getId() == buttonSpeaker.getId()) {
 
             if (!mp.isPlaying() && sound) {
                 view.startAnimation(scale);
-                playInstruction(animalSound);
+                playInstruction(soundAnimal);
 
             } else
             // Button inactive / no sound
@@ -826,12 +466,12 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
         // Back button
         else {
             backPressed = true;
-            backButton.setEnabled(false);
-            speakerButton.setEnabled(false);
-            letterButton.setEnabled(false);
+            buttonBack.setEnabled(false);
+            buttonSpeaker.setEnabled(false);
+            buttonLetter.setEnabled(false);
 
             if (loaded) {
-                soundPool.play(sounds[button], 1f, 1f, 1, 0, 1f);
+                soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
             }
 
             Intent intent = new Intent(this, StartActivity.class);
@@ -849,20 +489,14 @@ public class GameActivity extends BaseActivity implements View.OnTouchListener,
                 public void onAnimationEnd(Animation animation) {
                     if (mp.isPlaying()) {
                         mp.stop();
-
-                    }
-                    if (correctMatches == WINNINGNUMBER) {
-                        levelCompleted();
                     }
                     // reset animal pool because we leave the level
                     animalPool.reset();
                     startActivity(intent);
                     finish();
-
                 }
             });
             view.startAnimation(scale);
-
 
         }
     }
