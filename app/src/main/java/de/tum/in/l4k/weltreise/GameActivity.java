@@ -7,8 +7,8 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +33,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     private Globals globals;
     boolean stillThere;
     int counterCorrect, counterWrong;
-    boolean backPressed;
+    boolean backPressed, dino;
     int areYouStillThere;
 
 
@@ -178,28 +178,29 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 if (loaded) {
                     soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
                 }
-
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
-
             @RequiresApi(api = VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationEnd(Animation animation) {
                 layover.setBackground(null);
+                if (dino && !backPressed) {
+                    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                        displayDino();
+                    }
+                    return;
+                }
+                if (!backPressed) {
+                    leaveLevel();
+                }
+
             }
         });
         layover.startAnimation(flash);
 
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-        if (availableLevels.getInt(level.toString(), 0) == levelState.UNLOCKED.ordinal()) {
-            Handler handler = new Handler();
-            handler.postDelayed(this::displayDino, 1000);
-            return;
-        }
-        leaveLevel();
+
 
     }
 
@@ -265,6 +266,10 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
 
     void levelCompleted() {
+        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        if (availableLevels.getInt(level.toString(), 0) == levelState.UNLOCKED.ordinal()) {
+            dino = true;
+        }
         writePreferences(level, levelState.COMPLETED.ordinal());
         SharedPreferences.Editor editor = availableLevels.edit();
         editor.putBoolean("Tutorial", true);
@@ -282,10 +287,10 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         globals.getAnimalPool().reset();
         Intent intent = new Intent(this, StartActivity.class);
         Handler handler = new Handler();
-        if (!backPressed) {
+        // if (!backPressed) {
             handler.postDelayed(() -> startActivity(intent), 1000);
             handler.postDelayed(this::finish, 1000);
-        }
+        //}
 
     }
 
@@ -322,12 +327,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
             // Avoid animalSound being cut off by praise/encouragement
             if (mp.isPlaying()) {
-                mp.setOnCompletionListener(new OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        praiseEncourage(praise);
-                    }
-                });
+                mp.setOnCompletionListener(mp -> praiseEncourage(praise));
             } else {
                 praiseEncourage(praise);
             }
@@ -339,12 +339,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             int encourage = getResources()
                 .getIdentifier("encourage" + nr, "raw", this.getPackageName());
             if (mp.isPlaying()) {
-                mp.setOnCompletionListener(new OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        praiseEncourage(encourage);
-                    }
-                });
+                mp.setOnCompletionListener(mp -> praiseEncourage(encourage));
             } else {
                 praiseEncourage(encourage);
             }
