@@ -4,24 +4,19 @@ import android.app.Application;
 import android.content.res.Resources;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Globals extends Application {
     private Animals animalPool;
-    private Statistics statistics = new Statistics();
-    static ArrayList<Character> levels = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
+    //private Statistics statistics = new Statistics();
+    //static ArrayList<Character> levels = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
     public Animals getAnimalPool(){
         return this.animalPool;
     }
 
-    public ArrayList<Character> getLevels(){
-        return levels;
-    }
-
-    public Statistics getStatistics(){
+    /*public Statistics getStatistics(){
         return this.statistics;
-    }
+    }*/
 
     public void setAnimalPool(){
         animalPool = new Animals();
@@ -41,7 +36,7 @@ public class Globals extends Application {
                     filenames.add(id);
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -49,14 +44,16 @@ public class Globals extends Application {
         for (String filename : filenames) {
             Character firstLetter = filename.charAt(0);
             final int resourceId = resources.getIdentifier(filename, "drawable", getPackageName());
-            statistics.addToIDList(resourceId, filename.replace("_animal", ""));
-            if (!animalPool.getAnimalMapCurrent().containsKey(firstLetter)) {
-                animalPool.getAnimalMapCurrent().put(firstLetter, new ArrayList<>());
+            //statistics.addToIDList(resourceId, filename.replace("_animal", ""));
+            if (!animalPool.getAnimalMap().containsKey(firstLetter)) {
+                //animalPool.getAnimalMapCurrent().put(firstLetter, new ArrayList<>());
                 animalPool.getAnimalMap().put(firstLetter, new ArrayList<>());
             }
-            assert animalPool.getAnimalMapCurrent().get(firstLetter) != null;
-            animalPool.getAnimalMapCurrent().get(firstLetter).add(resourceId);
+            assert animalPool.getAnimalMap().get(firstLetter) != null;
+            //animalPool.getAnimalMapCurrent().get(firstLetter).add(resourceId);
             animalPool.getAnimalMap().get(firstLetter).add(resourceId);
         }
+
+        animalPool.reset();
     }
 }

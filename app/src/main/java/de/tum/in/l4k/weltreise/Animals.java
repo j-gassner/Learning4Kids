@@ -14,7 +14,6 @@ import java.util.TreeSet;
 // Faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
 @SuppressWarnings("serial")
 class Animals implements Serializable {
-
     private static Random rand = new Random();
 
     // HashMap Character -> ArrayList of animals
@@ -80,7 +79,7 @@ class Animals implements Serializable {
     }
 
     // Deepcopy of HashMap
-    private static HashMap<Character, ArrayList<Integer>> copy(
+    static HashMap<Character, ArrayList<Integer>> copy(
         HashMap<Character, ArrayList<Integer>> original) {
         HashMap<Character, ArrayList<Integer>> copy = new HashMap<>();
         for (Map.Entry<Character, ArrayList<Integer>> entry : original.entrySet()) {

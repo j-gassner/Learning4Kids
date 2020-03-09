@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,23 +21,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         Intent intent;
-        /*if(availableLevels.getString("Name", "").equals("" ))
-            intent = new Intent(this, NameActivity.class);*/
 
         // Start tutorial on first start
-        if(!availableLevels.getBoolean("Tutorial", false) && availableLevels.getInt("f", 1) != 2)
+        if (!availableLevels.getBoolean("Tutorial", false) && availableLevels.getInt("f", 1) != 2) {
             intent = new Intent(this, TutorialActivity.class);
-        else
+        } else {
             intent = new Intent(this, StartActivity.class);
-        //intent.putExtra("animalPool", animalPool);
+        }
         Handler handler = new Handler();
         handler.postDelayed(() -> startActivity(intent), 1000);
-
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
 
     }
 
@@ -55,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 

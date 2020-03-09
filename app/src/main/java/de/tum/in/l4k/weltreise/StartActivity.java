@@ -87,7 +87,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         for (char level : levels) {
             editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
         }
-        editor.putInt("f", levelState.UNLOCKED.ordinal());
+        //editor.putInt("f", levelState.UNLOCKED.ordinal());
         editor.apply();
         assignScrollElements();
 

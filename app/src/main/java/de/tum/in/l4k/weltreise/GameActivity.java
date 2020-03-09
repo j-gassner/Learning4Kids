@@ -7,6 +7,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -214,8 +215,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             sound = false;
             stopHandler();
 
-            if (!backPressed)
-                playInstruction(R.raw.complete_sound);
+            //if (!backPressed)
+            playInstruction(R.raw.complete_sound);
             mp.setOnCompletionListener(mp -> cameraFlash());
 
             return;
@@ -269,8 +270,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         editor.putBoolean("Tutorial", true);
         editor.apply();
         if (level != 't') {
-            int index = globals.getLevels().indexOf(level);
-            Character nextLevel = globals.getLevels().get(index + 1);
+            int index = levels.indexOf(level);
+            Character nextLevel = levels.get(index + 1);
             if (availableLevels.getInt(nextLevel.toString(), 0) == levelState.LOCKED.ordinal()) {
                 writePreferences(nextLevel, levelState.UNLOCKED.ordinal());
             }
@@ -319,28 +320,44 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             counterCorrect = 0;
             int nr = rand.nextInt(6) + 1;
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
-            mp.reset();
-            mp = MediaPlayer.create(this, praise);
-            mp.setVolume(0.5f, 0.5f);
-            new Handler().postDelayed(() -> mp.start(), 500);
-            mp.setOnCompletionListener(mp -> displayAnimal());
+            // Avoid animalSound being cut off by praise/encouragement
+            if (mp.isPlaying()) {
+                mp.setOnCompletionListener(new OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        praiseEncourage(praise);
+                    }
+                });
+            } else {
+                praiseEncourage(praise);
+            }
 
             // encourage randomly
         } else if (counterWrong == 3) {
             counterWrong = 0;
             int nr = rand.nextInt(4) + 1;
-            int praise = getResources()
+            int encourage = getResources()
                 .getIdentifier("encourage" + nr, "raw", this.getPackageName());
-            mp.reset();
-            mp = MediaPlayer.create(this, praise);
-            mp.setVolume(0.5f, 0.5f);
-            new Handler().postDelayed(() -> mp.start(), 500);
-            mp.setOnCompletionListener(mp -> {
-                displayAnimal();
-            });
+            if (mp.isPlaying()) {
+                mp.setOnCompletionListener(new OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        praiseEncourage(encourage);
+                    }
+                });
+            } else {
+                praiseEncourage(encourage);
+            }
         } else {
             view.postDelayed(this::displayAnimal, 1000);
         }
+    }
+
+    @RequiresApi(api = VERSION_CODES.N)
+    void praiseEncourage(int instruction) {
+        playInstruction(instruction);
+        mp.setOnCompletionListener(mp -> displayAnimal());
+
     }
 
 
@@ -370,7 +387,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
 
                     // True positive
-                    globals.getStatistics().addToStatistics(animalID, 0);
+                    //globals.getStatistics().addToStatistics(animalID, 0);
                     showProgress(correctMatches);
 
                     if (correctMatches == WINNINGNUMBER) {
@@ -391,7 +408,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     animalPool.getAnimalMapCurrent().get(lvl).remove(new Integer(animalID));
 
                     // True negative
-                    globals.getStatistics().addToStatistics(animalID, 1);
+                    //globals.getStatistics().addToStatistics(animalID, 1);
                     changeColor();
                     colorChange++;
                 }
@@ -407,13 +424,13 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     dragAnimal(view, container, shortSounds.WRONG.ordinal());
 
                     // False positive
-                    if (!fit && container.getId() == match.getId()) {
+                    /*if (!fit && container.getId() == match.getId()) {
                         globals.getStatistics().addToStatistics(animalID, 2);
                     } else
                     // False negative
                     {
                         globals.getStatistics().addToStatistics(animalID, 3);
-                    }
+                    }*/
 
                 }
 
