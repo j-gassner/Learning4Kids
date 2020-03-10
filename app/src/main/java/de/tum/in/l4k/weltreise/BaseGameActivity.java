@@ -79,8 +79,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
-        if (mp.isPlaying() && handler) {
-            mp.stop();
+        if (mediaPlayer.isPlaying() && handler) {
+            mediaPlayer.stop();
             handler = false;
         }
 

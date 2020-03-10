@@ -127,8 +127,8 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                 }
-                if (mp.isPlaying()) {
-                    mp.stop();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
                 }
                 resetLevels();
                 touchy();
@@ -139,14 +139,14 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                 }
-                if (mp.isPlaying()) {
-                    mp.stop();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
                 }
                 dialog.cancel();
                 touchy();
             }).setOnCancelListener(dialog -> {
-            if (mp.isPlaying()) {
-                mp.stop();
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
             }
             touchy();
         });
@@ -273,7 +273,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
 
         playInstruction(R.raw.instruction_museum);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             tutorialReset();
             arrow.setVisibility(View.INVISIBLE);
         });
@@ -286,7 +286,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         ImageView arrow = findViewById(R.id.button_point_reset);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
         playInstruction(R.raw.instruction_reset);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             arrow.setVisibility(View.INVISIBLE);
             tutorialTutorial();
         });
@@ -299,7 +299,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         ImageView arrow = findViewById(R.id.button_point_tutorial);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
         playInstruction(R.raw.instruction_tutorial);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             arrow.setVisibility(View.INVISIBLE);
             tutorialNowYou();
         });
@@ -312,7 +312,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         ImageView arrow = findViewById(R.id.button_point_f);
         arrow.setVisibility(View.VISIBLE);
         playInstruction(R.raw.instruction_now_you);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             arrow.setVisibility(View.INVISIBLE);
             tutorialRunning = false;
         });

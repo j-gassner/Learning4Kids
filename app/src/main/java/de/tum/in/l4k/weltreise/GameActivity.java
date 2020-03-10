@@ -129,15 +129,15 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         // Prepare async to not intefere with loading of other stuff
         AssetFileDescriptor afd = getResources().openRawResourceFd(currentInstruction);
         try {
-            mp.reset();
-            mp.setVolume(0.5f, 0.5f);
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(0.5f, 0.5f);
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
                 afd.getDeclaredLength());
-            mp.prepareAsync();
+            mediaPlayer.prepareAsync();
 
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
+            mediaPlayer.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
 
-            mp.setOnCompletionListener(mp -> {
+            mediaPlayer.setOnCompletionListener(mp -> {
 
                 new Handler().postDelayed(this::displayAnimal, 500);
 
@@ -188,7 +188,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             sound = false;
             stopHandler();
             playInstruction(R.raw.complete_sound);
-            mp.setOnCompletionListener(mp -> cameraFlash());
+            mediaPlayer.setOnCompletionListener(mp -> cameraFlash());
             return;
         }
         ViewGroup owner = (ViewGroup) animal.getParent();
@@ -220,12 +220,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             fit = false;
         }
 
-        mp.reset();
-        mp = MediaPlayer.create(this, soundAnimal);
+        mediaPlayer.reset();
+        mediaPlayer = MediaPlayer.create(this, soundAnimal);
         if (!backPressed) {
-            mp.setVolume(0.5f, 0.5f);
-            mp.start();
-            mp.setOnCompletionListener(mp -> sound = true);
+            mediaPlayer.setVolume(0.5f, 0.5f);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(mp -> sound = true);
         }
         positionAnimal(false);
 
@@ -239,7 +239,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     @RequiresApi(api = VERSION_CODES.N)
     void praiseEncourage(int instruction) {
         playInstruction(instruction);
-        mp.setOnCompletionListener(mp -> displayAnimal());
+        mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
     }
 
     /**
@@ -263,7 +263,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         String packageName = this.getPackageName();
 
         playInstruction(getResources().getIdentifier("museum_" + level, "raw", packageName));
-        mp.setOnCompletionListener(mp -> leaveLevel());
+        mediaPlayer.setOnCompletionListener(mp -> leaveLevel());
         animal.startAnimation(zoom);
     }
 
@@ -447,8 +447,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             int nr = rand.nextInt(6) + 1;
             int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
             // Avoid animalSound being cut off by praise/encouragement
-            if (mp.isPlaying()) {
-                mp.setOnCompletionListener(mp -> praiseEncourage(praise));
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.setOnCompletionListener(mp -> praiseEncourage(praise));
             } else {
                 praiseEncourage(praise);
             }
@@ -459,8 +459,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             int nr = rand.nextInt(4) + 1;
             int encourage = getResources()
                 .getIdentifier("encourage" + nr, "raw", this.getPackageName());
-            if (mp.isPlaying()) {
-                mp.setOnCompletionListener(mp -> praiseEncourage(encourage));
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.setOnCompletionListener(mp -> praiseEncourage(encourage));
             } else {
                 praiseEncourage(encourage);
             }
@@ -474,7 +474,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
 
-            if (!mp.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && sound) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
                 playInstruction(soundLetter);
@@ -486,7 +486,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
         } else if (view.getId() == buttonSpeaker.getId()) {
 
-            if (!mp.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && sound) {
                 view.startAnimation(scale);
                 playInstruction(soundAnimal);
 
@@ -521,8 +521,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if (mp.isPlaying()) {
-                        mp.stop();
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
                     }
                     // reset animal pool because we leave the level
                     animalPool.getAnimalPool().reset();

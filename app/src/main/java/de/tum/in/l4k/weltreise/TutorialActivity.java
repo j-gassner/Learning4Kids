@@ -58,7 +58,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
-            if (!mp.isPlaying()) {
+            if (!mediaPlayer.isPlaying()) {
                 // Make instruction interruptable
                 playInstruction(currentInstruction);
                 handler = true;
@@ -131,16 +131,16 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Intro
         AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_intro);
         try {
-            mp.reset();
-            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
                 afd.getDeclaredLength());
-            mp.prepareAsync();
+            mediaPlayer.prepareAsync();
 
-            mp.setVolume(0.5f, 0.5f);
+            mediaPlayer.setVolume(0.5f, 0.5f);
 
-            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
+            mediaPlayer.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
 
-            mp.setOnCompletionListener(mp -> tutorialLetter());
+            mediaPlayer.setOnCompletionListener(mp -> tutorialLetter());
 
             afd.close();
 
@@ -164,7 +164,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
         // Letter
         playInstruction(R.raw.tutorial_letter);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             currentInstruction = R.raw.instruction_letter;
             buttonLetter.setEnabled(true);
@@ -179,7 +179,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialSubmarine() {
         sound = false;
         playInstruction(R.raw.tutorial_submarine);
-        mp.setOnCompletionListener(mp -> tutorialAnimal());
+        mediaPlayer.setOnCompletionListener(mp -> tutorialAnimal());
     }
 
     /**
@@ -199,7 +199,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      */
     void tutorialSpeaker() {
         playInstruction(R.raw.tutorial_speaker);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             buttonSpeaker.setEnabled(true);
             currentInstruction = R.raw.instruction_speaker;
@@ -213,7 +213,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialProgress() {
         sound = false;
         playInstruction(R.raw.tutorial_progress);
-        mp.setOnCompletionListener(mp -> tutorialFlug());
+        mediaPlayer.setOnCompletionListener(mp -> tutorialFlug());
 
     }
 
@@ -222,7 +222,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      */
     void tutorialFlug() {
         playInstruction(R.raw.tutorial_flug);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             currentInstruction = R.raw.instruction_flug;
             startHandler();
@@ -252,7 +252,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         arrow.setVisibility(View.INVISIBLE);
         sound = false;
         playInstruction(R.raw.tutorial_colorchange);
-        mp.setOnCompletionListener(mp -> displayAnimal());
+        mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
     }
 
     /**
@@ -262,7 +262,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialLionRight() {
         sound = false;
         playInstruction(R.raw.tutorial_loewe_correct);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             currentInstruction = R.raw.instruction_loewe_correct;
             startHandler();
@@ -294,7 +294,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         arrow.setVisibility(View.INVISIBLE);
         sound = false;
         playInstruction(R.raw.tutorial_progress_lost);
-        mp.setOnCompletionListener(mp -> displayAnimal());
+        mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
     }
 
     /**
@@ -307,7 +307,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         arrow = findViewById(R.id.button_point_submarine);
         sound = false;
         playInstruction(R.raw.instruction_loewe_wrong);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             currentInstruction = R.raw.instruction_loewe_wrong;
             startHandler();
@@ -329,7 +329,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
         sound = false;
         playInstruction(R.raw.tutorial_back);
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             currentInstruction = R.raw.instruction_back;
             startHandler();
             buttonBack.setEnabled(true);
@@ -371,7 +371,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Animal sound
         playInstruction(soundAnimal);
 
-        mp.setOnCompletionListener(mp -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             sound = true;
             if (step == 0) {
                 tutorialSpeaker();
@@ -470,11 +470,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
 
-            if (!mp.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && sound) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
                 playInstruction(soundLetter);
-                mp.setOnCompletionListener(mp -> {
+                mediaPlayer.setOnCompletionListener(mp -> {
                     if (!letterClicked) {
                         arrow.setVisibility(View.INVISIBLE);
                         letterClicked = true;
@@ -491,10 +491,10 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
             // Speaker button
         } else if (view.getId() == buttonSpeaker.getId()) {
-            if (!mp.isPlaying() && sound && !lastDrag) {
+            if (!mediaPlayer.isPlaying() && sound && !lastDrag) {
                 view.startAnimation(scale);
                 playInstruction(soundAnimal);
-                mp.setOnCompletionListener(mp -> {
+                mediaPlayer.setOnCompletionListener(mp -> {
                     if (!speakerClicked) {
                         speakerClicked = true;
                         arrow.setVisibility(View.INVISIBLE);

@@ -127,8 +127,8 @@ public class DinosActivity extends ScrollActivity {
         Intent intent = new Intent(this, StartActivity.class);
         switch (view.getId()) {
             case R.id.button_back:
-                if (mp.isPlaying()) {
-                    mp.stop();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
                 }
 
                 // Sound loaded
@@ -202,7 +202,8 @@ public class DinosActivity extends ScrollActivity {
                 String name = getResources().getResourceEntryName(view.getId());
                 String level = "" + name.charAt(5);
                 int id = getResources().getIdentifier(name + "_sound", "raw", getPackageName());
-                if (availableLevels.getInt(level, 0) == levelState.COMPLETED.ordinal() && !mp
+                if (availableLevels.getInt(level, 0) == levelState.COMPLETED.ordinal()
+                    && !mediaPlayer
                     .isPlaying()) {
                     view.startAnimation(dino);
                     playInstruction(id);

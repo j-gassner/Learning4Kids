@@ -24,7 +24,7 @@ public abstract class BaseActivity extends WindowManagement {
     static ArrayList<Character> levels = new ArrayList<>(
         Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
     static Character level;
-    MediaPlayer mp = new MediaPlayer();
+    MediaPlayer mediaPlayer = new MediaPlayer();
     SoundPool soundPool;
     SharedPreferences availableLevels;
     Animation scale, scaleHalf;
@@ -44,14 +44,14 @@ public abstract class BaseActivity extends WindowManagement {
     @Override
     protected void onPause() {
         super.onPause();
-        mp.setVolume(0f, 0f);
+        mediaPlayer.setVolume(0f, 0f);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mp.release();
-        mp = null;
+        mediaPlayer.release();
+        mediaPlayer = null;
         soundPool.release();
         soundPool = null;
     }
@@ -62,12 +62,12 @@ public abstract class BaseActivity extends WindowManagement {
      * @param resID ID of the soundfile
      */
     void playInstruction(int resID) {
-        mp.reset();
-        mp = MediaPlayer.create(this, resID);
+        mediaPlayer.reset();
+        mediaPlayer = MediaPlayer.create(this, resID);
 
         // Volume at 0.5f fits best with volume of soundPool
-        mp.setVolume(0.5f, 0.5f);
-        mp.start();
+        mediaPlayer.setVolume(0.5f, 0.5f);
+        mediaPlayer.start();
     }
 
     /**
