@@ -10,7 +10,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-      android:name="de.tum.in.l4k.weltreise.Globals">
+      android:name="de.tum.in.l4k.weltreise.AnimalPool">
         <activity
           android:name="de.tum.in.l4k.weltreise.MainActivity"
           android:screenOrientation="sensorLandscape"

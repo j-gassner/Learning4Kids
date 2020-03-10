@@ -27,10 +27,11 @@ import java.util.Random;
 public class GameActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
-    private Animals animalPool = new Animals();
+
+    //private Animals aP = new Animals();
     private LevelCollection levelCollection;
     private static Random rand = new Random();
-    private Globals globals;
+    private AnimalPool animalPool;
     boolean stillThere;
     int counterCorrect, counterWrong;
     boolean backPressed, dino;
@@ -76,8 +77,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         Intent intent = getIntent();
         level = intent.getCharExtra("LEVEL", 'f');
         super.onStart();
-        globals = (Globals) getApplication();
-        animalPool = globals.getAnimalPool();
+        animalPool = (AnimalPool) getApplication();
+        //aP = animalPool.getAnimalPool();
     }
 
 
@@ -228,7 +229,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
         // n% chance correct letter
         if (rand.nextInt(100) < levelCollection.getLevel(level).getDifficulty()) {
-            animalID = animalPool.getAnimal(level);
+            animalID = animalPool.getAnimalPool().getAnimal(level);
             animal.setImageResource(animalID);
 
             // Sound
@@ -239,7 +240,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             findViewById(R.id.button_animal).setEnabled(true);
             fit = true;
         } else {
-            animalID = animalPool.getDistractorAnimal(level);
+            animalID = animalPool.getAnimalPool().getDistractorAnimal(level);
             animal.setImageResource(animalID);
 
             // Sound
@@ -284,7 +285,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     }
 
     void leaveLevel() {
-        globals.getAnimalPool().reset();
+        animalPool.getAnimalPool().reset();
         Intent intent = new Intent(this, StartActivity.class);
         Handler handler = new Handler();
         // if (!backPressed) {
@@ -375,7 +376,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
                 // Match
                 if (fit && container.getId() == match.getId()) {
-                    animalPool.getAnimalMapCurrent().get(level).remove(new Integer(animalID));
+                    animalPool.getAnimalPool().getAnimalMapCurrent().get(level)
+                        .remove(new Integer(animalID));
                     counterCorrect++;
                     correctMatches++;
                     counterWrong = 0;
@@ -400,7 +402,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     Character lvl = getResources().getResourceEntryName(animalID).charAt(0);
 
                     // valueOf does not work here
-                    animalPool.getAnimalMapCurrent().get(lvl).remove(new Integer(animalID));
+                    animalPool.getAnimalPool().getAnimalMapCurrent().get(lvl)
+                        .remove(new Integer(animalID));
 
                     // True negative
                     //globals.getStatistics().addToStatistics(animalID, 1);
@@ -498,7 +501,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                         mp.stop();
                     }
                     // reset animal pool because we leave the level
-                    animalPool.reset();
+                    animalPool.getAnimalPool().reset();
                     startActivity(intent);
                     finish();
                 }

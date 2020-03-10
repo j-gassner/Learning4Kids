@@ -5,10 +5,9 @@ import android.content.res.Resources;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class Globals extends Application {
+public class AnimalPool extends Application {
     private Animals animalPool;
     //private Statistics statistics = new Statistics();
-    //static ArrayList<Character> levels = new ArrayList<>(Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
 
     public Animals getAnimalPool(){
         return this.animalPool;
