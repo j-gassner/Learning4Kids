@@ -13,6 +13,14 @@ public abstract class WindowManagement extends AppCompatActivity {
         hideSystemUI();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
     void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -31,13 +39,4 @@ public abstract class WindowManagement extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemUI();
-        }
-    }
-
 }
