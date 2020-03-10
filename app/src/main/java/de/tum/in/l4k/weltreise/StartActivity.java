@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
+import java.util.Objects;
 
 public class StartActivity extends ScrollActivity implements View.OnClickListener {
 
@@ -240,7 +241,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         AlertDialog alertDialog = alertDialogBuilder.create();
         assert (alertDialog != null);
         Typeface typeface = ResourcesCompat.getFont(this, R.font.chalk);
-        alertDialog.getWindow().
+        Objects.requireNonNull(alertDialog.getWindow()).
             setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         // Set full-sreen mode (immersive sticky):

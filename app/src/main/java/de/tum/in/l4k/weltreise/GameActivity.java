@@ -22,13 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import androidx.annotation.RequiresApi;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 public class GameActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
-
-    //private Animals aP = new Animals();
     private LevelCollection levelCollection;
     private static Random rand = new Random();
     private AnimalPool animalPool;
@@ -36,7 +35,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     int counterCorrect, counterWrong;
     boolean backPressed, dino;
     int areYouStillThere;
-
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -78,7 +76,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         level = intent.getCharExtra("LEVEL", 'f');
         super.onStart();
         animalPool = (AnimalPool) getApplication();
-        //aP = animalPool.getAnimalPool();
     }
 
 
@@ -106,6 +103,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         implementEvents();
 
         // Intro
+        // Prepare async to not intefere with loading of other stuff
         AssetFileDescriptor afd = getResources().openRawResourceFd(currentInstruction);
         try {
             mp.reset();
@@ -114,10 +112,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 afd.getDeclaredLength());
             mp.prepareAsync();
 
-            mp.setOnPreparedListener(mp -> {
-                new Handler().postDelayed(mp::start, 500);
-
-            });
+            mp.setOnPreparedListener(mp -> new Handler().postDelayed(mp::start, 500));
 
             mp.setOnCompletionListener(mp -> {
 
@@ -151,11 +146,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             .getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());
 
         //Define a bitmap with the same size as the view
-
         Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
         splitImage(bm);
-
-
     }
 
     void writePreferences(Character level, int mode) {
@@ -163,15 +155,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         SharedPreferences.Editor editor = availableLevels.edit();
         editor.putInt(level.toString(), mode);
         editor.apply();
-
     }
-
 
     public void cameraFlash() {
         // White
         ImageView layover = findViewById(R.id.flash);
         new Handler().postDelayed(() -> layover.setVisibility(View.VISIBLE), 500);
-        //mp = MediaPlayer.create(this, R.raw.camera);
 
         flash.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -180,9 +169,11 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
                 }
             }
+
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
+
             @RequiresApi(api = VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -202,25 +193,20 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         layover.startAnimation(flash);
 
 
-
     }
 
     //Set position of animal image and display
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void displayAnimal() {
-
         animal.setOnTouchListener(this);
+
         // Level done
         if (correctMatches == WINNINGNUMBER) {
-            //levelCompleted();
             sound = false;
             stopHandler();
-
-            //if (!backPressed)
             playInstruction(R.raw.complete_sound);
             mp.setOnCompletionListener(mp -> cameraFlash());
-
             return;
         }
         ViewGroup owner = (ViewGroup) animal.getParent();
@@ -257,9 +243,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         if (!backPressed) {
             mp.setVolume(0.5f, 0.5f);
             mp.start();
-            mp.setOnCompletionListener(mp -> {
-                sound = true;
-            });
+            mp.setOnCompletionListener(mp -> sound = true);
         }
         positionAnimal(false);
 
@@ -288,10 +272,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animalPool.getAnimalPool().reset();
         Intent intent = new Intent(this, StartActivity.class);
         Handler handler = new Handler();
-        // if (!backPressed) {
-            handler.postDelayed(() -> startActivity(intent), 1000);
-            handler.postDelayed(this::finish, 1000);
-        //}
+        handler.postDelayed(() -> startActivity(intent), 1000);
+        handler.postDelayed(this::finish, 1000);
 
     }
 
@@ -376,8 +358,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
                 // Match
                 if (fit && container.getId() == match.getId()) {
-                    animalPool.getAnimalPool().getAnimalMapCurrent().get(level)
-                        .remove(new Integer(animalID));
+                    Objects
+                        .requireNonNull(animalPool.getAnimalPool().getAnimalMapCurrent().get(level))
+                        .remove(Integer.valueOf(animalID));
                     counterCorrect++;
                     correctMatches++;
                     counterWrong = 0;
@@ -402,8 +385,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     Character lvl = getResources().getResourceEntryName(animalID).charAt(0);
 
                     // valueOf does not work here
-                    animalPool.getAnimalPool().getAnimalMapCurrent().get(lvl)
-                        .remove(new Integer(animalID));
+                    Objects
+                        .requireNonNull(animalPool.getAnimalPool().getAnimalMapCurrent().get(lvl))
+                        .remove(Integer.valueOf(animalID));
 
                     // True negative
                     //globals.getStatistics().addToStatistics(animalID, 1);

@@ -127,10 +127,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         for (int i = 0; i < WINNINGNUMBER; i++) {
             ImageView frag = new ImageView(getApplicationContext());
             frag.setImageBitmap(Bitmap.createBitmap(image, 0, y, image.getWidth(),
-                (int) (Math.ceil(image.getHeight() / WINNINGNUMBER))));
+                image.getHeight() / WINNINGNUMBER));
             fragments.add(frag);
-
-            // Avoid lines during animation
             y += (image.getHeight() / WINNINGNUMBER);
         }
 
@@ -138,12 +136,14 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
     void showProgress(int step) {
         RelativeLayout progress = findViewById(R.id.image_progress);
-        int chunkSize = (int) Math.ceil(progress.getHeight() / WINNINGNUMBER);
+        int chunkSize = progress.getHeight() / WINNINGNUMBER;
         ImageView fragment = fragments.get(fragments.size() - step);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(progress.getWidth(),
-            (int) Math.ceil(progress.getHeight() / WINNINGNUMBER));
+            chunkSize);
         params.leftMargin = 0;
-        params.topMargin = progress.getHeight() - chunkSize * step;
+
+        // +1 to avoid lines in animation
+        params.topMargin = progress.getHeight() - chunkSize * step + 1;
         progress.addView(fragment, params);
 
         fragment.setScaleType(ImageView.ScaleType.FIT_CENTER);

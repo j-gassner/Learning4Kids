@@ -79,7 +79,7 @@ class Animals implements Serializable {
     }
 
     // Deepcopy of HashMap
-    static HashMap<Character, ArrayList<Integer>> copy(
+    private static HashMap<Character, ArrayList<Integer>> copy(
         HashMap<Character, ArrayList<Integer>> original) {
         HashMap<Character, ArrayList<Integer>> copy = new HashMap<>();
         for (Map.Entry<Character, ArrayList<Integer>> entry : original.entrySet()) {

@@ -1,3 +1,4 @@
+/*
 package de.tum.in.l4k.weltreise;
 
 import java.util.ArrayList;
@@ -38,3 +39,4 @@ public class Statistics {
     }
 
 }
+*/

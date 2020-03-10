@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.res.Resources;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AnimalPool extends Application {
     private Animals animalPool;
@@ -50,7 +51,7 @@ public class AnimalPool extends Application {
             }
             assert animalPool.getAnimalMap().get(firstLetter) != null;
             //animalPool.getAnimalMapCurrent().get(firstLetter).add(resourceId);
-            animalPool.getAnimalMap().get(firstLetter).add(resourceId);
+            Objects.requireNonNull(animalPool.getAnimalMap().get(firstLetter)).add(resourceId);
         }
 
         animalPool.reset();
