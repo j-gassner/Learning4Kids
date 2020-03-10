@@ -3,6 +3,12 @@ package de.tum.in.l4k.weltreise;
 import android.content.Context;
 import java.util.HashMap;
 
+/**
+ * Class containing the letter, difficulty, position of match, and winningNumber of each level.
+ *
+ * @author Josefine Gaßner
+ */
+
 class LevelCollection {
 
     private HashMap<Character, Level> levels = new HashMap<>();
@@ -29,7 +35,6 @@ class LevelCollection {
 
     /**
      * @param level Letter of level requested.
-     *
      * @return Level starting with specified character.
      */
     Level getLevel(Character level) {

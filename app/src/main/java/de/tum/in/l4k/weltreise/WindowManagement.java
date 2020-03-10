@@ -5,6 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Class hiding the system's UI and enabling immersive sticky mode.
+ *
+ * @author Josefine Gaßner
+ */
+
 public abstract class WindowManagement extends AppCompatActivity {
 
     @Override

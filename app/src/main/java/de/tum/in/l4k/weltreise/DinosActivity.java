@@ -15,6 +15,12 @@ import android.widget.LinearLayout;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+/**
+ * Class containing a dinosaur for each level as a reward.
+ *
+ * @author Josefine Gaßner
+ */
+
 public class DinosActivity extends ScrollActivity {
 
     private Animation dino;

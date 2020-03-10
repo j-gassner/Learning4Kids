@@ -24,6 +24,12 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Abstract class used as a base for Game- and TutorialActivity.
+ *
+ * @author Josefine Gaßner
+ */
+
 public abstract class BaseGameActivity extends BaseActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
@@ -40,9 +46,11 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     ImageButton buttonLetter, buttonSpeaker, buttonBack;
     Animation zoom, flash;
     static int[] sounds = new int[4];
+
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
 
     abstract void inactivityHandler();
+
     abstract void displayAnimal();
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
@@ -195,7 +203,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * Adds new fragment to letter to indicate progress when relevant animals was dragged correctly.
+     * Adds new fragment to letter to indicate progress when relevant animals was dragged
+     * correctly.
      *
      * @param step Which fragment will be added.
      */
@@ -265,8 +274,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * Scales image's longer side to fit 300dp and other side accordingly.
-     * Positions it to bottom center of screen.
+     * Scales image's longer side to fit 300dp and other side accordingly. Positions it to bottom
+     * center of screen.
      *
      * @param dino Indicates if dino or animal is to be positioned.
      */
@@ -306,9 +315,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
 
     /**
-     * Called when animal is dragged to another view that accepts it.
-     * Shows animation in letterButton.
-     * A sound indicates whether it was right or wrong.
+     * Called when animal is dragged to another view that accepts it. Shows animation in
+     * letterButton. A sound indicates whether it was right or wrong.
      *
      * @param view View to be dragged.
      * @param container Where view is dragged to.
@@ -330,8 +338,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * Called when view is dropped into container.
-     * View is removed from old and added to new container.
+     * Called when view is dropped into container. View is removed from old and added to new
+     * container.
      *
      * @param view View to be dropped.
      * @param container Container to accept view.

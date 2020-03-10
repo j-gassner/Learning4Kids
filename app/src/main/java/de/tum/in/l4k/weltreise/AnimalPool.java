@@ -6,17 +6,24 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Class managing an animalPool that contains all animals used during gameplay.
+ *
+ * @author Josefine Gaßner
+ */
+
 public class AnimalPool extends Application {
+
     private Animals animalPool;
 
-    public Animals getAnimalPool(){
+    public Animals getAnimalPool() {
         return this.animalPool;
     }
 
     /**
      * Finds all animals in drawable and adds them to the animalPool
      */
-    public void setAnimalPool(){
+    public void setAnimalPool() {
         animalPool = new Animals();
         final R.drawable drawableResources = new R.drawable();
         final Class<R.drawable> drawableClass = R.drawable.class;

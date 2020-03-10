@@ -10,16 +10,22 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Class used for managing the set of animals used in the game.
+ *
+ * @author Josefine Gaßner
+ */
 
 // Faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
 @SuppressWarnings("serial")
 class Animals implements Serializable {
+
     private static Random rand = new Random();
     private HashMap<Character, ArrayList<Integer>> animalMap;
     private HashMap<Character, ArrayList<Integer>> animalMapCurrent;
 
     /**
-     * Constructor intializing HashMaps.
+     * Constructor initializing HashMaps.
      */
     Animals() {
         this.animalMap = new HashMap<>();
@@ -70,6 +76,7 @@ class Animals implements Serializable {
 
     /**
      * Finds a random letter that is not currentLetter and draws animal starting with it.
+     *
      * @param currentLetter Letter of level.
      * @return Random animal not starting with currentLetter.
      */
@@ -102,6 +109,7 @@ class Animals implements Serializable {
 
     /**
      * Creates a deepcopy of passed HashMap.
+     *
      * @param original HashMap to be copied.
      * @return Deepcopy of original.
      */

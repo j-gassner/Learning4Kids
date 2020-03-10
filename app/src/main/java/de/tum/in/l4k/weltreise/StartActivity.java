@@ -26,6 +26,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
+/**
+ * Class representing the main menu. All functions are started from here.
+ *
+ * @author Josefine Gaßner
+ */
+
 public class StartActivity extends ScrollActivity implements View.OnClickListener {
 
     boolean tutorialRunning;
@@ -243,8 +249,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
     }
 
     /**
-     * Unlocks all levels via invisible button is lower left corner.
-     * For testing only.
+     * Unlocks all levels via invisible button is lower left corner. For testing only.
      */
     void unlockLevels() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);

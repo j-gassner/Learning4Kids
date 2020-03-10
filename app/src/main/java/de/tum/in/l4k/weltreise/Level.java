@@ -2,7 +2,14 @@ package de.tum.in.l4k.weltreise;
 
 import android.content.Context;
 
+/**
+ * Class representing a level of the GameActivity.
+ *
+ * @author Josefine Gaßner
+ */
+
 class Level {
+
     private int backgroundID;
     private int difficulty;
     private boolean isLeft;

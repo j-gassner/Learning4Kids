@@ -13,6 +13,11 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Class serving as a base for all activities except the MainActivity.
+ *
+ * @author Josefine Gaßner
+ */
 
 public abstract class BaseActivity extends WindowManagement {
 
@@ -24,6 +29,7 @@ public abstract class BaseActivity extends WindowManagement {
     SharedPreferences availableLevels;
     Animation scale, scaleHalf;
     boolean loaded;
+
     enum levelState {LOCKED, UNLOCKED, COMPLETED}
 
     @SuppressLint("ClickableViewAccessibility")
@@ -65,8 +71,8 @@ public abstract class BaseActivity extends WindowManagement {
     }
 
     /**
-     * Base for loading sounds used in soundPool.
-     * Indicates with loaded = true when loading was successful.
+     * Base for loading sounds used in soundPool. Indicates with loaded = true when loading was
+     * successful.
      */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void loadButtonSounds() {

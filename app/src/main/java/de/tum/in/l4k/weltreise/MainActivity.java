@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
+/**
+ * Class for the first screen the user sees containing the L4K logo. Starts tutorial or main menu
+ * depending on level states.
+ */
 public class MainActivity extends WindowManagement {
 
     @Override

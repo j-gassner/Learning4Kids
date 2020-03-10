@@ -8,9 +8,14 @@ import android.widget.ImageButton;
 import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 
+/**
+ * Base class for Start- and DinosActivity
+ *
+ * @author Josefine Gaßner
+ */
 public abstract class ScrollActivity extends BaseActivity {
 
-    // Remeber scroll position
+    // Remember scroll position
     protected static HashMap<Class, Integer> scrollXMap = new HashMap<Class, Integer>() {{
         put(StartActivity.class, 0);
         put(DinosActivity.class, 0);

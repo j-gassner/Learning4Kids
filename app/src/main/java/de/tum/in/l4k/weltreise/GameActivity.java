@@ -25,6 +25,12 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Class that manages the gameplay for each level.
+ *
+ * @author Josefine Gaßner
+ */
+
 public class GameActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
@@ -425,8 +431,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     }
 
     /**
-     * Called when animal is dropped.
-     * Depending on previous performance a random praise or encouragement is triggered.
+     * Called when animal is dropped. Depending on previous performance a random praise or
+     * encouragement is triggered.
      *
      * @param view View to be dropped.
      * @param container Container to accept view.

@@ -1,6 +1,5 @@
 package de.tum.in.l4k.weltreise;
 
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -22,6 +21,11 @@ import android.widget.RelativeLayout;
 import androidx.annotation.RequiresApi;
 import java.io.IOException;
 
+/**
+ * Class explaining the game principle. Is started on initial start of the app.
+ *
+ * @author Josefine Gaßner
+ */
 
 public class TutorialActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener {
@@ -380,9 +384,8 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     }
 
     /**
-     * Called when animal is dragged to another view that accepts it.
-     * Shows animation in letterButton.
-     * A sound indicates whether it was right or wrong.
+     * Called when animal is dragged to another view that accepts it. Shows animation in
+     * letterButton. A sound indicates whether it was right or wrong.
      *
      * @param view View to be dragged.
      * @param container Where view is dragged to.
