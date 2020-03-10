@@ -48,6 +48,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         tutorialIntro();
     }
 
+    /**
+     * Repeats current instruction after specified duration of inactivity.
+     */
     void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
@@ -60,14 +63,19 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 startHandler();
             }
         };
-
     }
 
+    /**
+     * Starts handler waiting for 10s of inactivity.
+     */
     public void startHandler() {
         super.startHandler();
         handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
     }
 
+    /**
+     * Initialize elements.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
@@ -92,6 +100,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     }
 
 
+    /**
+     * Find and disable buttons that should be locked at the start.
+     */
     void loadButtons() {
         super.loadButtons();
         arrow = findViewById(R.id.button_point_letter);
@@ -107,6 +118,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    /**
+     * Play intro.
+     */
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void tutorialIntro() {
@@ -136,6 +150,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    /**
+     * Explain letter button and enable it to be clicked.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLetter() {
         arrow.setVisibility(View.VISIBLE);
@@ -151,6 +168,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Explain which animals should be dragged to submarine.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialSubmarine() {
         sound = false;
@@ -158,6 +178,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         mp.setOnCompletionListener(mp -> tutorialAnimal());
     }
 
+    /**
+     * Display first animal and set speakerButton visible.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialAnimal() {
         // First animal
@@ -165,9 +188,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         new Handler().postDelayed(() -> buttonSpeaker.setAlpha(1.0f), 2500);
         arrow = findViewById(R.id.button_point_speaker);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 2500);
-
     }
 
+    /**
+     * Explain speaker button and enable it to be clicked.
+     */
     void tutorialSpeaker() {
         playInstruction(R.raw.tutorial_speaker);
         mp.setOnCompletionListener(mp -> {
@@ -178,6 +203,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Explain how progress works.
+     */
     void tutorialProgress() {
         sound = false;
         playInstruction(R.raw.tutorial_progress);
@@ -185,6 +213,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    /**
+     * Explain where Flughoernchen wants to go.
+     */
     void tutorialFlug() {
         playInstruction(R.raw.tutorial_flug);
         mp.setOnCompletionListener(mp -> {
@@ -195,6 +226,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Enable Flughoernchen being dragged to submarine.
+     */
     @SuppressLint("ClickableViewAccessibility")
     void tutorialDragCorrect() {
         // Drag to submarine
@@ -206,6 +240,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    /**
+     * Explain what happens when irrelevant animal is dragged correctly. Display Loewen.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialColorChange() {
         arrow.setVisibility(View.INVISIBLE);
@@ -214,6 +251,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         mp.setOnCompletionListener(mp -> displayAnimal());
     }
 
+    /**
+     * Explain where Loewe wants to go.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLionRight() {
         sound = false;
@@ -226,6 +266,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Enable Loewen to be dragged to sign.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void tutorialDragCorrectRight() {
@@ -239,6 +282,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    /**
+     * Explain what happens on mistake.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialProgressLost() {
         arrow.setVisibility(View.INVISIBLE);
@@ -247,6 +293,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         mp.setOnCompletionListener(mp -> displayAnimal());
     }
 
+    /**
+     * Enable Loewen to be dragged incorrectly.
+     */
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialDragFalse() {
@@ -265,6 +314,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Explain back button and enable it.
+     */
     void tutorialBack() {
         // Back button
         arrow.setVisibility(View.INVISIBLE);
@@ -281,7 +333,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
-    //Set position of animal image and display
+    /**
+     * Displays animals and plays their name.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void displayAnimal() {
@@ -325,6 +379,14 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
+    /**
+     * Called when animal is dragged to another view that accepts it.
+     * Shows animation in letterButton.
+     * A sound indicates whether it was right or wrong.
+     * @param view View to be dragged.
+     * @param container Where view is dragged to.
+     * @param sound Correct or wrong sound.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     void dragAnimal(View view, LinearLayout container, int sound) {
         // Animation

@@ -65,6 +65,9 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         stopHandler();
     }
 
+    /**
+     * Called when user touches the screen. Stops handler.
+     */
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
@@ -79,6 +82,12 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         }
     }
 
+    /**
+     * Called when user touches animal with intention to drag it.
+     *
+     * @param view View that is touched.
+     * @param motionEvent Kind of motion used.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -92,26 +101,35 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         }
     }
 
+    /**
+     * Starts handler handling user inactivity.
+     */
     public void startHandler() {
         isRunning = true;
     }
 
+    /**
+     * Stops handler handling user inactivity.
+     */
     public void stopHandler() {
         isRunning = false;
         handleInactivity.removeCallbacks(runnable);
     }
 
-    //Implement long click and drag listener
+    /**
+     * Sets onTouch- and onDragListeners
+     */
     @SuppressLint("ClickableViewAccessibility")
     void implementEvents() {
-        //add or remove any view that you want to be dragged
         animal.setOnTouchListener(this);
-        //add or remove any layout view that you want to accept dragged view
         middle.setOnDragListener(this);
         match.setOnDragListener(this);
         noMatch.setOnDragListener(this);
     }
 
+    /**
+     * Prepares buttons, animations, sounds, and some views.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         loadButtons();
@@ -123,18 +141,27 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         middle = findViewById(R.id.middle);
     }
 
+    /**
+     * Finds buttons used by all extending activities.
+     */
     void loadButtons() {
         buttonLetter = findViewById(R.id.button_letter);
         buttonSpeaker = findViewById(R.id.button_animal);
         buttonBack = findViewById(R.id.button_back);
     }
 
+    /**
+     * Finds animations used by all extending activities.
+     */
     void loadAnimations() {
         super.loadAnimations();
         zoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
         flash = AnimationUtils.loadAnimation(this, R.anim.flash);
     }
 
+    /**
+     * Adds all necessary sounds to soundPool.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void buttonSounds() {
         AudioAttributes attributes = new AudioAttributes.Builder()
@@ -150,7 +177,10 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         sounds[shortSounds.CAMERA.ordinal()] = soundPool.load(this, R.raw.camera, 1);
     }
 
-    // Cut image horizontally
+    /**
+     * Splits an image into fragments horizontally depending on winningNumber.
+     * @param image Image to be split.
+     */
     void splitImage(Bitmap image) {
         fragments = new ArrayList<>(winningNumber);
         int y = 0;
@@ -163,6 +193,10 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         }
     }
 
+    /**
+     * Adds new fragment to letter to indicate progress when relevant animals was dragged correctly.
+     * @param step Which fragment will be added.
+     */
     void showProgress(int step) {
         RelativeLayout progress = findViewById(R.id.image_progress);
         int chunkSize = progress.getHeight() / winningNumber;
@@ -177,6 +211,10 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         fragment.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
+    /**
+     * Removes fragment when mistake was made.
+     * @param step Which fragment to be removed.
+     */
     void removeProgress(int step) {
         if (step == 0) {
             return;
@@ -186,6 +224,10 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         progress.removeView(fragment);
     }
 
+    /**
+     * Changes color of letterButton and filling when irrelevant animals was dragged correctly.
+     * Works by coloring each fragment.
+     */
     void changeColor() {
         if (colorChange >= colors.size()) {
             colorChange %= colors.size();
@@ -199,25 +241,31 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             DrawableCompat.setTint(fragment.getDrawable(),
                 ContextCompat.getColor(getApplicationContext(), colors.get(colorChange)));
         }
-
         // Change color of letter
         ImageButton iB = findViewById(R.id.button_letter);
         DrawableCompat.setTint(iB.getDrawable(), ContextCompat
             .getColor(getApplicationContext(), colors.get((colorChange + 1) % colors.size())));
     }
 
+    /**
+     * Resets letterButton to initial appearance.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void removeColor() {
         for (ImageView fragment : fragments) {
             fragment.getDrawable().setTintList(null);
         }
-
         // Change color of letter
         ImageButton iB = findViewById(R.id.button_letter);
         iB.getDrawable().setTintList(null);
 
     }
 
+    /**
+     * Scales image's longer side to fit 300dp and other side accordingly.
+     * Positions it to bottom center of screen.
+     * @param dino Indicates if dino or animal is to be positioned.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void positionAnimal(boolean dino) {
         if (!dino) {
@@ -243,9 +291,9 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             scalingFactor = vHeight / dHeight;
         }
         matrix.postScale(scalingFactor, scalingFactor);
-
         dWidth *= scalingFactor;
         dHeight *= scalingFactor;
+
         // Bottom center
         matrix.postTranslate(Math.round((vWidth - dWidth) * 0.5f),
             Math.round((vHeight - dHeight)));
@@ -253,6 +301,14 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
 
+    /**
+     * Called when animal is dragged to another view that accepts it.
+     * Shows animation in letterButton.
+     * A sound indicates whether it was right or wrong.
+     * @param view View to be dragged.
+     * @param container Where view is dragged to.
+     * @param sound Correct or wrong sound.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     void dragAnimal(View view, LinearLayout container, int sound) {
         // Animation
@@ -268,6 +324,12 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
     }
 
+    /**
+     * Called when view is dropped into container.
+     * View is removed from old and added to new container.
+     * @param view View to be dropped.
+     * @param container Container to accept view.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         sound = false;

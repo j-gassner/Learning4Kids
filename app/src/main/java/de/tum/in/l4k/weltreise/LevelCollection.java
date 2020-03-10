@@ -7,6 +7,11 @@ class LevelCollection {
 
     private HashMap<Character, Level> levels = new HashMap<>();
 
+    /**
+     * Constructor initializing the different levels.
+     *
+     * @param context Context.
+     */
     LevelCollection(Context context) {
         levels.put('f', new Level('f', 50, true, 5, context));
         levels.put('l', new Level('l', 50, false, 5, context));
@@ -22,6 +27,10 @@ class LevelCollection {
         levels.put('t', new Level('t', 25, true, 7, context));
     }
 
+    /**
+     * @param level Letter of level requested.
+     * @return Level starting with specified character.
+     */
     Level getLevel(Character level) {
         return levels.get(level);
     }

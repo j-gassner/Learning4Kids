@@ -52,6 +52,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animalPool = (AnimalPool) getApplication();
     }
 
+    /**
+     * Change state of level in shared preferences.
+     *
+     * @param level Level to be changed.
+     * @param mode New state of level.
+     */
     void writePreferences(Character level, int mode) {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -59,6 +65,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         editor.apply();
     }
 
+    /**
+     * Plays reminder after specified duration of inactivity.
+     */
     void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
@@ -76,11 +85,17 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         };
     }
 
+    /**
+     * Starts handler waiting for 30s of inactivity.
+     */
     public void startHandler() {
         super.startHandler();
         handleInactivity.postDelayed(runnable, 30000); //for 30 seconds
     }
 
+    /**
+     * Initialize elements and play level instruction.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
@@ -135,6 +150,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         }
     }
 
+    /**
+     * Find level's letterButton and create its progress bar.
+     */
     void setLetterButton() {
         buttonLetter = findViewById(R.id.button_letter);
         int idImage = getResources()
@@ -151,7 +169,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         splitImage(bm);
     }
 
-    //Set position of animal image and display
+    /**
+     * Draws animal according to level difficulty, displays them, and plays their name.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void displayAnimal() {
@@ -205,12 +225,19 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
     }
 
+    /**
+     * Plays praise or encouragement and waits for its completion.
+     * @param instruction Praise or encouragement to be played.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     void praiseEncourage(int instruction) {
         playInstruction(instruction);
         mp.setOnCompletionListener(mp -> displayAnimal());
     }
 
+    /**
+     * Displays dino with an animation and praise.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void displayDino() {
         ViewGroup owner = (ViewGroup) animal.getParent();
@@ -233,6 +260,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animal.startAnimation(zoom);
     }
 
+    /**
+     * Updates shared preferences when level is completed.
+     */
     void levelCompleted() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         if (availableLevels.getInt(level.toString(), 0) == levelState.UNLOCKED.ordinal()) {
@@ -251,6 +281,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         }
     }
 
+    /**
+     * Simulates camera flash with animation and sound.
+     */
     public void cameraFlash() {
         // White
         ImageView layover = findViewById(R.id.flash);
@@ -263,6 +296,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
                 }
             }
+
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
@@ -286,6 +320,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         layover.startAnimation(flash);
     }
 
+    /**
+     * Resets animalPool and finishes level.
+     */
     void leaveLevel() {
         animalPool.getAnimalPool().reset();
         Intent intent = new Intent(this, StartActivity.class);
@@ -294,6 +331,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         handler.postDelayed(this::finish, 1000);
     }
 
+    /**
+     * Checks whether animal has been dragged correctly and takes action accordingly.
+     * @param layoutview View animal is dragged to.
+     * @param dragevent Dragevent.
+     * @return True or false depending on success of drag.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
@@ -372,7 +415,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             case DragEvent.ACTION_DRAG_ENDED:
                 view.setVisibility(View.VISIBLE);
                 break;
-
             default:
                 break;
         }
@@ -380,6 +422,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         return true;
     }
 
+    /**
+     * Called when animal is dropped.
+     * Depending on previous performance a random praise or encouragement is triggered.
+     * @param view View to be dropped.
+     * @param container Container to accept view.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         super.dropAnimal(view, container);

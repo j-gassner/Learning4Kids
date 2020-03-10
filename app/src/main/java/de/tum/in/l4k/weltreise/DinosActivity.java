@@ -39,6 +39,9 @@ public class DinosActivity extends ScrollActivity {
         removeTint();
     }
 
+    /**
+     * Finds animations only used in this activity.
+     */
     void loadAnimations() {
         super.loadAnimations();
         dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
@@ -46,6 +49,9 @@ public class DinosActivity extends ScrollActivity {
 
     }
 
+    /**
+     * Checks whether a level is completed and sets dino images accordingly.
+     */
     public void assignScrollElements() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         for (char level : levels) {
@@ -64,6 +70,11 @@ public class DinosActivity extends ScrollActivity {
         }
     }
 
+    /**
+     * Snaps scrollview when buttons are used for scrolling.
+     *
+     * @param left Indicates whether left button was clicked.
+     */
     void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
         int horizontalWidth = hsv.getMeasuredWidth();
@@ -91,7 +102,9 @@ public class DinosActivity extends ScrollActivity {
         }
     }
 
-    // Remove dark tint from dino when level completed
+    /**
+     * Removes dark tint from dino when level is completed.
+     */
     void removeTint() {
         for (char level : levels) {
             int idImage = getResources()

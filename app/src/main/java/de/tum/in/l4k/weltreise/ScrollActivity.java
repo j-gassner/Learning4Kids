@@ -20,7 +20,16 @@ public abstract class ScrollActivity extends BaseActivity {
     Animation locked;
     int button;
 
+    /**
+     * Snaps scrollview.
+     *
+     * @param left Whether left button has been pressed.
+     */
     abstract void snap(boolean left);
+
+    /**
+     * Find elements of scrollview.
+     */
     abstract void assignScrollElements();
 
     @Override
@@ -44,6 +53,9 @@ public abstract class ScrollActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Make left and right button (in-)visible depending on scroll position.
+     */
     void scrollPosition() {
         hsv = findViewById(R.id.scroll_horizontal);
         ImageButton arrowRight = findViewById(R.id.scroll_right);
@@ -68,6 +80,9 @@ public abstract class ScrollActivity extends BaseActivity {
             });
     }
 
+    /**
+     * Load sound used by all extending activities to soundPool.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void loadButtonSounds() {
         super.loadButtonSounds();

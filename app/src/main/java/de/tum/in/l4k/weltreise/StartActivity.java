@@ -51,15 +51,26 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         }
     }
 
+    /**
+     * Ignores touch of user.
+     */
     void noTouchy() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
+    /**
+     * Makes window touchable.
+     */
     void touchy() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
+    /**
+     * Snaps scrollview when buttons are used for scrolling.
+     *
+     * @param left Whether left button has been pressed.
+     */
     void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
         int horizontalWidth = hsv.getMeasuredWidth();
@@ -73,8 +84,8 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
             child.getHitRect(hitRect);
             // 45 coord distance between polaroids
             // Cover entire space
-            hitRect.right += 22;
-            hitRect.left -= 23;
+            hitRect.right += distancePolaroids / 2;
+            hitRect.left -= (distancePolaroids / 2 + 1);
 
             if (hitRect.contains(centerX, centerY)) {
                 if (left) {
@@ -89,6 +100,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         }
     }
 
+    /**
+     * Called when reset is pressed asking if the user really wants to reset.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         playInstruction(R.raw.question_reset);
@@ -161,11 +175,17 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         findViewById(R.id.button_reset).setEnabled(true);
     }
 
+    /**
+     * Finds remaining animation needed for this activity.
+     */
     void loadAnimations() {
         super.loadAnimations();
         locked = AnimationUtils.loadAnimation(this, R.anim.locked);
     }
 
+    /**
+     * Checks state of level and sets image of image buttons accordingly.
+     */
     public void assignScrollElements() {
         //findViewById(R.id.button_unlock).setEnabled(false);
         for (char button : levels) {
@@ -191,6 +211,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
         }
     }
+
+    /**
+     * Sets levels to inital state with only f being unlocked.
+     * @param reset Whether reset was pressed.
+     */
     void writeInitialLevels(boolean reset) {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -205,6 +230,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         }
     }
 
+    /**
+     * Reset levels to intial state.
+     */
     void resetLevels() {
         writeInitialLevels(true);
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -213,7 +241,10 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         assignScrollElements();
     }
 
-    // For testing only
+    /**
+     * Unlocks all levels via invisible button is lower left corner.
+     * For testing only.
+     */
     void unlockLevels() {
         availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -227,6 +258,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         assignScrollElements();
     }
 
+    /**
+     * Starts explanation of museum.
+     */
     void tutorialMuseum() {
         // Explain museum
         ImageView arrow = findViewById(R.id.button_point_museum);
@@ -239,6 +273,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         });
     }
 
+    /**
+     * Starts explanation of reset button.
+     */
     void tutorialReset() {
         ImageView arrow = findViewById(R.id.button_point_reset);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
@@ -249,6 +286,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         });
     }
 
+    /**
+     * Starts explanation of tutorialButton.
+     */
     void tutorialTutorial() {
         ImageView arrow = findViewById(R.id.button_point_tutorial);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
@@ -259,6 +299,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         });
     }
 
+    /**
+     * Points to first level.
+     */
     void tutorialNowYou() {
         ImageView arrow = findViewById(R.id.button_point_f);
         arrow.setVisibility(View.VISIBLE);

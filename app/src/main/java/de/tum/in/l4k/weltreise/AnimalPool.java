@@ -13,13 +13,15 @@ public class AnimalPool extends Application {
         return this.animalPool;
     }
 
+    /**
+     * Finds all animals in drawable and adds them to the animalPool
+     */
     public void setAnimalPool(){
         animalPool = new Animals();
         final R.drawable drawableResources = new R.drawable();
         final Class<R.drawable> drawableClass = R.drawable.class;
         final Field[] fields = drawableClass.getDeclaredFields();
         final ArrayList<String> filenames = new ArrayList<>();
-
 
         for (Field field : fields) {
             final int resourceId;

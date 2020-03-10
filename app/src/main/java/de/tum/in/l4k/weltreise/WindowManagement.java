@@ -7,12 +7,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class WindowManagement extends AppCompatActivity {
 
+    /**
+     * Called when activity is created.
+     *
+     * @param savedInstanceState State saved in Bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideSystemUI();
     }
 
+    /**
+     * Called when the current Window of the activity gains or loses focus.
+     * @param hasFocus Whether the window of this activity has focus.
+     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -21,16 +30,14 @@ public abstract class WindowManagement extends AppCompatActivity {
         }
     }
 
+    /**
+     * Enables immersive sticky mode and hides system UI
+     */
     void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

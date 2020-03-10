@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 public abstract class BaseActivity extends WindowManagement {
 
     static ArrayList<Character> levels = new ArrayList<>(
@@ -49,13 +50,24 @@ public abstract class BaseActivity extends WindowManagement {
         soundPool = null;
     }
 
+    /**
+     * Makes MediaPlayer play a soundfile.
+     *
+     * @param resID ID of the soundfile
+     */
     void playInstruction(int resID) {
         mp.reset();
         mp = MediaPlayer.create(this, resID);
+
+        // Volume at 0.5f fits best with volume of soundPool
         mp.setVolume(0.5f, 0.5f);
         mp.start();
     }
 
+    /**
+     * Base for loading sounds used in soundPool.
+     * Indicates with loaded = true when loading was successful.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void loadButtonSounds() {
         AudioAttributes attributes = new AudioAttributes.Builder()
@@ -69,6 +81,9 @@ public abstract class BaseActivity extends WindowManagement {
             (soundPool, sampleId, status) -> loaded = true);
     }
 
+    /**
+     * Loads animations that all activities use.
+     */
     void loadAnimations() {
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);

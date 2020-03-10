@@ -15,29 +15,44 @@ import java.util.TreeSet;
 @SuppressWarnings("serial")
 class Animals implements Serializable {
     private static Random rand = new Random();
-
-    // HashMap Character -> ArrayList of animals
     private HashMap<Character, ArrayList<Integer>> animalMap;
     private HashMap<Character, ArrayList<Integer>> animalMapCurrent;
 
+    /**
+     * Constructor intializing HashMaps.
+     */
     Animals() {
         this.animalMap = new HashMap<>();
         this.animalMapCurrent = new HashMap<>();
     }
 
+    /**
+     * @return animalMap
+     */
     HashMap<Character, ArrayList<Integer>> getAnimalMap() {
         return this.animalMap;
     }
 
+    /**
+     * @return animalMapCurrent
+     */
     HashMap<Character, ArrayList<Integer>> getAnimalMapCurrent() {
         return this.animalMapCurrent;
     }
 
+    /**
+     * Deep copies animalMap to animalMapCurrent so that it contains all animals again.
+     */
     void reset() {
         this.animalMapCurrent = copy(this.animalMap);
     }
 
-    // Get random animal for current letter
+    /**
+     * Draws animal starting with currentLetter randomly from animalMapCurrent.
+     *
+     * @param currentLetter Letter of level.
+     * @return Random animal starting with currentLetter.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     Integer getAnimal(char currentLetter) {
         cleanUp();
@@ -53,7 +68,11 @@ class Animals implements Serializable {
         return animals.get(rand.nextInt(animals.size()));
     }
 
-    // Get random distractor
+    /**
+     * Finds a random letter that is not currentLetter and draws animal starting with it.
+     * @param currentLetter Letter of level.
+     * @return Random animal not starting with currentLetter.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     Integer getDistractorAnimal(char currentLetter) {
         cleanUp();
@@ -73,12 +92,19 @@ class Animals implements Serializable {
     }
 
 
+    /**
+     * Removes empty entries from animalMapCurrent.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void cleanUp() {
         animalMapCurrent.entrySet().removeIf(level -> level.getValue().size() == 0);
     }
 
-    // Deepcopy of HashMap
+    /**
+     * Creates a deepcopy of passed HashMap.
+     * @param original HashMap to be copied.
+     * @return Deepcopy of original.
+     */
     private static HashMap<Character, ArrayList<Integer>> copy(
         HashMap<Character, ArrayList<Integer>> original) {
         HashMap<Character, ArrayList<Integer>> copy = new HashMap<>();
