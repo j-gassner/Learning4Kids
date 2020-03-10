@@ -51,92 +51,13 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         }
     }
 
-    void loadAnimations() {
-        super.loadAnimations();
-        locked = AnimationUtils.loadAnimation(this, R.anim.locked);
-
-    }
-    void writeInitialLevels(boolean reset) {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-        SharedPreferences.Editor editor = availableLevels.edit();
-
-        // Create SharedPreference
-        if (!availableLevels.contains("f") || reset) {
-            for (char level : levels) {
-                editor.putInt(Character.toString(level), levelState.LOCKED.ordinal());
-            }
-            editor.putInt("f", levelState.UNLOCKED.ordinal());
-            editor.apply();
-        }
+    void noTouchy() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
-    void resetLevels() {
-        writeInitialLevels(true);
-        SharedPreferences.Editor editor = availableLevels.edit();
-        editor.putBoolean("Tutorial", false);
-        editor.apply();
-        assignScrollElements();
-
-    }
-    // For testing only
-
-    void unlockLevels() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-        SharedPreferences.Editor editor = availableLevels.edit();
-
-        // Create SharedPreference
-        for (char level : levels) {
-            editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
-        }
-        //editor.putInt("f", levelState.UNLOCKED.ordinal());
-        editor.apply();
-        assignScrollElements();
-
-    }
-
-    void tutorialMuseum() {
-        // Explain museum
-        ImageView arrow = findViewById(R.id.button_point_museum);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
-
-        playInstruction(R.raw.instruction_museum);
-        mp.setOnCompletionListener(mp -> {
-            tutorialReset();
-            arrow.setVisibility(View.INVISIBLE);
-        });
-    }
-
-    void tutorialReset() {
-        ImageView arrow = findViewById(R.id.button_point_reset);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
-        playInstruction(R.raw.instruction_reset);
-        mp.setOnCompletionListener(mp -> {
-            arrow.setVisibility(View.INVISIBLE);
-            tutorialTutorial();
-        });
-
-    }
-
-    void tutorialTutorial() {
-        ImageView arrow = findViewById(R.id.button_point_tutorial);
-        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
-        playInstruction(R.raw.instruction_tutorial);
-        mp.setOnCompletionListener(mp -> {
-            arrow.setVisibility(View.INVISIBLE);
-            tutorialNowYou();
-        });
-    }
-
-    void tutorialNowYou() {
-        ImageView arrow = findViewById(R.id.button_point_f);
-        arrow.setVisibility(View.VISIBLE);
-        playInstruction(R.raw.instruction_now_you);
-        mp.setOnCompletionListener(mp -> {
-            arrow.setVisibility(View.INVISIBLE);
-            tutorialRunning = false;
-        });
-
-
+    void touchy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     void snap(boolean left) {
@@ -168,36 +89,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         }
     }
 
-    public void assignScrollElements() {
-        //findViewById(R.id.button_unlock).setEnabled(false);
-        for (char button : levels) {
-            int idImage;
-            int idButton = getResources()
-                .getIdentifier("button_" + button, "id", this.getPackageName());
-            ImageButton iB = findViewById(idButton);
-            if (availableLevels.getInt(button + "", 0) == levelState.COMPLETED.ordinal()) {
-
-                idImage = getResources()
-                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
-
-            } else if (availableLevels.getInt(button + "", 0) == levelState.UNLOCKED.ordinal()) {
-
-                idImage = getResources()
-                    .getIdentifier(button + "_polaroid_unlocked", "drawable",
-                        this.getPackageName());
-            } else {
-                idImage = getResources()
-                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
-            }
-            iB.setImageResource(idImage);
-
-        }
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         playInstruction(R.raw.question_reset);
-
         int ui_flags =
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
@@ -265,16 +159,114 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         alertDialog.getWindow().
             clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         findViewById(R.id.button_reset).setEnabled(true);
-
     }
 
-    void noTouchy() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    void loadAnimations() {
+        super.loadAnimations();
+        locked = AnimationUtils.loadAnimation(this, R.anim.locked);
     }
 
-    void touchy() {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    public void assignScrollElements() {
+        //findViewById(R.id.button_unlock).setEnabled(false);
+        for (char button : levels) {
+            int idImage;
+            int idButton = getResources()
+                .getIdentifier("button_" + button, "id", this.getPackageName());
+            ImageButton iB = findViewById(idButton);
+            if (availableLevels.getInt(button + "", 0) == levelState.COMPLETED.ordinal()) {
+
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
+
+            } else if (availableLevels.getInt(button + "", 0) == levelState.UNLOCKED.ordinal()) {
+
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid_unlocked", "drawable",
+                        this.getPackageName());
+            } else {
+                idImage = getResources()
+                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
+            }
+            iB.setImageResource(idImage);
+
+        }
+    }
+    void writeInitialLevels(boolean reset) {
+        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        SharedPreferences.Editor editor = availableLevels.edit();
+
+        // Create SharedPreference
+        if (!availableLevels.contains("f") || reset) {
+            for (char level : levels) {
+                editor.putInt(Character.toString(level), levelState.LOCKED.ordinal());
+            }
+            editor.putInt("f", levelState.UNLOCKED.ordinal());
+            editor.apply();
+        }
+    }
+
+    void resetLevels() {
+        writeInitialLevels(true);
+        SharedPreferences.Editor editor = availableLevels.edit();
+        editor.putBoolean("Tutorial", false);
+        editor.apply();
+        assignScrollElements();
+    }
+
+    // For testing only
+    void unlockLevels() {
+        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        SharedPreferences.Editor editor = availableLevels.edit();
+
+        // Create SharedPreference
+        for (char level : levels) {
+            editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
+        }
+        //editor.putInt("f", levelState.UNLOCKED.ordinal());
+        editor.apply();
+        assignScrollElements();
+    }
+
+    void tutorialMuseum() {
+        // Explain museum
+        ImageView arrow = findViewById(R.id.button_point_museum);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
+
+        playInstruction(R.raw.instruction_museum);
+        mp.setOnCompletionListener(mp -> {
+            tutorialReset();
+            arrow.setVisibility(View.INVISIBLE);
+        });
+    }
+
+    void tutorialReset() {
+        ImageView arrow = findViewById(R.id.button_point_reset);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
+        playInstruction(R.raw.instruction_reset);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            tutorialTutorial();
+        });
+    }
+
+    void tutorialTutorial() {
+        ImageView arrow = findViewById(R.id.button_point_tutorial);
+        new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 0);
+        playInstruction(R.raw.instruction_tutorial);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            tutorialNowYou();
+        });
+    }
+
+    void tutorialNowYou() {
+        ImageView arrow = findViewById(R.id.button_point_f);
+        arrow.setVisibility(View.VISIBLE);
+        playInstruction(R.raw.instruction_now_you);
+        mp.setOnCompletionListener(mp -> {
+            arrow.setVisibility(View.INVISIBLE);
+            tutorialRunning = false;
+        });
     }
 
 

@@ -39,6 +39,31 @@ public class DinosActivity extends ScrollActivity {
         removeTint();
     }
 
+    void loadAnimations() {
+        super.loadAnimations();
+        dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
+        locked = AnimationUtils.loadAnimation(this, R.anim.dino_locked_anim);
+
+    }
+
+    public void assignScrollElements() {
+        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        for (char level : levels) {
+            int idImage;
+            int idButton = getResources()
+                .getIdentifier("dino_" + level, "id", this.getPackageName());
+            ImageButton iB = findViewById(idButton);
+            idImage = getResources()
+                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
+            Drawable draw = getResources().getDrawable(idImage);
+            if (availableLevels.getInt(level + "", 0) != levelState.COMPLETED.ordinal()) {
+                draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
+                    PorterDuff.Mode.SRC_ATOP);
+            }
+            iB.setImageResource(idImage);
+        }
+    }
+
     void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
         int horizontalWidth = hsv.getMeasuredWidth();
@@ -63,31 +88,6 @@ public class DinosActivity extends ScrollActivity {
                 }
                 break;
             }
-        }
-    }
-
-    void loadAnimations() {
-        super.loadAnimations();
-        dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
-        locked = AnimationUtils.loadAnimation(this, R.anim.dino_locked_anim);
-
-    }
-
-    public void assignScrollElements() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
-        for (char level : levels) {
-            int idImage;
-            int idButton = getResources()
-                .getIdentifier("dino_" + level, "id", this.getPackageName());
-            ImageButton iB = findViewById(idButton);
-            idImage = getResources()
-                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
-            Drawable draw = getResources().getDrawable(idImage);
-            if (availableLevels.getInt(level + "", 0) != levelState.COMPLETED.ordinal()) {
-                draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
-                    PorterDuff.Mode.SRC_ATOP);
-            }
-            iB.setImageResource(idImage);
         }
     }
 

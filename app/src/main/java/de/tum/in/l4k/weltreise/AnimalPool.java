@@ -8,15 +8,10 @@ import java.util.Objects;
 
 public class AnimalPool extends Application {
     private Animals animalPool;
-    //private Statistics statistics = new Statistics();
 
     public Animals getAnimalPool(){
         return this.animalPool;
     }
-
-    /*public Statistics getStatistics(){
-        return this.statistics;
-    }*/
 
     public void setAnimalPool(){
         animalPool = new Animals();
@@ -44,13 +39,9 @@ public class AnimalPool extends Application {
         for (String filename : filenames) {
             Character firstLetter = filename.charAt(0);
             final int resourceId = resources.getIdentifier(filename, "drawable", getPackageName());
-            //statistics.addToIDList(resourceId, filename.replace("_animal", ""));
             if (!animalPool.getAnimalMap().containsKey(firstLetter)) {
-                //animalPool.getAnimalMapCurrent().put(firstLetter, new ArrayList<>());
                 animalPool.getAnimalMap().put(firstLetter, new ArrayList<>());
             }
-            assert animalPool.getAnimalMap().get(firstLetter) != null;
-            //animalPool.getAnimalMapCurrent().get(firstLetter).add(resourceId);
             Objects.requireNonNull(animalPool.getAnimalMap().get(firstLetter)).add(resourceId);
         }
 

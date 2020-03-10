@@ -41,6 +41,13 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         inactivityHandler();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tutorialIntro();
+    }
+
     void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
@@ -56,11 +63,16 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
+    public void startHandler() {
+        super.startHandler();
+        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
+    }
+
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
 
-        WINNINGNUMBER = 5;
+        winningNumber = 5;
         level = 'f';
 
         // Get other components
@@ -79,18 +91,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         splitImage(bm);
     }
 
-    public void startHandler() {
-        super.startHandler();
-        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    protected void onResume() {
-        super.onResume();
-        tutorialIntro();
-    }
 
     void loadButtons() {
         super.loadButtons();
@@ -265,7 +265,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         });
     }
 
-
     void tutorialBack() {
         // Back button
         arrow.setVisibility(View.INVISIBLE);
@@ -281,10 +280,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             sound = true;
         });
     }
-
-
-
-
 
     //Set position of animal image and display
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -328,7 +323,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 tutorialDragFalse();
             }
         });
-
     }
 
     @RequiresApi(api = VERSION_CODES.N)
@@ -342,7 +336,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         if (loaded) {
             soundPool.play(sounds[sound], 1f, 1f, 1, 0, 1f);
         }
-        drop(view, container);
+        dropAnimal(view, container);
 
     }
 

@@ -23,7 +23,6 @@ public abstract class BaseActivity extends WindowManagement {
     SharedPreferences availableLevels;
     Animation scale, scaleHalf;
     boolean loaded;
-
     enum levelState {LOCKED, UNLOCKED, COMPLETED}
 
     @SuppressLint("ClickableViewAccessibility")
@@ -33,6 +32,21 @@ public abstract class BaseActivity extends WindowManagement {
         super.onCreate(savedInstanceState);
         loadButtonSounds();
         loadAnimations();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mp.setVolume(0f, 0f);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mp.release();
+        mp = null;
+        soundPool.release();
+        soundPool = null;
     }
 
     void playInstruction(int resID) {
@@ -58,21 +72,6 @@ public abstract class BaseActivity extends WindowManagement {
     void loadAnimations() {
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mp.setVolume(0f, 0f);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mp.release();
-        mp = null;
-        soundPool.release();
-        soundPool = null;
     }
 
 }

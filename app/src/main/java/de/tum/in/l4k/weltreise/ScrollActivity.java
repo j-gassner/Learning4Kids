@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public abstract class ScrollActivity extends BaseActivity {
 
+    // Remeber scroll position
     protected static HashMap<Class, Integer> scrollXMap = new HashMap<Class, Integer>() {{
         put(StartActivity.class, 0);
         put(DinosActivity.class, 0);
@@ -17,11 +18,9 @@ public abstract class ScrollActivity extends BaseActivity {
 
     HorizontalScrollView hsv;
     Animation locked;
-
     int button;
 
     abstract void snap(boolean left);
-
     abstract void assignScrollElements();
 
     @Override
