@@ -97,7 +97,6 @@
       app:fontFamily="@font/chalk"
       tools:ignore="RelativeOverlap" />
 
-
     <ImageView
       android:id="@+id/button_point_museum"
       android:layout_width="120dp"
@@ -109,6 +108,7 @@
       android:rotation="-150"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
+
     <ImageView
       android:id="@+id/button_point_reset"
       android:layout_width="120dp"
@@ -119,8 +119,8 @@
       android:contentDescription="@string/arrow_reset"
       android:rotation="45"
       android:src="@drawable/button_arrow"
-
       android:visibility="invisible" />
+
     <ImageView
       android:id="@+id/button_point_tutorial"
       android:layout_width="120dp"
@@ -131,7 +131,6 @@
       android:contentDescription="@string/arrow_tutorial"
       android:rotation="60"
       android:src="@drawable/button_arrow"
-
       android:visibility="invisible" />
 
     <ImageView
@@ -145,7 +144,6 @@
       android:rotation="-135"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
-
 
     <ImageButton
       android:id="@+id/scroll_left"
@@ -172,7 +170,6 @@
       android:alpha="0.2"
       android:background="@null"
       android:contentDescription="@string/button_right"
-
       android:onClick="onClick"
       android:scaleType="fitCenter"
       android:src="@drawable/scroll_right"
@@ -183,13 +180,10 @@
       android:layout_width="1110dp"
       android:layout_height="wrap_content"
       android:layout_centerHorizontal="true"
-
       android:layout_marginTop="250dp"
-
       android:background="@null"
       android:orientation="horizontal"
       android:scrollbars="none">
-
 
         <LinearLayout
           android:id="@+id/layout_scroll"
@@ -314,7 +308,6 @@
               android:background="@null"
               android:contentDescription="@string/button_s"
               android:onClick="onClick"
-
               android:scaleType="fitCenter" />
 
             <ImageButton
@@ -342,6 +335,5 @@
               android:scaleType="fitCenter" />
 
         </LinearLayout>
-
     </HorizontalScrollView>
 </RelativeLayout>

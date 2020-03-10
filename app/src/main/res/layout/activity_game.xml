@@ -65,18 +65,14 @@
       android:layout_width="380dp"
       android:layout_height="fill_parent"
       android:layout_gravity="start"
-      android:orientation="vertical"
-
-      />
+      android:orientation="vertical" />
 
     <LinearLayout
       android:id="@+id/right"
       android:layout_width="380dp"
       android:layout_height="match_parent"
       android:layout_gravity="end"
-      android:orientation="vertical"
-
-      />
+      android:orientation="vertical" />
 
     <LinearLayout
       android:id="@+id/middle"

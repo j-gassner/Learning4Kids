@@ -19,7 +19,6 @@
     android:scaleType="fitStart"
     android:src="@drawable/button_back" />
 
-
   <HorizontalScrollView
     android:id="@+id/scroll_horizontal"
     android:layout_width="match_parent"
@@ -28,7 +27,6 @@
     android:layout_marginTop="150dp"
     android:orientation="horizontal"
     android:scrollbars="none">
-
 
     <LinearLayout
       android:id="@+id/layout_scroll"
@@ -41,7 +39,6 @@
         android:layout_height="600dp"
         android:adjustViewBounds="true"
         android:background="@null"
-
         android:contentDescription="@string/dino_f"
         android:onClick="onClick"
         android:scaleType="fitEnd" />
@@ -53,7 +50,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_l"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -64,7 +60,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_r"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -75,7 +70,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_m"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -86,7 +80,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_n"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -97,7 +90,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_i"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -108,7 +100,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_e"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -119,7 +110,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_a"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -130,7 +120,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_o"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -141,9 +130,7 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_s"
-
         android:onClick="onClick"
-
         android:scaleType="fitEnd" />
 
       <ImageButton
@@ -153,7 +140,6 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/dino_b"
-
         android:onClick="onClick"
         android:scaleType="fitEnd" />
 
@@ -196,9 +182,9 @@
     android:alpha="0.4"
     android:background="@null"
     android:contentDescription="@string/button_right"
-
     android:onClick="onClick"
     android:scaleType="fitCenter"
     android:src="@drawable/scroll_right"
     android:visibility="invisible" />
+
 </RelativeLayout>
