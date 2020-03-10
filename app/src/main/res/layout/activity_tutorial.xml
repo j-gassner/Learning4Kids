@@ -11,6 +11,7 @@
       android:id="@+id/tutorial_background"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:contentDescription="@string/background"
       android:scaleType="fitXY"
       android:src="@drawable/background_f" />
 
@@ -33,7 +34,7 @@
       android:layout_marginLeft="970dp"
       android:layout_marginTop="30dp"
       android:background="@null"
-      android:contentDescription="@string/button_back"
+      android:contentDescription="@string/button_skip"
       android:onClick="onClick"
       android:scaleType="fitStart"
       android:src="@drawable/button_skip" />
@@ -68,7 +69,7 @@
       android:layout_gravity="center_horizontal"
       android:layout_marginTop="700dp"
       android:background="@null"
-      android:contentDescription="@string/button_animal"
+      android:contentDescription="@string/button_speaker"
       android:onClick="onClick"
       android:scaleType="fitCenter"
       android:src="@drawable/button_speaker" />
@@ -80,6 +81,7 @@
       android:layout_marginStart="480dp"
       android:layout_marginLeft="480dp"
       android:layout_marginTop="90dp"
+      android:contentDescription="@string/arrow_letter"
       android:rotation="135"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
@@ -91,6 +93,7 @@
       android:layout_marginStart="500dp"
       android:layout_marginLeft="500dp"
       android:layout_marginTop="610dp"
+      android:contentDescription="@string/arrow_speaker"
       android:rotation="-115"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
@@ -102,6 +105,7 @@
       android:layout_marginStart="130dp"
       android:layout_marginLeft="130dp"
       android:layout_marginTop="80dp"
+      android:contentDescription="@string/arrow_back"
       android:rotation="30"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
@@ -113,6 +117,7 @@
       android:layout_marginStart="280dp"
       android:layout_marginLeft="280dp"
       android:layout_marginTop="350dp"
+      android:contentDescription="@string/arrow_submarine"
       android:rotation="-60"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />
@@ -124,6 +129,7 @@
       android:layout_marginStart="890dp"
       android:layout_marginLeft="890dp"
       android:layout_marginTop="360dp"
+      android:contentDescription="@string/arrow_sign"
       android:rotation="-160"
       android:src="@drawable/button_arrow"
       android:visibility="invisible" />

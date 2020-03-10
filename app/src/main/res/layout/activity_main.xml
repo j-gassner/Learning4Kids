@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal|center_vertical"
-    android:background="@drawable/blackboard_menu"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/blackboard_menu"
+  android:gravity="center_horizontal|center_vertical"
+  android:orientation="horizontal"
   tools:context="de.tum.in.l4k.weltreise.StartActivity">
 
     <ImageView
-        android:layout_width="400dp"
-        android:layout_height="300dp"
-        android:scaleType="fitCenter"
-        android:id="@+id/logo"
-        android:src="@drawable/logo_start"
-        />
+      android:id="@+id/logo"
+      android:layout_width="400dp"
+      android:layout_height="300dp"
+      android:contentDescription="@string/l4k"
+      android:scaleType="fitCenter"
+      android:src="@drawable/logo_start" />
 
 </LinearLayout>

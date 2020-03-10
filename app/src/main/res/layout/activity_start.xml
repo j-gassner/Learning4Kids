@@ -1,178 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:background="@drawable/blackboard_menu"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/blackboard_menu"
+  android:orientation="horizontal"
   tools:context="de.tum.in.l4k.weltreise.StartActivity">
 
     <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
-        android:src="@drawable/button_reset"
-        android:scaleType="fitStart"
-        android:background="@null"
-        android:id="@+id/button_reset"
-        android:contentDescription="@string/button_reset"
-        android:onClick="onClick" />
+      android:id="@+id/button_reset"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:layout_margin="20dp"
+      android:background="@null"
+      android:contentDescription="@string/button_reset"
+      android:onClick="onClick"
+      android:scaleType="fitStart"
+      android:src="@drawable/button_reset" />
 
     <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/button_exit"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:id="@+id/button_exit"
-        android:contentDescription="@string/button_exit"
-        android:onClick="onClick"
-        android:layout_alignParentEnd="true" />
+      android:id="@+id/button_exit"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_margin="20dp"
+      android:background="@null"
+      android:contentDescription="@string/button_exit"
+      android:onClick="onClick"
+      android:scaleType="fitCenter"
+      android:src="@drawable/button_exit" />
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="700dp"
-        android:src="@null"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:id="@+id/button_unlock"
-        android:layout_alignParentLeft="true"
-        android:contentDescription="@string/button_unlock"
-        android:onClick="onClick"
-      android:layout_alignParentStart="true" />
+      android:id="@+id/button_unlock"
+      android:layout_width="100dp"
+      android:layout_height="100dp"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="700dp"
+      android:background="@null"
+      android:contentDescription="@string/button_unlock"
+      android:onClick="onClick"
+      android:scaleType="fitCenter"
+      android:src="@null" />
 
     <ImageButton
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="670dp"
-        android:src="@drawable/button_museum"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:id="@+id/button_museum"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/button_exit"
-        android:onClick="onClick" />
+      android:id="@+id/button_museum"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="670dp"
+      android:background="@null"
+      android:contentDescription="@string/button_exit"
+      android:onClick="onClick"
+      android:scaleType="fitCenter"
+      android:src="@drawable/button_museum" />
 
     <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="140dp"
-        android:layout_marginStart="100dp"
-        android:src="@drawable/button_tutorial"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:id="@+id/button_tutorial"
-        android:contentDescription="@string/button_tutorial"
-        android:onClick="onClick" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:id="@+id/name_child"
-        android:text="Tierische"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-      android:fontFamily="@font/chalk"
-      android:textSize="80sp"
-        android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="Weltreise"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-      android:fontFamily="@font/chalk"
-      android:textSize="80sp"
-        android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true" />
-
-
-
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:rotation="-150"
-        android:id="@+id/button_point_museum"
-        android:src="@drawable/button_arrow"
-        android:layout_marginLeft="450dp"
-        android:layout_marginStart="450dp"
-        android:layout_marginTop="650dp"
-        android:visibility="invisible"
-        />
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:rotation="45"
-        android:id="@+id/button_point_reset"
-        android:src="@drawable/button_arrow"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="70dp"
-        android:visibility="invisible"
-
-        />
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-      android:rotation="60"
-        android:id="@+id/button_point_tutorial"
-        android:src="@drawable/button_arrow"
-      android:layout_marginLeft="100dp"
+      android:id="@+id/button_tutorial"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
       android:layout_marginStart="100dp"
-      android:layout_marginTop="80dp"
-        android:visibility="invisible"
+      android:layout_marginLeft="140dp"
+      android:layout_marginTop="20dp"
+      android:background="@null"
+      android:contentDescription="@string/button_tutorial"
+      android:onClick="onClick"
+      android:scaleType="fitCenter"
+      android:src="@drawable/button_tutorial" />
 
-        />
+    <TextView
+      android:id="@+id/name_child"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="10dp"
+      android:gravity="center_horizontal"
+      android:text="@string/tierische"
+      android:textColor="@color/white"
+      android:textSize="80sp"
+      android:textStyle="bold"
+      app:fontFamily="@font/chalk"
+      tools:ignore="RelativeOverlap" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="100dp"
+      android:gravity="center_horizontal"
+      android:text="@string/weltreise"
+      android:textColor="@color/white"
+      android:textSize="80sp"
+      android:textStyle="bold"
+      app:fontFamily="@font/chalk"
+      tools:ignore="RelativeOverlap" />
+
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:rotation="-135"
-        android:id="@+id/button_point_f"
-        android:src="@drawable/button_arrow"
-        android:layout_marginLeft="80dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="150dp"
-        android:visibility="invisible"
-        />
+      android:id="@+id/button_point_museum"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_marginStart="450dp"
+      android:layout_marginLeft="450dp"
+      android:layout_marginTop="650dp"
+      android:contentDescription="@string/arrow_museum"
+      android:rotation="-150"
+      android:src="@drawable/button_arrow"
+      android:visibility="invisible" />
+    <ImageView
+      android:id="@+id/button_point_reset"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_marginStart="30dp"
+      android:layout_marginLeft="30dp"
+      android:layout_marginTop="70dp"
+      android:contentDescription="@string/arrow_reset"
+      android:rotation="45"
+      android:src="@drawable/button_arrow"
+
+      android:visibility="invisible" />
+    <ImageView
+      android:id="@+id/button_point_tutorial"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_marginStart="100dp"
+      android:layout_marginLeft="100dp"
+      android:layout_marginTop="80dp"
+      android:contentDescription="@string/arrow_tutorial"
+      android:rotation="60"
+      android:src="@drawable/button_arrow"
+
+      android:visibility="invisible" />
+
+    <ImageView
+      android:id="@+id/button_point_f"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_marginStart="80dp"
+      android:layout_marginLeft="80dp"
+      android:layout_marginTop="150dp"
+      android:contentDescription="@string/arrow_first_level"
+      android:rotation="-135"
+      android:src="@drawable/button_arrow"
+      android:visibility="invisible" />
 
 
     <ImageButton
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:alpha="0.2"
-        android:id="@+id/scroll_left"
-        android:src="@drawable/scroll_left"
+      android:id="@+id/scroll_left"
+      android:layout_width="80dp"
+      android:layout_height="100dp"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="375dp"
+      android:alpha="0.2"
       android:background="@null"
+      android:contentDescription="@string/button_left"
+      android:onClick="onClick"
       android:scaleType="fitCenter"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="375dp"
-        android:layout_alignParentStart="true"
-      android:visibility="invisible"
-      android:onClick="onClick" />
+      android:src="@drawable/scroll_left"
+      android:visibility="invisible" />
 
     <ImageButton
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:alpha="0.2"
-        android:id="@+id/scroll_right"
-        android:src="@drawable/scroll_right"
+      android:id="@+id/scroll_right"
+      android:layout_width="80dp"
+      android:layout_height="100dp"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginTop="375dp"
+      android:alpha="0.2"
       android:background="@null"
-      android:scaleType="fitCenter"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="375dp"
+      android:contentDescription="@string/button_right"
 
-        android:layout_alignParentEnd="true"
-      android:visibility="invisible"
-      android:onClick="onClick" />
+      android:onClick="onClick"
+      android:scaleType="fitCenter"
+      android:src="@drawable/scroll_right"
+      android:visibility="invisible" />
 
     <HorizontalScrollView
       android:id="@+id/scroll_horizontal"
