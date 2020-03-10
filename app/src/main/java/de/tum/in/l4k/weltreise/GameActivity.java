@@ -227,6 +227,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
     /**
      * Plays praise or encouragement and waits for its completion.
+     *
      * @param instruction Praise or encouragement to be played.
      */
     @RequiresApi(api = VERSION_CODES.N)
@@ -333,6 +334,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
     /**
      * Checks whether animal has been dragged correctly and takes action accordingly.
+     *
      * @param layoutview View animal is dragged to.
      * @param dragevent Dragevent.
      * @return True or false depending on success of drag.
@@ -425,6 +427,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * Called when animal is dropped.
      * Depending on previous performance a random praise or encouragement is triggered.
+     *
      * @param view View to be dropped.
      * @param container Container to accept view.
      */

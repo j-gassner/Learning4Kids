@@ -179,6 +179,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
     /**
      * Splits an image into fragments horizontally depending on winningNumber.
+     *
      * @param image Image to be split.
      */
     void splitImage(Bitmap image) {
@@ -195,6 +196,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
     /**
      * Adds new fragment to letter to indicate progress when relevant animals was dragged correctly.
+     *
      * @param step Which fragment will be added.
      */
     void showProgress(int step) {
@@ -213,6 +215,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
 
     /**
      * Removes fragment when mistake was made.
+     *
      * @param step Which fragment to be removed.
      */
     void removeProgress(int step) {
@@ -264,6 +267,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * Scales image's longer side to fit 300dp and other side accordingly.
      * Positions it to bottom center of screen.
+     *
      * @param dino Indicates if dino or animal is to be positioned.
      */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
@@ -305,6 +309,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      * Called when animal is dragged to another view that accepts it.
      * Shows animation in letterButton.
      * A sound indicates whether it was right or wrong.
+     *
      * @param view View to be dragged.
      * @param container Where view is dragged to.
      * @param sound Correct or wrong sound.
@@ -327,6 +332,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * Called when view is dropped into container.
      * View is removed from old and added to new container.
+     *
      * @param view View to be dropped.
      * @param container Container to accept view.
      */

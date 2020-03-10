@@ -383,6 +383,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * Called when animal is dragged to another view that accepts it.
      * Shows animation in letterButton.
      * A sound indicates whether it was right or wrong.
+     *
      * @param view View to be dragged.
      * @param container Where view is dragged to.
      * @param sound Correct or wrong sound.
@@ -402,13 +403,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
     }
 
-    // This is the method that the system calls when it dispatches a drag event to the
-    // listener.
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
-        //ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-
         int action = dragevent.getAction();
         View view = (View) dragevent.getLocalState();
         switch (action) {
@@ -418,12 +415,10 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DROP:
-                //Log.d("drag", "Dropped");
                 LinearLayout container = (LinearLayout) layoutview;
 
                 // Match
                 if (fit && container.getId() == match.getId() && !dragCorrectRight) {
-                    //dragCorrect = true;
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     correctMatches++;
                     step++;

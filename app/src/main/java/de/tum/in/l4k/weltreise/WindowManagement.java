@@ -7,21 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class WindowManagement extends AppCompatActivity {
 
-    /**
-     * Called when activity is created.
-     *
-     * @param savedInstanceState State saved in Bundle
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideSystemUI();
     }
 
-    /**
-     * Called when the current Window of the activity gains or loses focus.
-     * @param hasFocus Whether the window of this activity has focus.
-     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);

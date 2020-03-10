@@ -214,6 +214,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
     /**
      * Sets levels to inital state with only f being unlocked.
+     *
      * @param reset Whether reset was pressed.
      */
     void writeInitialLevels(boolean reset) {

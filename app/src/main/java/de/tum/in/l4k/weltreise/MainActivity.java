@@ -13,6 +13,7 @@ public class MainActivity extends WindowManagement {
         setContentView(R.layout.activity_main);
         hideSystemUI();
 
+        // Set animalPool
         AnimalPool animalPool = (AnimalPool) getApplication();
         animalPool.setAnimalPool();
 
