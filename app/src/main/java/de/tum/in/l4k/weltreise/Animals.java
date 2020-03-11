@@ -16,7 +16,7 @@ import java.util.TreeSet;
  * @author Josefine Gaßner
  */
 
-// Serializable faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
+// Serializable is faster than Parcelable. See https://bitbucket.org/afrishman/androidserializationtest/src/default/
 @SuppressWarnings("serial")
 class Animals implements Serializable {
 
