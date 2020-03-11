@@ -16,13 +16,22 @@ import java.util.TreeSet;
  * @author Josefine Gaßner
  */
 
-// Faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
+// Serializable faster than Parcelable? https://bitbucket.org/afrishman/androidserializationtest/src/default/
 @SuppressWarnings("serial")
 class Animals implements Serializable {
 
     private static Random rand = new Random();
-    private HashMap<Character, ArrayList<Integer>> animalMap;
+
+    /**
+     * Map containing the animals for each level. Animals are drawn from here during the game.
+     */
     private HashMap<Character, ArrayList<Integer>> animalMapCurrent;
+
+    /**
+     * Backup Map containing all animals. Used for reset when a level is left.
+     */
+    private HashMap<Character, ArrayList<Integer>> animalMap;
+
 
     /**
      * Constructor initializing HashMaps.

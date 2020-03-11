@@ -52,7 +52,6 @@ public class DinosActivity extends ScrollActivity {
         super.loadAnimations();
         dino = AnimationUtils.loadAnimation(this, R.anim.dino_anim);
         locked = AnimationUtils.loadAnimation(this, R.anim.dino_locked_anim);
-
     }
 
     /**
@@ -83,9 +82,9 @@ public class DinosActivity extends ScrollActivity {
      */
     void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
-        int horizontalWidth = hsv.getMeasuredWidth();
-        int horizontalHeight = hsv.getMeasuredHeight();
-        int centerX = hsv.getScrollX() + horizontalWidth / 2;
+        int horizontalWidth = horizontalScrollView.getMeasuredWidth();
+        int horizontalHeight = horizontalScrollView.getMeasuredHeight();
+        int centerX = horizontalScrollView.getScrollX() + horizontalWidth / 2;
         int centerY = horizontalHeight / 2;
         Rect hitRect = new Rect();
         for (int i = 0; i < scroll.getChildCount(); i++) {
@@ -98,10 +97,10 @@ public class DinosActivity extends ScrollActivity {
             if (hitRect.contains(centerX, centerY)) {
                 if (left) {
                     int x = (child.getRight() - (horizontalWidth / 2));
-                    hsv.smoothScrollTo(x - (child.getWidth()), 0);
+                    horizontalScrollView.smoothScrollTo(x - (child.getWidth()), 0);
                 } else {
                     int x = (child.getLeft() - (horizontalWidth / 2));
-                    hsv.smoothScrollTo(x + (child.getWidth()), 0);
+                    horizontalScrollView.smoothScrollTo(x + (child.getWidth()), 0);
                 }
                 break;
             }
@@ -130,22 +129,16 @@ public class DinosActivity extends ScrollActivity {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
-
-                // Sound loaded
                 if (loaded) {
                     soundPool.play(button, 1f, 1f, 1, 0, 1f);
                 }
                 scale.setAnimationListener(new Animation.AnimationListener() {
-
                     @Override
                     public void onAnimationStart(Animation animation) {
-
                     }
-
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
-
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         startActivity(intent);
@@ -153,50 +146,38 @@ public class DinosActivity extends ScrollActivity {
                 });
                 view.startAnimation(scale);
                 break;
-
             case R.id.scroll_right:
                 scaleHalf.setAnimationListener(new AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        snap(false);
-
                     }
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(false);
                     }
                 });
                 view.startAnimation(scaleHalf);
-
                 return;
             case R.id.scroll_left:
                 scaleHalf.setAnimationListener(new AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        snap(true);
-
                     }
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(true);
                     }
                 });
                 view.startAnimation(scaleHalf);
-
                 return;
-
             // Dino
             default:
                 String name = getResources().getResourceEntryName(view.getId());

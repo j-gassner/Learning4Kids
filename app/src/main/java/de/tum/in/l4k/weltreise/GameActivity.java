@@ -37,8 +37,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     private LevelCollection levelCollection;
     private static Random rand = new Random();
     private AnimalPool animalPool;
-    int counterCorrect, counterWrong, areYouStillThere;
-    boolean stillThere, backPressed, dino;
+    private int counterCorrect, counterWrong, areYouStillThere;
+    private boolean stillThere, backPressed, dino;
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -144,9 +144,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 startHandler();
                 isRunning = true;
             });
-
             afd.close();
-
         } catch (IllegalArgumentException e) {
             Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
@@ -206,7 +204,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             soundAnimal = getResources()
                 .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
-            fit = true;
+            relevant = true;
         } else {
             animalID = animalPool.getAnimalPool().getDistractorAnimal(level);
             animal.setImageResource(animalID);
@@ -217,7 +215,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             soundAnimal = getResources()
                 .getIdentifier(name + "sound", "raw", this.getPackageName());
             findViewById(R.id.button_animal).setEnabled(true);
-            fit = false;
+            relevant = false;
         }
 
         mediaPlayer.reset();
@@ -303,11 +301,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
                 }
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
-
             @RequiresApi(api = VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -321,7 +317,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 if (!backPressed) {
                     leaveLevel();
                 }
-
             }
         });
         layover.startAnimation(flash);
@@ -338,13 +333,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         handler.postDelayed(this::finish, 1000);
     }
 
-    /**
-     * Checks whether animal has been dragged correctly and takes action accordingly.
-     *
-     * @param layoutview View animal is dragged to.
-     * @param dragevent Dragevent.
-     * @return True or false depending on success of drag.
-     */
     @RequiresApi(api = VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
@@ -357,11 +345,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 view.setVisibility(View.INVISIBLE);
                 break;
             case DragEvent.ACTION_DROP:
-
                 LinearLayout container = (LinearLayout) layoutview;
-
                 // Match
-                if (fit && container.getId() == match.getId()) {
+                if (relevant && container.getId() == match.getId()) {
                     Objects
                         .requireNonNull(animalPool.getAnimalPool().getAnimalMapCurrent().get(level))
                         .remove(Integer.valueOf(animalID));
@@ -369,11 +355,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     correctMatches++;
                     counterWrong = 0;
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
-
-                    // True positive
-                    //globals.getStatistics().addToStatistics(animalID, 0);
                     showProgress(correctMatches);
-
                     if (correctMatches == winningNumber) {
                         levelCompleted();
                         new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
@@ -381,19 +363,14 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 }
 
                 // No Match
-                else if (!fit && container.getId() == noMatch.getId()) {
+                else if (!relevant && container.getId() == noMatch.getId()) {
                     counterCorrect++;
                     counterWrong = 0;
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     Character lvl = getResources().getResourceEntryName(animalID).charAt(0);
-
-                    // valueOf does not work here
                     Objects
                         .requireNonNull(animalPool.getAnimalPool().getAnimalMapCurrent().get(lvl))
                         .remove(Integer.valueOf(animalID));
-
-                    // True negative
-                    //globals.getStatistics().addToStatistics(animalID, 1);
                     changeColor();
                     colorChange++;
                 }
@@ -407,18 +384,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                         correctMatches--;
                     }
                     dragAnimal(view, container, shortSounds.WRONG.ordinal());
-
-                    // False positive
-                    /*if (!fit && container.getId() == match.getId()) {
-                        globals.getStatistics().addToStatistics(animalID, 2);
-                    } else
-                    // False negative
-                    {
-                        globals.getStatistics().addToStatistics(animalID, 3);
-                    }*/
-
                 }
-
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 view.setVisibility(View.VISIBLE);
@@ -426,7 +392,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             default:
                 break;
         }
-
         return true;
     }
 
@@ -440,7 +405,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         super.dropAnimal(view, container);
-
         // Praise randomly
         if (counterCorrect == 3) {
             counterCorrect = 0;
@@ -452,7 +416,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             } else {
                 praiseEncourage(praise);
             }
-
             // encourage randomly
         } else if (counterWrong == 3) {
             counterWrong = 0;
@@ -473,52 +436,41 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         // Letter button
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-
             if (!mediaPlayer.isPlaying() && sound) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
                 playInstruction(soundLetter);
-
             } else {
                 progress.startAnimation(scaleHalf);
                 view.startAnimation(scaleHalf);
             }
-
         } else if (view.getId() == buttonSpeaker.getId()) {
-
             if (!mediaPlayer.isPlaying() && sound) {
                 view.startAnimation(scale);
                 playInstruction(soundAnimal);
-
             } else
             // Button inactive / no sound
             {
                 view.startAnimation(scaleHalf);
             }
         }
-
         // Back button
         else {
             backPressed = true;
             buttonBack.setEnabled(false);
             buttonSpeaker.setEnabled(false);
             buttonLetter.setEnabled(false);
-
             if (loaded) {
                 soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
             }
-
             Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
-
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if (mediaPlayer.isPlaying()) {
@@ -531,7 +483,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 }
             });
             view.startAnimation(scale);
-
         }
     }
 }

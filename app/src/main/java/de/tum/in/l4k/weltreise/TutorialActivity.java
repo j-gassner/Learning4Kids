@@ -30,12 +30,17 @@ import java.io.IOException;
 public class TutorialActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener {
 
+    /**
+     * Points to the element currently explained
+     */
     private ImageView arrow;
-    private boolean fit;
-    int step;
 
-    boolean letterClicked, speakerClicked, dragCorrectRight, lastDrag;
-    ImageButton buttonSkip;
+    /**
+     * Indicated which animal is currently shown
+     */
+    private int step;
+    private boolean letterClicked, speakerClicked, dragCorrectRight, lastDrag;
+    private ImageButton buttonSkip;
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -355,7 +360,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             soundAnimal = R.raw.flughoernchen_sound;
             animal.setVisibility(View.VISIBLE);
 
-            fit = true;
+            relevant = true;
 
         } else {
             animal.setImageResource(R.drawable.loewe_animal);
@@ -363,7 +368,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 .getIdentifier("loewe_animal", "drawable", this.getPackageName());
             soundAnimal = R.raw.loewe_sound;
             animal.setVisibility(View.VISIBLE);
-            fit = false;
+            relevant = false;
 
         }
         positionAnimal(false);
@@ -419,9 +424,8 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 break;
             case DragEvent.ACTION_DROP:
                 LinearLayout container = (LinearLayout) layoutview;
-
                 // Match
-                if (fit && container.getId() == match.getId() && !dragCorrectRight) {
+                if (relevant && container.getId() == match.getId() && !dragCorrectRight) {
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     correctMatches++;
                     step++;
@@ -429,14 +433,12 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialColorChange, 500);
                 }
-
                 // No match
-                else if (!fit && container.getId() == noMatch.getId() && dragCorrectRight) {
+                else if (!relevant && container.getId() == noMatch.getId() && dragCorrectRight) {
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     changeColor();
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialProgressLost, 500);
-
                 }
                 // Wrong
                 else if (container.getId() != middle.getId()) {
@@ -451,7 +453,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                     new Handler().postDelayed(this::tutorialBack, 500);
                     sound = true;
                 }
-
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 view.setVisibility(View.VISIBLE);
@@ -460,7 +461,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             default:
                 break;
         }
-
         return true;
     }
 
@@ -469,7 +469,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Letter button
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-
             if (!mediaPlayer.isPlaying() && sound) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
@@ -482,13 +481,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                     } else {
                         sound = true;
                     }
-
                 });
             } else {
                 progress.startAnimation(scaleHalf);
                 view.startAnimation(scaleHalf);
             }
-
             // Speaker button
         } else if (view.getId() == buttonSpeaker.getId()) {
             if (!mediaPlayer.isPlaying() && sound && !lastDrag) {
@@ -507,7 +504,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 view.startAnimation(scaleHalf);
             }
         }
-
         // Skip
         else if (view.getId() == buttonSkip.getId()) {
             stopHandler();
@@ -515,22 +511,16 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             buttonLetter.setEnabled(false);
             buttonSpeaker.setEnabled(false);
             buttonBack.setEnabled(false);
-
-            if (loaded) {
+            if (loaded)
                 soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
-            }
-
             Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
-
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);
@@ -545,24 +535,19 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             if (loaded) {
                 soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
             }
-
             buttonBack.setEnabled(false);
             buttonSkip.setEnabled(false);
             buttonLetter.setEnabled(false);
             buttonSpeaker.setEnabled(false);
-
             Intent intent = new Intent(this, StartActivity.class);
             intent.putExtra("Tutorial", true);
             scale.setAnimationListener(new Animation.AnimationListener() {
-
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);
@@ -570,7 +555,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 }
             });
             buttonBack.startAnimation(scale);
-
         }
     }
 }

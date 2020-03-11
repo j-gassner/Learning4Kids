@@ -28,8 +28,11 @@ public abstract class BaseActivity extends WindowManagement {
     SoundPool soundPool;
     SharedPreferences availableLevels;
     Animation scale, scaleHalf;
-    boolean loaded;
 
+    /**
+     * Wheter soundPool is loaded or not.
+     */
+    boolean loaded;
     enum levelState {LOCKED, UNLOCKED, COMPLETED}
 
     @SuppressLint("ClickableViewAccessibility")

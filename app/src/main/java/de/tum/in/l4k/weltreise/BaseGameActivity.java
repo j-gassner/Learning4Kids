@@ -34,19 +34,18 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     View.OnDragListener, View.OnClickListener {
 
     int winningNumber, soundAnimal, soundLetter, animalID, colorChange, correctMatches, currentInstruction;
-    boolean sound, fit, isRunning, handler;
+    boolean sound, relevant, isRunning, handler;
     ImageView animal;
     LinearLayout match, middle, noMatch;
     Handler handleInactivity;
     Runnable runnable;
     ArrayList<ImageView> fragments;
-    ArrayList<Integer> colors = new ArrayList<>(
+    static ArrayList<Integer> colors = new ArrayList<>(
         Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
             R.color.green, R.color.orange, R.color.purple));
     ImageButton buttonLetter, buttonSpeaker, buttonBack;
     Animation zoom, flash;
     static int[] sounds = new int[4];
-
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
 
     abstract void inactivityHandler();

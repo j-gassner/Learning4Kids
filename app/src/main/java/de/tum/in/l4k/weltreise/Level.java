@@ -9,7 +9,6 @@ import android.content.Context;
  */
 
 class Level {
-
     private int backgroundID;
     private int difficulty;
     private boolean isLeft;

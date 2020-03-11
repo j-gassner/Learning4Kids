@@ -9,21 +9,31 @@ import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 
 /**
- * Base class for Start- and DinosActivity
+ * Base class for Start- and DinosActivity.
  *
  * @author Josefine Gaßner
  */
 public abstract class ScrollActivity extends BaseActivity {
 
-    // Remember scroll position
-    protected static HashMap<Class, Integer> scrollXMap = new HashMap<Class, Integer>() {{
+    /**
+     * Remembers scroll position for each class containing a scrollview.
+     */
+    static HashMap<Class, Integer> scrollXMap = new HashMap<Class, Integer>() {{
         put(StartActivity.class, 0);
         put(DinosActivity.class, 0);
     }};
 
-    HorizontalScrollView hsv;
-    Animation locked;
-    int button;
+    protected HorizontalScrollView horizontalScrollView;
+
+    /**
+     * Animation for locked functionality.
+     */
+    protected Animation locked;
+
+    /**
+     * Sound for button press.
+     */
+    protected int button;
 
     /**
      * Snaps scrollview.
@@ -46,7 +56,7 @@ public abstract class ScrollActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        scrollXMap.put(this.getClass(), hsv.getScrollX());
+        scrollXMap.put(this.getClass(), horizontalScrollView.getScrollX());
     }
 
     @Override
@@ -54,7 +64,7 @@ public abstract class ScrollActivity extends BaseActivity {
         super.onResume();
         Integer scrollX = scrollXMap.get(this.getClass());
         if (scrollX != null) {
-            hsv.post(() -> hsv.scrollTo(scrollX, 0));
+            horizontalScrollView.post(() -> horizontalScrollView.scrollTo(scrollX, 0));
         }
     }
 
@@ -62,15 +72,17 @@ public abstract class ScrollActivity extends BaseActivity {
      * Make left and right button (in-)visible depending on scroll position.
      */
     void scrollPosition() {
-        hsv = findViewById(R.id.scroll_horizontal);
+        horizontalScrollView = findViewById(R.id.scroll_horizontal);
         ImageButton arrowRight = findViewById(R.id.scroll_right);
         ImageButton arrowLeft = findViewById(R.id.scroll_left);
         arrowRight.setVisibility(View.VISIBLE);
-        View view = hsv.getChildAt(hsv.getChildCount() - 1);
-        hsv.getViewTreeObserver()
+        View view = horizontalScrollView.getChildAt(horizontalScrollView.getChildCount() - 1);
+        horizontalScrollView.getViewTreeObserver()
             .addOnScrollChangedListener(() -> {
-                int diff = (view.getRight() - (hsv.getWidth() + hsv.getScrollX()));
-                int scrollX = hsv.getScrollX();
+                int diff = (view.getRight() - (horizontalScrollView.getWidth()
+                    + horizontalScrollView
+                    .getScrollX()));
+                int scrollX = horizontalScrollView.getScrollX();
                 if (scrollX > 0 && diff != 0) {
                     arrowRight.setVisibility(View.VISIBLE);
                     arrowLeft.setVisibility(View.VISIBLE);

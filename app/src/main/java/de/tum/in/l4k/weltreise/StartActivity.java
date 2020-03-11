@@ -34,7 +34,7 @@ import java.util.Objects;
 
 public class StartActivity extends ScrollActivity implements View.OnClickListener {
 
-    boolean tutorialRunning;
+    private boolean tutorialRunning;
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
@@ -79,9 +79,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      */
     void snap(boolean left) {
         LinearLayout scroll = findViewById(R.id.layout_scroll);
-        int horizontalWidth = hsv.getMeasuredWidth();
-        int horizontalHeight = hsv.getMeasuredHeight();
-        int centerX = hsv.getScrollX() + horizontalWidth / 2;
+        int horizontalWidth = horizontalScrollView.getMeasuredWidth();
+        int horizontalHeight = horizontalScrollView.getMeasuredHeight();
+        int centerX = horizontalScrollView.getScrollX() + horizontalWidth / 2;
         int centerY = horizontalHeight / 2;
         int distancePolaroids = scroll.getChildAt(1).getLeft() - scroll.getChildAt(0).getRight();
         Rect hitRect = new Rect();
@@ -96,10 +96,12 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
             if (hitRect.contains(centerX, centerY)) {
                 if (left) {
                     int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
-                    hsv.smoothScrollTo(x - (child.getWidth() + distancePolaroids), 0);
+                    horizontalScrollView
+                        .smoothScrollTo(x - (child.getWidth() + distancePolaroids), 0);
                 } else {
                     int x = (child.getLeft() - (horizontalWidth / 2)) + (child.getWidth() / 2);
-                    hsv.smoothScrollTo(x + (child.getWidth() + distancePolaroids), 0);
+                    horizontalScrollView
+                        .smoothScrollTo(x + (child.getWidth() + distancePolaroids), 0);
                 }
                 break;
             }
@@ -318,30 +320,23 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         });
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
         // Avoid double clicks
         noTouchy();
-
         switch (view.getId()) {
             case R.id.button_exit:
                 if (!tutorialRunning) {
-
                     scale.setAnimationListener(new Animation.AnimationListener() {
-
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded) {
+                            if (loaded)
                                 soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                            }
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
-
                         @RequiresApi(api = VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
@@ -356,25 +351,20 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 return;
             case R.id.button_reset:
                 if (!tutorialRunning) {
-
                     scale.setAnimationListener(new Animation.AnimationListener() {
-
                         @Override
                         public void onAnimationStart(Animation animation) {
                             if (loaded) {
                                 soundPool.play(button, 1f, 1f, 1, 0, 1f);
                             }
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
-
                         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             alertDialogue();
-
                         }
                     });
                     view.startAnimation(scale);
@@ -383,7 +373,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     touchy();
                 }
                 return;
-
             // Testing only
             case R.id.button_unlock:
                 unlockLevels();
@@ -393,18 +382,14 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 if (!tutorialRunning) {
                     Intent intentTut = new Intent(this, TutorialActivity.class);
                     scale.setAnimationListener(new Animation.AnimationListener() {
-
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded) {
+                            if (loaded)
                                 soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                            }
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
-
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             startActivity(intentTut);
@@ -416,23 +401,18 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     touchy();
                 }
                 return;
-
             case R.id.button_museum:
                 if (!tutorialRunning) {
                     Intent intentDino = new Intent(this, DinosActivity.class);
                     scale.setAnimationListener(new Animation.AnimationListener() {
-
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded) {
+                            if (loaded)
                                 soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                            }
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
-
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             startActivity(intentDino);
@@ -448,54 +428,41 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 scaleHalf.setAnimationListener(new AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        snap(true);
-                        touchy();
-
                     }
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(true);
+                        touchy();
                     }
                 });
                 view.startAnimation(scaleHalf);
-
                 return;
             case R.id.scroll_right:
                 scaleHalf.setAnimationListener(new AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        snap(false);
-                        touchy();
-
                     }
 
                     @Override
                     public void onAnimationRepeat(Animation animation) {
-
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        snap(false);
+                        touchy();
                     }
                 });
                 view.startAnimation(scaleHalf);
-
                 return;
-
             default:
                 String name = getResources().getResourceEntryName(view.getId());
                 level = name.charAt(7);
         }
-
         // Only playable levels
-
         if (availableLevels.getInt(level.toString(), 0) != levelState.LOCKED.ordinal()
             && !tutorialRunning) {
             Intent intent = new Intent(this, GameActivity.class);
@@ -508,23 +475,18 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         soundPool.play(button, 1f, 1f, 1, 0, 1f);
                     }
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);
                 }
             });
             view.startAnimation(scaleHalf);
-
-
         } else {
             view.startAnimation(locked);
             touchy();
         }
-
     }
 }
