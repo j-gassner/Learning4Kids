@@ -47,7 +47,8 @@ public class AnimalPool extends Application {
         Resources resources = getResources();
         for (String filename : filenames) {
             Character firstLetter = filename.charAt(0);
-            final int resourceId = resources.getIdentifier(filename, "drawable", getPackageName());
+            //final int resourceId = resources.getIdentifier(filename, "drawable", getPackageName());
+            final int resourceId = ResourceManager.getDrawableIdResource(this, filename);
             if (!animalPool.getAnimalMap().containsKey(firstLetter)) {
                 animalPool.getAnimalMap().put(firstLetter, new ArrayList<>());
             }

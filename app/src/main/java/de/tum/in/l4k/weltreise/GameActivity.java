@@ -111,10 +111,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         levelCollection = new LevelCollection(this);
         winningNumber = levelCollection.getLevel(level).getWinningNumber();
         areYouStillThere = R.raw.are_you_still_there;
-        soundLetter = getResources()
-            .getIdentifier(level + "_sound", "raw", this.getPackageName());
-        currentInstruction = getResources()
-            .getIdentifier("instruction_" + level, "raw", this.getPackageName());
+        soundLetter = ResourceManager.getRawIdLevel(this, level);
+        /*soundLetter = getResources()
+            .getIdentifier(level + "_sound", "raw", this.getPackageName());*/
+        currentInstruction = ResourceManager.getRawIdInstruction(this, level);
+        /*currentInstruction = getResources()
+            .getIdentifier("instruction_" + level, "raw", this.getPackageName());*/
 
         if (levelCollection.getLevel(level).getIsLeft()) {
             match = findViewById(R.id.left);
@@ -158,14 +160,16 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      */
     void setLetterButton() {
         buttonLetter = findViewById(R.id.button_letter);
-        int idImage = getResources()
-            .getIdentifier(level + "_letter_outline", "drawable", this.getPackageName());
+        int idImage = ResourceManager.getDrawableIdLetterOutline(this, level);
+        /*int idImage = getResources()
+            .getIdentifier(level + "_letter_outline", "drawable", this.getPackageName());*/
         buttonLetter.setImageResource(idImage);
         buttonLetter.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         // Letter "progress bar"
-        idImage = getResources()
-            .getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());
+        idImage = ResourceManager.getDrawableIdLetterFill(this, level);
+        /*idImage = getResources()
+            .getIdentifier(level + "_letter_fill", "drawable", this.getPackageName());*/
 
         //Define a bitmap with the same size as the view
         Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
@@ -203,8 +207,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animal.setImageResource(animalID);
         String name = getResources().getResourceEntryName(animalID);
         name = name.replace("animal", "");
-        soundAnimal = getResources()
-            .getIdentifier(name + "sound", "raw", this.getPackageName());
+        soundAnimal = ResourceManager.getRawIdAnimal(this, name);
+        /*soundAnimal = getResources()
+            .getIdentifier(name + "sound", "raw", this.getPackageName());*/
 
         mediaPlayer.reset();
         mediaPlayer = MediaPlayer.create(this, soundAnimal);
@@ -240,7 +245,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
         animal.setVisibility(View.VISIBLE);
 
-        animalID = getResources().getIdentifier("dino_" + level, "drawable", getPackageName());
+        //animalID = getResources().getIdentifier("dino_" + level, "drawable", getPackageName());
+        animalID = ResourceManager.getDrawableIdDino(this, level);
         animal.setImageResource(animalID);
 
         positionAnimal(true);
@@ -248,7 +254,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animal.setY(animal.getY() - 100);
         String packageName = this.getPackageName();
 
-        playInstruction(getResources().getIdentifier("museum_" + level, "raw", packageName));
+        //playInstruction(getResources().getIdentifier("museum_" + level, "raw", packageName));
+        playInstruction(ResourceManager.getRawIdMuseum(this, level));
         mediaPlayer.setOnCompletionListener(mp -> leaveLevel());
         animal.startAnimation(zoom);
     }
@@ -396,8 +403,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         // Praise randomly
         if (counterCorrect == 3) {
             counterCorrect = 0;
-            int nr = rand.nextInt(6) + 1;
-            int praise = getResources().getIdentifier("praise" + nr, "raw", this.getPackageName());
+            int number = rand.nextInt(6) + 1;
+            //int praise = getResources().getIdentifier("praise" + number, "raw", this.getPackageName());
+            int praise = ResourceManager.getRawIdPraise(this, number);
             // Avoid animalSound being cut off by praise/encouragement
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.setOnCompletionListener(mp -> praiseEncourage(praise));
@@ -407,9 +415,10 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             // encourage randomly
         } else if (counterWrong == 3) {
             counterWrong = 0;
-            int nr = rand.nextInt(4) + 1;
-            int encourage = getResources()
-                .getIdentifier("encourage" + nr, "raw", this.getPackageName());
+            int number = rand.nextInt(4) + 1;
+            int encourage = ResourceManager.getRawIdEncourage(this, number);
+            /*int encourage = getResources()
+                .getIdentifier("encourage" + nr, "raw", this.getPackageName());*/
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.setOnCompletionListener(mp -> praiseEncourage(encourage));
             } else {

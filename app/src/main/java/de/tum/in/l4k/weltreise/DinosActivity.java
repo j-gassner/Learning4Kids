@@ -58,19 +58,20 @@ public class DinosActivity extends ScrollActivity {
      * Checks whether a level is completed and sets dino images accordingly.
      */
     public void assignScrollElements() {
-        for (char level : levels) {
-            int idImage;
-            int idButton = getResources()
-                .getIdentifier("dino_" + level, "id", this.getPackageName());
-            ImageButton iB = findViewById(idButton);
-            idImage = getResources()
-                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
+        for (Character level : levels) {
+            /*int idButton = getResources()
+                .getIdentifier("dino_" + level, "id", this.getPackageName());*/
+            int idButton = ResourceManager.getIdDino(this, level);
+            ImageButton imageButton = findViewById(idButton);
+            /*idImage = getResources()
+                .getIdentifier("dino_" + level, "drawable", this.getPackageName());*/
+            int idImage = ResourceManager.getDrawableIdDino(this, level);
             Drawable draw = getResources().getDrawable(idImage);
-            if (availableLevels.getInt(level + "", 0) != levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(level.toString(), 0) != levelState.COMPLETED.ordinal()) {
                 draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
                     PorterDuff.Mode.SRC_ATOP);
             }
-            iB.setImageResource(idImage);
+            imageButton.setImageResource(idImage);
         }
     }
 
@@ -110,11 +111,12 @@ public class DinosActivity extends ScrollActivity {
      * Removes dark tint from dino when level is completed.
      */
     void removeTint() {
-        for (char level : levels) {
-            int idImage = getResources()
-                .getIdentifier("dino_" + level, "drawable", this.getPackageName());
+        for (Character level : levels) {
+            int idImage = ResourceManager.getDrawableIdDino(this, level);
+            /*int idImage = getResources()
+                .getIdentifier("dino_" + level, "drawable", this.getPackageName());*/
             Drawable draw = getResources().getDrawable(idImage);
-            if (availableLevels.getInt(level + "", 0) == levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(level.toString(), 0) == levelState.COMPLETED.ordinal()) {
                 draw.clearColorFilter();
             }
         }
@@ -179,7 +181,8 @@ public class DinosActivity extends ScrollActivity {
             default:
                 String name = getResources().getResourceEntryName(view.getId());
                 String level = "" + name.charAt(5);
-                int id = getResources().getIdentifier(name + "_sound", "raw", getPackageName());
+                int id = ResourceManager.getRawIdDino(this, name);
+                //int id = getResources().getIdentifier(name + "_sound", "raw", getPackageName());
                 if (availableLevels.getInt(level, 0) == levelState.COMPLETED.ordinal()
                     && !mediaPlayer
                     .isPlaying()) {

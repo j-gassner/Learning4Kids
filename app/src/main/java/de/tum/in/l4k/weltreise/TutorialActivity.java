@@ -97,13 +97,16 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         noMatch = findViewById(R.id.right);
 
         // Sounds
-        soundLetter = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
-        soundAnimal = getResources()
+        soundLetter = ResourceManager.getRawIdLevel(this, level);
+        soundAnimal = ResourceManager.getRawIdAnimal(this, "flughoernchen");
+        //soundLetter = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
+        /*soundAnimal = getResources()
             .getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
-
+*/
         // Letter "progress bar"
-        int idImage = getResources()
-            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());
+        int idImage = ResourceManager.getDrawableIdLetterFill(this, level);
+        /*int idImage = getResources()
+            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());*/
         Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
         splitImage(bm);
     }
@@ -349,22 +352,21 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
         // Correct animal - Flughoernchen
         if (step == 0) {
-            animalID = getResources()
-                .getIdentifier("flughoernchen_animal", "drawable", this.getPackageName());
+            animalID = ResourceManager.getDrawableIdResource(this, "flughoernchen_animal");
+            /*animalID = getResources()
+                .getIdentifier("flughoernchen_animal", "drawable", this.getPackageName());*/
             animal.setImageResource(R.drawable.flughoernchen_animal);
             soundAnimal = R.raw.flughoernchen_sound;
             animal.setVisibility(View.VISIBLE);
-
             relevant = true;
-
         } else {
             animal.setImageResource(R.drawable.loewe_animal);
-            animalID = getResources()
-                .getIdentifier("loewe_animal", "drawable", this.getPackageName());
+            animalID = ResourceManager.getDrawableIdResource(this, "loewe_animal");
+            /*animalID = getResources()
+                .getIdentifier("loewe_animal", "drawable", this.getPackageName());*/
             soundAnimal = R.raw.loewe_sound;
             animal.setVisibility(View.VISIBLE);
             relevant = false;
-
         }
         positionAnimal(false);
 

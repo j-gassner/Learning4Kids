@@ -190,24 +190,27 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      */
     public void assignScrollElements() {
         findViewById(R.id.button_unlock).setEnabled(false);
-        for (char button : levels) {
+        for (Character button : levels) {
             int idImage;
-            int idButton = getResources()
-                .getIdentifier("button_" + button, "id", this.getPackageName());
+            int idButton = ResourceManager.getIdButton(this, button);
+            /*int idButton = getResources()
+                .getIdentifier("button_" + button, "id", this.getPackageName());*/
             ImageButton iB = findViewById(idButton);
-            if (availableLevels.getInt(button + "", 0) == levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(button.toString(), 0) == levelState.COMPLETED.ordinal()) {
+                idImage = ResourceManager.getDrawableIdPolaroid(this, button);
+                /*idImage = getResources()
+                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());*/
 
-                idImage = getResources()
-                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());
-
-            } else if (availableLevels.getInt(button + "", 0) == levelState.UNLOCKED.ordinal()) {
-
-                idImage = getResources()
+            } else if (availableLevels.getInt(button.toString(), 0) == levelState.UNLOCKED
+                .ordinal()) {
+                idImage = ResourceManager.getDrawableIdPolaroidUnlocked(this, button);
+                /*idImage = getResources()
                     .getIdentifier(button + "_polaroid_unlocked", "drawable",
-                        this.getPackageName());
+                        this.getPackageName());*/
             } else {
-                idImage = getResources()
-                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());
+                idImage = ResourceManager.getDrawableIdPolaroidLocked(this, button);
+                /*idImage = getResources()
+                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());*/
             }
             iB.setImageResource(idImage);
 
