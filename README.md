@@ -4,12 +4,12 @@ This is a Java literacy app for the project Learning4Kids: http://www.psy.lmu.de
 
 It is developed to run on the Samsung Galaxy Tab A SM-T510.
 
-##Requirements
+## Requirements
 The project was built in Android Studio 3.6.1 using Gradle version 5.6.4.
 
 The minimum required Android API version is 24.
 
-##Documentation
+## Documentation
 You can build a Doxygen documentation by running the following command in the root directory:
 
 ```sh
@@ -18,7 +18,7 @@ doxygen Doxyfile
 
 The documentation then can be found in the directory `doc_doxygen`.
 
-##How it works
+## How it works
 Structure of the app.
 
 ### Main Screen
