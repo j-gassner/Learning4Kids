@@ -5,11 +5,9 @@ import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 
 /**
@@ -46,9 +44,14 @@ public abstract class BaseActivity extends WindowManagementActivity {
     static SharedPreferences availableLevels;
 
     /**
-     * Animations indicating if a button is active or not.
+     * Animations indicating that a button is active.
      */
-    static Animation scale, scaleHalf;
+    static Animation scale;
+
+    /**
+     * Animation indicating that a button is currently inactive.
+     */
+    static Animation scaleHalf;
 
     /**
      * Whether soundPool is loaded or not.
@@ -61,7 +64,6 @@ public abstract class BaseActivity extends WindowManagementActivity {
      * @param savedInstanceState Instance state.
      */
     @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +124,6 @@ public abstract class BaseActivity extends WindowManagementActivity {
      * Base for loading sounds used in soundPool. Indicates with loaded = true when loading was
      * successful.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void loadButtonSounds() {
         AudioAttributes attributes = new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_MEDIA)

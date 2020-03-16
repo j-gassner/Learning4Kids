@@ -1,11 +1,9 @@
 package de.tum.in.l4k.weltreise;
 
-import android.os.Build.VERSION_CODES;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 
 /**
@@ -111,7 +109,6 @@ public abstract class ScrollActivity extends BaseActivity {
     /**
      * Load sound used by all extending activities to soundPool.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void loadButtonSounds() {
         super.loadButtonSounds();
         button = soundPool.load(this, R.raw.button, 1);

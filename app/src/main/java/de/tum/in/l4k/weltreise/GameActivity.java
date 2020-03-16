@@ -7,9 +7,6 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -20,7 +17,6 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import androidx.annotation.RequiresApi;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
@@ -84,7 +80,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      *
      * @param savedInstanceState Instance state.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +90,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * {@inheritDoc} Gets level and animal pool.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
         // Get Level and list of animals
@@ -147,7 +141,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * Initialize elements and play level instruction.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
         levelCollection = new LevelCollection(this);
@@ -211,7 +204,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * Draws animal according to level difficulty, displays them, and plays their name.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void displayAnimal() {
         animal.setOnTouchListener(this);
@@ -255,7 +247,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      *
      * @param instruction Praise or encouragement to be played.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     void praiseEncourage(int instruction) {
         playInstruction(instruction);
         mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
@@ -264,7 +255,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * Displays dino with an animation and praise.
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void displayDino() {
         ViewGroup owner = (ViewGroup) animal.getParent();
         owner.removeView(animal);
@@ -275,7 +265,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animal.setImageResource(animalID);
         positionAnimal(true);
         animal.setY(animal.getY() - 100);
-        String packageName = this.getPackageName();
         playInstruction(ResourceManager.getRawIdMuseum(this, level));
         mediaPlayer.setOnCompletionListener(mp -> leaveLevel());
         animal.startAnimation(zoom);
@@ -319,14 +308,11 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             public void onAnimationRepeat(Animation animation) {
             }
 
-            @RequiresApi(api = VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationEnd(Animation animation) {
                 layover.setBackground(null);
                 if (dinoUnlocked && !backPressed) {
-                    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-                        displayDino();
-                    }
+                    displayDino();
                     return;
                 }
                 if (!backPressed) {
@@ -354,7 +340,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      * @param layoutview View to be dragged, i.e. the animal.
      * @param dragevent Drag event.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
         int action = dragevent.getAction();
@@ -426,7 +411,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      * @param view View to be dropped.
      * @param container Container to accept view.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         super.dropAnimal(view, container);
         // Praise randomly

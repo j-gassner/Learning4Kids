@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.TypedValue;
@@ -22,7 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
@@ -45,7 +43,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      * @param savedInstanceState Instance state.
      */
     @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +116,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
     /**
      * Called when reset is pressed asking if the user really wants to reset.
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     void alertDialogue() {
         playInstruction(R.raw.question_reset);
         int ui_flags =
@@ -171,9 +167,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         Button buttonNegative = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         textView.setTypeface(typeface, Typeface.BOLD);
         buttonPositive.setTypeface(typeface, Typeface.BOLD);
-        buttonPositive.setTextColor(getResources().getColor(R.color.green));
+        buttonPositive.setTextColor(ContextCompat.getColor(this, R.color.green));
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
-        buttonNegative.setTextColor(getResources().getColor(R.color.red));
+        buttonNegative.setTextColor(ContextCompat.getColor(this, R.color.red));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
@@ -310,7 +306,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      *
      * @param view View that is clicked.
      */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
         // Avoid double clicks
@@ -328,7 +323,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationRepeat(Animation animation) {
                         }
 
-                        @RequiresApi(api = VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             finish();
@@ -352,7 +346,6 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationRepeat(Animation animation) {
                         }
 
-                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             alertDialogue();

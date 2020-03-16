@@ -6,7 +6,6 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
-import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -18,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import java.util.ArrayList;
@@ -178,7 +176,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * {@inheritDoc} Initializes activity upon start.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
         super.onStart();
@@ -188,7 +185,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * {@inheritDoc} Removes color from letter on resume.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
@@ -226,13 +222,12 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      * @param view View that is touched.
      * @param motionEvent Kind of motion used.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            view.startDrag(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
+            view.startDragAndDrop(null, shadowBuilder, view, View.DRAG_FLAG_OPAQUE);
             return true;
         } else {
             return false;
@@ -268,7 +263,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * Prepares buttons, animations, sounds, and some views.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         loadButtons();
         loadAnimations();
@@ -300,7 +294,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * Adds all necessary sounds to soundPool.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void buttonSounds() {
         AudioAttributes attributes = new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
@@ -392,7 +385,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     /**
      * Resets letterButton to initial appearance.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void removeColor() {
         for (ImageView fragment : fragments) {
             fragment.getDrawable().setTintList(null);
@@ -408,7 +400,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      *
      * @param dino Indicates if dino or animal is to be positioned.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void positionAnimal(boolean dino) {
         // Check if animal to be positioned is a dino
         if (!dino) {
@@ -450,7 +441,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      * @param container Where view is dragged to.
      * @param sound Correct or wrong sound.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     void dragAnimal(View view, LinearLayout container, int sound) {
         // Animation
         RelativeLayout progress = findViewById(R.id.image_progress);
@@ -468,7 +458,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      * @param view View to be dropped.
      * @param container Container to accept view.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         allowedToStartMediaPlayer = false;
 

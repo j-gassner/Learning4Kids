@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -12,8 +11,8 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import java.util.Objects;
 
 /**
  * Class containing a dinosaur for each level as a reward.
@@ -33,7 +32,6 @@ public class DinosActivity extends ScrollActivity {
      *
      * @param savedInstanceState Instance state.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +41,6 @@ public class DinosActivity extends ScrollActivity {
     /**
      * {@inheritDoc} Assigns dino images depending on level state.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
         super.onStart();
@@ -76,9 +73,10 @@ public class DinosActivity extends ScrollActivity {
             int idButton = ResourceManager.getIdDino(this, level);
             ImageButton imageButton = findViewById(idButton);
             int idImage = ResourceManager.getDrawableIdDino(this, level);
-            Drawable draw = getResources().getDrawable(idImage);
+            Drawable draw = ContextCompat.getDrawable(this, idImage);
             if (availableLevels.getInt(level.toString(), 0) != LevelState.COMPLETED.ordinal()) {
-                draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
+                Objects.requireNonNull(draw)
+                    .setColorFilter(ContextCompat.getColor(this, R.color.dark),
                     PorterDuff.Mode.SRC_ATOP);
             }
             imageButton.setImageResource(idImage);
@@ -123,9 +121,9 @@ public class DinosActivity extends ScrollActivity {
     void removeTint() {
         for (Character level : levels) {
             int idImage = ResourceManager.getDrawableIdDino(this, level);
-            Drawable draw = getResources().getDrawable(idImage);
+            Drawable draw = ContextCompat.getDrawable(this, idImage);
             if (availableLevels.getInt(level.toString(), 0) == LevelState.COMPLETED.ordinal()) {
-                draw.clearColorFilter();
+                Objects.requireNonNull(draw).clearColorFilter();
             }
         }
     }
@@ -135,7 +133,6 @@ public class DinosActivity extends ScrollActivity {
      *
      * @param view View that is clicked.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     public void onClick(View view) {
         Intent intent = new Intent(this, StartActivity.class);
         switch (view.getId()) {

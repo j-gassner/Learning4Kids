@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import androidx.annotation.RequiresApi;
 import java.io.IOException;
 
 /**
@@ -70,7 +67,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      *
      * @param savedInstanceState Instance state.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +77,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * {@inheritDoc} Restarts tutorial on resume.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onResume() {
         super.onResume();
@@ -116,7 +111,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Initialize elements.
      */
-    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
         winningNumber = 5;
@@ -157,7 +151,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * Play intro.
      */
     @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void tutorialIntro() {
         // Intro
         AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.tutorial_intro);
@@ -183,7 +176,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Explain letter button and enable it to be clicked.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLetter() {
         arrow.setVisibility(View.VISIBLE);
         buttonLetter.setAlpha(1.0f);
@@ -201,7 +193,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Explain which animals should be dragged to submarine.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialSubmarine() {
         allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_submarine);
@@ -211,7 +202,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Display first animal and set speakerButton visible.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialAnimal() {
         // First animal
         new Handler().postDelayed(this::displayAnimal, 500);
@@ -271,7 +261,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Explain what happens when irrelevant animal is dragged correctly. Display Loewen.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialColorChange() {
         arrow.setVisibility(View.INVISIBLE);
         allowedToStartMediaPlayer = false;
@@ -282,7 +271,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Explain where Loewe wants to go.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLionRight() {
         allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_loewe_correct);
@@ -297,7 +285,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Enable Loewen to be dragged to sign.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void tutorialDragCorrectRight() {
         // Drag animal to the right
@@ -312,7 +299,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Explain what happens on mistake.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialProgressLost() {
         arrow.setVisibility(View.INVISIBLE);
         allowedToStartMediaPlayer = false;
@@ -324,7 +310,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * Enable Loewen to be dragged incorrectly.
      */
     @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialDragFalse() {
         // Drag wrong
         arrow = findViewById(R.id.button_point_submarine);
@@ -363,7 +348,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     /**
      * Displays animals and plays their name.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ClickableViewAccessibility")
     void displayAnimal() {
         ViewGroup owner = (ViewGroup) animal.getParent();
@@ -408,7 +392,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * @param container Where view is dragged to.
      * @param sound Correct or wrong sound.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     void dragAnimal(View view, LinearLayout container, int sound) {
         // Animation
         RelativeLayout progress = findViewById(R.id.image_progress);
@@ -425,7 +408,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * @param layoutview View to be dragged, i.e. the animal.
      * @param dragevent Drag event.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
         int action = dragevent.getAction();
@@ -486,7 +468,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      *
      * @param view View that is clicked.
      */
-    @RequiresApi(api = VERSION_CODES.N)
     public void onClick(View view) {
         // Letter button
         if (view.getId() == buttonLetter.getId()) {
