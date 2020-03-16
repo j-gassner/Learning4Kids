@@ -46,6 +46,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             R.color.green, R.color.orange, R.color.purple));
     static Animation zoom, flash;
     static int[] sounds = new int[4];
+
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
 
     abstract void inactivityHandler();
@@ -73,8 +74,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * {@inheritDoc}
-     * Called when user touches the screen. Restarts handler.
+     * {@inheritDoc} Called when user touches the screen. Restarts handler.
      */
     @Override
     public void onUserInteraction() {
@@ -90,8 +90,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * {@inheritDoc}
-     * Called when user touches animal with intention to drag it.
+     * {@inheritDoc} Called when user touches animal with intention to drag it.
      *
      * @param view View that is touched.
      * @param motionEvent Kind of motion used.
@@ -254,8 +253,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
                 ContextCompat.getColor(getApplicationContext(), colors.get(colorChange)));
         }
         // Change color of letter
-        ImageButton iB = findViewById(R.id.button_letter);
-        DrawableCompat.setTint(iB.getDrawable(), ContextCompat
+        ImageButton imageButton = findViewById(R.id.button_letter);
+        DrawableCompat.setTint(imageButton.getDrawable(), ContextCompat
             .getColor(getApplicationContext(), colors.get((colorChange + 1) % colors.size())));
     }
 
@@ -268,9 +267,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             fragment.getDrawable().setTintList(null);
         }
         // Change color of letter
-        ImageButton iB = findViewById(R.id.button_letter);
-        iB.getDrawable().setTintList(null);
-
+        ImageButton imageButton = findViewById(R.id.button_letter);
+        imageButton.getDrawable().setTintList(null);
     }
 
     /**
@@ -288,7 +286,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             params.gravity = Gravity.CENTER_HORIZONTAL;
             animal.setLayoutParams(params);
         }
-
         // Set image position inside ImageView
         Matrix matrix = animal.getImageMatrix();
         matrix.reset();
@@ -313,7 +310,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             Math.round((vHeight - dHeight)));
         animal.setImageMatrix(matrix);
     }
-
 
     /**
      * Called when animal is dragged to another view that accepts it. Shows animation in

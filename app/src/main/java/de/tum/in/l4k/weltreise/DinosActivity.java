@@ -129,9 +129,11 @@ public class DinosActivity extends ScrollActivity {
                     @Override
                     public void onAnimationStart(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         startActivity(intent);
@@ -148,6 +150,7 @@ public class DinosActivity extends ScrollActivity {
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         snap(false);
@@ -164,6 +167,7 @@ public class DinosActivity extends ScrollActivity {
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         snap(true);

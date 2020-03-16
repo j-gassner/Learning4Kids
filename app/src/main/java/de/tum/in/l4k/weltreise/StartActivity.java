@@ -147,7 +147,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
             touchy();
         });
 
-        // create alert dialog_shape
+        // Create alertDialog
         AlertDialog alertDialog = alertDialogBuilder.create();
         assert (alertDialog != null);
         Typeface typeface = ResourcesCompat.getFont(this, R.font.chalk);
@@ -166,12 +166,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         buttonPositive.setTextColor(getResources().getColor(R.color.green));
         buttonNegative.setTypeface(typeface, Typeface.BOLD);
         buttonNegative.setTextColor(getResources().getColor(R.color.red));
-
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonPositive.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
         buttonNegative.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 46);
-
-        // Set dialog_shape focusable so we can avoid touching outside:
         alertDialog.getWindow().
             clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         findViewById(R.id.button_reset).setEnabled(true);
@@ -193,7 +190,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         for (Character button : levels) {
             int idImage;
             int idButton = ResourceManager.getIdButton(this, button);
-            ImageButton iB = findViewById(idButton);
+            ImageButton imageButton = findViewById(idButton);
             if (availableLevels.getInt(button.toString(), 0) == LevelState.COMPLETED.ordinal()) {
                 idImage = ResourceManager.getDrawableIdPolaroid(this, button);
             } else if (availableLevels.getInt(button.toString(), 0) == LevelState.UNLOCKED
@@ -202,8 +199,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
             } else {
                 idImage = ResourceManager.getDrawableIdPolaroidLocked(this, button);
             }
-            iB.setImageResource(idImage);
-
+            imageButton.setImageResource(idImage);
         }
     }
 
@@ -314,9 +310,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationStart(Animation animation) {
                             playSound(button);
                         }
+
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
+
                         @RequiresApi(api = VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
@@ -336,9 +334,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationStart(Animation animation) {
                             playSound(button);
                         }
+
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
+
                         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onAnimationEnd(Animation animation) {
@@ -364,9 +364,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationStart(Animation animation) {
                             playSound(button);
                         }
+
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
+
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             startActivity(intentTut);
@@ -386,9 +388,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                         public void onAnimationStart(Animation animation) {
                             playSound(button);
                         }
+
                         @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
+
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             startActivity(intentDino);
@@ -409,6 +413,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         snap(true);
@@ -426,6 +431,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         snap(false);
@@ -449,9 +455,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 public void onAnimationStart(Animation animation) {
                     playSound(button);
                 }
+
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);

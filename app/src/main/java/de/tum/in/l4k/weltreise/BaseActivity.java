@@ -68,6 +68,7 @@ public abstract class BaseActivity extends WindowManagementActivity {
             soundPool.play(resID, 1f, 1f, 1, 0, 1f);
         }
     }
+
     /**
      * Makes MediaPlayer play a soundfile.
      *
@@ -106,5 +107,4 @@ public abstract class BaseActivity extends WindowManagementActivity {
         scale = AnimationUtils.loadAnimation(this, R.anim.button_anim);
         scaleHalf = AnimationUtils.loadAnimation(this, R.anim.button_inactive_anim);
     }
-
 }

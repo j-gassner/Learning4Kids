@@ -206,7 +206,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             mediaPlayer.setOnCompletionListener(mp -> allowedToStartMediaPlayer = true);
         }
         positionAnimal(false);
-
     }
 
     /**
@@ -273,9 +272,11 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             public void onAnimationStart(Animation animation) {
                 playSound(sounds[shortSounds.CAMERA.ordinal()]);
             }
+
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
+
             @RequiresApi(api = VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -440,9 +441,11 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if (mediaPlayer.isPlaying()) {

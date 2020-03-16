@@ -36,7 +36,6 @@ class LevelCollection {
     }
 
     /**
-     *
      * @param level Letter of level requested.
      * @return Level starting with specified character.
      */
@@ -50,5 +49,4 @@ class LevelCollection {
     ArrayList<Character> getLevels() {
         return new ArrayList<>(levels.keySet());
     }
-
 }

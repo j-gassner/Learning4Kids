@@ -23,7 +23,7 @@ public abstract class ScrollActivity extends BaseActivity {
         put(DinosActivity.class, 0);
     }};
 
-    protected HorizontalScrollView horizontalScrollView;
+    HorizontalScrollView horizontalScrollView;
 
     /**
      * Animation for locked functionality.
@@ -93,7 +93,6 @@ public abstract class ScrollActivity extends BaseActivity {
                     arrowRight.setVisibility(View.INVISIBLE);
                     arrowLeft.setVisibility(View.VISIBLE);
                 }
-
             });
     }
 
@@ -104,6 +103,5 @@ public abstract class ScrollActivity extends BaseActivity {
     void loadButtonSounds() {
         super.loadButtonSounds();
         button = soundPool.load(this, R.raw.button, 1);
-
     }
 }

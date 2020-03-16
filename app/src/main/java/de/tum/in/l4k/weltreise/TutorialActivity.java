@@ -209,7 +209,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_progress);
         mediaPlayer.setOnCompletionListener(mp -> tutorialFlug());
-
     }
 
     /**
@@ -236,7 +235,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         arrow.setVisibility(View.VISIBLE);
         animal.setOnTouchListener(this);
         match.setOnDragListener(this);
-
     }
 
     /**
@@ -278,7 +276,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         animal.setOnTouchListener(this);
         noMatch.setOnDragListener(this);
         match.setOnDragListener(null);
-
     }
 
     /**
@@ -498,9 +495,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);
@@ -523,9 +522,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     startActivity(intent);
