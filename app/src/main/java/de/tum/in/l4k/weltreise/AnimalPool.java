@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Josefine Gaßner
  */
 
-class AnimalPool extends Application {
+public class AnimalPool extends Application {
 
     private Animals animalPool;
 
