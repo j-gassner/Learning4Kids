@@ -19,6 +19,7 @@ doxygen Doxyfile
 The documentation then can be found in the directory `doc_doxygen`.
 
 ##How it works
+Structure of the app.
 
 ### Main Screen
 Upon starting the app the L4K logo is shown. Then, depending on the player's previous progress, the tutorial or main menu is presented.
