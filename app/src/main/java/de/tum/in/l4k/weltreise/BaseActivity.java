@@ -21,10 +21,9 @@ import java.util.ArrayList;
 public abstract class BaseActivity extends WindowManagementActivity {
 
     Character level;
-    static ArrayList<Character> levels = new ArrayList<>();
-    /*Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));*/
     MediaPlayer mediaPlayer = new MediaPlayer();
     SoundPool soundPool;
+    static ArrayList<Character> levels = new ArrayList<>();
     static SharedPreferences availableLevels;
     static Animation scale, scaleHalf;
 
@@ -32,7 +31,6 @@ public abstract class BaseActivity extends WindowManagementActivity {
      * Whether soundPool is loaded or not.
      */
     boolean loaded;
-    enum levelState {LOCKED, UNLOCKED, COMPLETED}
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)

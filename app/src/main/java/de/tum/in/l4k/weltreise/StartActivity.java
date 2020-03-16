@@ -193,24 +193,14 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         for (Character button : levels) {
             int idImage;
             int idButton = ResourceManager.getIdButton(this, button);
-            /*int idButton = getResources()
-                .getIdentifier("button_" + button, "id", this.getPackageName());*/
             ImageButton iB = findViewById(idButton);
-            if (availableLevels.getInt(button.toString(), 0) == levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(button.toString(), 0) == LevelState.COMPLETED.ordinal()) {
                 idImage = ResourceManager.getDrawableIdPolaroid(this, button);
-                /*idImage = getResources()
-                    .getIdentifier(button + "_polaroid", "drawable", this.getPackageName());*/
-
-            } else if (availableLevels.getInt(button.toString(), 0) == levelState.UNLOCKED
+            } else if (availableLevels.getInt(button.toString(), 0) == LevelState.UNLOCKED
                 .ordinal()) {
                 idImage = ResourceManager.getDrawableIdPolaroidUnlocked(this, button);
-                /*idImage = getResources()
-                    .getIdentifier(button + "_polaroid_unlocked", "drawable",
-                        this.getPackageName());*/
             } else {
                 idImage = ResourceManager.getDrawableIdPolaroidLocked(this, button);
-                /*idImage = getResources()
-                    .getIdentifier(button + "_polaroid_locked", "drawable", this.getPackageName());*/
             }
             iB.setImageResource(idImage);
 
@@ -227,9 +217,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         // Create SharedPreference
         if (!availableLevels.contains("f") || reset) {
             for (char level : levels) {
-                editor.putInt(Character.toString(level), levelState.LOCKED.ordinal());
+                editor.putInt(Character.toString(level), LevelState.LOCKED.ordinal());
             }
-            editor.putInt("f", levelState.UNLOCKED.ordinal());
+            editor.putInt("f", LevelState.UNLOCKED.ordinal());
             editor.apply();
         }
     }
@@ -251,7 +241,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
     void unlockLevels() {
         SharedPreferences.Editor editor = availableLevels.edit();
         for (char level : levels) {
-            editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
+            editor.putInt(Character.toString(level), LevelState.COMPLETED.ordinal());
         }
         editor.apply();
         assignScrollElements();
@@ -449,7 +439,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 level = name.charAt(7);
         }
         // Only playable levels
-        if (availableLevels.getInt(level.toString(), 0) != levelState.LOCKED.ordinal()
+        if (availableLevels.getInt(level.toString(), 0) != LevelState.LOCKED.ordinal()
             && !tutorialRunning) {
             Intent intent = new Intent(this, GameActivity.class);
             intent.putExtra("LEVEL", level);

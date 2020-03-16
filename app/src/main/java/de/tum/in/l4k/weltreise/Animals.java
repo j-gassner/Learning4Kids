@@ -72,8 +72,6 @@ class Animals implements Serializable {
     Integer getAnimal(char currentLetter) {
         removeEmptyEntries();
         ArrayList<Integer> animals = animalMapCurrent.get(currentLetter);
-
-        //assert animals != null;
         // List for current level is empty
         if (animals == null) {
             reset();

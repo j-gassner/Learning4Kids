@@ -1,7 +1,6 @@
 package de.tum.in.l4k.weltreise;
 
 import android.app.Application;
-import android.content.res.Resources;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -12,10 +11,15 @@ import java.util.Objects;
  * @author Josefine Gaßner
  */
 
-public class AnimalPool extends Application {
+class AnimalPool extends Application {
 
     private Animals animalPool;
 
+    /**
+     * Returns the animalPool containing all animals.
+     *
+     * @return animalPool.
+     */
     public Animals getAnimalPool() {
         return this.animalPool;
     }
@@ -43,18 +47,14 @@ public class AnimalPool extends Application {
                 e.printStackTrace();
             }
         }
-
-        Resources resources = getResources();
         for (String filename : filenames) {
             Character firstLetter = filename.charAt(0);
-            //final int resourceId = resources.getIdentifier(filename, "drawable", getPackageName());
             final int resourceId = ResourceManager.getDrawableIdResource(this, filename);
             if (!animalPool.getAnimalMap().containsKey(firstLetter)) {
                 animalPool.getAnimalMap().put(firstLetter, new ArrayList<>());
             }
             Objects.requireNonNull(animalPool.getAnimalMap().get(firstLetter)).add(resourceId);
         }
-
         animalPool.reset();
     }
 }

@@ -40,10 +40,10 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     Handler handleInactivity;
     Runnable runnable;
     ArrayList<ImageView> fragments;
+    ImageButton buttonLetter, buttonSpeaker, buttonBack;
     static ArrayList<Integer> colors = new ArrayList<>(
         Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
             R.color.green, R.color.orange, R.color.purple));
-    ImageButton buttonLetter, buttonSpeaker, buttonBack;
     static Animation zoom, flash;
     static int[] sounds = new int[4];
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
@@ -344,10 +344,12 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
         allowedToStartMediaPlayer = false;
+
         // Accept view
         ViewGroup owner = (ViewGroup) view.getParent();
         owner.removeView(view);
         container.addView(view);
+
         // Avoid animal being dragged away again
         view.setOnTouchListener(null);
     }

@@ -26,8 +26,6 @@ class Level {
     Level(Character level, int difficulty, boolean isLeft, int winningNumber, Context context) {
         this.difficulty = difficulty;
         this.backgroundID = ResourceManager.getDrawableIdBackground(context, level);
-        /*this.backgroundID = context.getResources()
-            .getIdentifier("background_" + level, "drawable", context.getPackageName());*/
         this.isLeft = isLeft;
         this.winningNumber = winningNumber;
     }

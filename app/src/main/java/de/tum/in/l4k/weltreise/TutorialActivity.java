@@ -88,7 +88,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     protected void init() {
         super.init();
-
         winningNumber = 5;
         level = 'f';
 
@@ -99,18 +98,12 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Sounds
         soundLetter = ResourceManager.getRawIdLevel(this, level);
         soundAnimal = ResourceManager.getRawIdAnimal(this, "flughoernchen");
-        //soundLetter = getResources().getIdentifier("f_sound", "raw", this.getPackageName());
-        /*soundAnimal = getResources()
-            .getIdentifier("flughoernchen_sound", "raw", this.getPackageName());
-*/
+
         // Letter "progress bar"
         int idImage = ResourceManager.getDrawableIdLetterFill(this, level);
-        /*int idImage = getResources()
-            .getIdentifier("f_letter_fill", "drawable", this.getPackageName());*/
         Bitmap bm = BitmapFactory.decodeResource(getResources(), idImage);
         splitImage(bm);
     }
-
 
     /**
      * Find and disable buttons that should be locked at the start.
@@ -127,7 +120,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         buttonLetter.setAlpha(0.3f);
         buttonSpeaker.setAlpha(0.3f);
         buttonBack.setAlpha(0.3f);
-
     }
 
     /**
@@ -353,8 +345,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Correct animal - Flughoernchen
         if (step == 0) {
             animalID = ResourceManager.getDrawableIdResource(this, "flughoernchen_animal");
-            /*animalID = getResources()
-                .getIdentifier("flughoernchen_animal", "drawable", this.getPackageName());*/
             animal.setImageResource(R.drawable.flughoernchen_animal);
             soundAnimal = R.raw.flughoernchen_sound;
             animal.setVisibility(View.VISIBLE);
@@ -362,8 +352,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         } else {
             animal.setImageResource(R.drawable.loewe_animal);
             animalID = ResourceManager.getDrawableIdResource(this, "loewe_animal");
-            /*animalID = getResources()
-                .getIdentifier("loewe_animal", "drawable", this.getPackageName());*/
             soundAnimal = R.raw.loewe_sound;
             animal.setVisibility(View.VISIBLE);
             relevant = false;
@@ -372,7 +360,6 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
         // Animal sound
         playInstruction(soundAnimal);
-
         mediaPlayer.setOnCompletionListener(mp -> {
             allowedToStartMediaPlayer = true;
             if (step == 0) {

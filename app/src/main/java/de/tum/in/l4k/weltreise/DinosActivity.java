@@ -59,15 +59,11 @@ public class DinosActivity extends ScrollActivity {
      */
     public void assignScrollElements() {
         for (Character level : levels) {
-            /*int idButton = getResources()
-                .getIdentifier("dino_" + level, "id", this.getPackageName());*/
             int idButton = ResourceManager.getIdDino(this, level);
             ImageButton imageButton = findViewById(idButton);
-            /*idImage = getResources()
-                .getIdentifier("dino_" + level, "drawable", this.getPackageName());*/
             int idImage = ResourceManager.getDrawableIdDino(this, level);
             Drawable draw = getResources().getDrawable(idImage);
-            if (availableLevels.getInt(level.toString(), 0) != levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(level.toString(), 0) != LevelState.COMPLETED.ordinal()) {
                 draw.setColorFilter(ContextCompat.getColor(this, R.color.dark),
                     PorterDuff.Mode.SRC_ATOP);
             }
@@ -113,10 +109,8 @@ public class DinosActivity extends ScrollActivity {
     void removeTint() {
         for (Character level : levels) {
             int idImage = ResourceManager.getDrawableIdDino(this, level);
-            /*int idImage = getResources()
-                .getIdentifier("dino_" + level, "drawable", this.getPackageName());*/
             Drawable draw = getResources().getDrawable(idImage);
-            if (availableLevels.getInt(level.toString(), 0) == levelState.COMPLETED.ordinal()) {
+            if (availableLevels.getInt(level.toString(), 0) == LevelState.COMPLETED.ordinal()) {
                 draw.clearColorFilter();
             }
         }
@@ -182,8 +176,7 @@ public class DinosActivity extends ScrollActivity {
                 String name = getResources().getResourceEntryName(view.getId());
                 String level = "" + name.charAt(5);
                 int id = ResourceManager.getRawIdDino(this, name);
-                //int id = getResources().getIdentifier(name + "_sound", "raw", getPackageName());
-                if (availableLevels.getInt(level, 0) == levelState.COMPLETED.ordinal()
+                if (availableLevels.getInt(level, 0) == LevelState.COMPLETED.ordinal()
                     && !mediaPlayer
                     .isPlaying()) {
                     view.startAnimation(dino);

@@ -25,7 +25,8 @@ public class MainActivity extends WindowManagementActivity {
         Intent intent;
 
         // Start tutorial if it or the first level are not completed yet.
-        if (!availableLevels.getBoolean("Tutorial", false) && availableLevels.getInt("f", 1) != 2) {
+        if (!availableLevels.getBoolean("Tutorial", false)
+            && availableLevels.getInt("f", 1) != LevelState.COMPLETED.ordinal()) {
             intent = new Intent(this, TutorialActivity.class);
         } else {
             intent = new Intent(this, StartActivity.class);
