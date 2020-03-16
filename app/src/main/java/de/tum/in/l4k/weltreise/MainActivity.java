@@ -11,6 +11,12 @@ import android.os.Handler;
  */
 public class MainActivity extends WindowManagementActivity {
 
+    /**
+     * {@inheritDoc} Shows L4K logo and sets the animal pool. Starts tutorial or StartActivity
+     * depending on if the tutorial or first level are completed already.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +39,5 @@ public class MainActivity extends WindowManagementActivity {
         }
         Handler handler = new Handler();
         handler.postDelayed(() -> startActivity(intent), 1000);
-
     }
-
 }

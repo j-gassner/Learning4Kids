@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 
 /**
- * Base class for Start- and DinosActivity.
+ * Base class for StartActivity and DinosActivity.
  *
  * @author Josefine Gaßner
  */
@@ -23,6 +23,9 @@ public abstract class ScrollActivity extends BaseActivity {
         put(DinosActivity.class, 0);
     }};
 
+    /**
+     * Scrollview containing scrollable elements.
+     */
     HorizontalScrollView horizontalScrollView;
 
     /**
@@ -47,18 +50,27 @@ public abstract class ScrollActivity extends BaseActivity {
      */
     abstract void assignScrollElements();
 
+    /**
+     * {@inheritDoc} Calls scrollPosition() on start.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         scrollPosition();
     }
 
+    /**
+     * {@inheritDoc} Saves current scroll position on pause.
+     */
     @Override
     protected void onPause() {
         super.onPause();
         scrollXMap.put(this.getClass(), horizontalScrollView.getScrollX());
     }
 
+    /**
+     * {@inheritDoc} Sets previous scroll position.
+     */
     @Override
     protected void onResume() {
         super.onResume();

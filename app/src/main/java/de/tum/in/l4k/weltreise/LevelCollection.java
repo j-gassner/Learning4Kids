@@ -12,6 +12,9 @@ import java.util.LinkedHashMap;
 
 class LevelCollection {
 
+    /**
+     * Map conatining all levels including their attributes.
+     */
     // Linked to keep order of keys
     private static final LinkedHashMap<Character, Level> levels = new LinkedHashMap<>();
 

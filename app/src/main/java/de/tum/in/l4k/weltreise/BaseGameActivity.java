@@ -33,26 +33,151 @@ import java.util.Arrays;
 public abstract class BaseGameActivity extends BaseActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
-    int winningNumber, soundAnimal, soundLetter, animalID, colorChange, correctMatches, currentInstruction;
-    boolean allowedToStartMediaPlayer, relevant, isRunning, handler;
+    /**
+     * Number of fragments letter is divided into.
+     */
+    int winningNumber;
+
+    /**
+     * ID of soundfile with animal name.
+     */
+    int soundAnimal;
+
+    /**
+     * ID of soundfile with letter.
+     */
+    int soundLetter;
+
+    /**
+     * ID of the current animal.
+     */
+    int animalID;
+
+    /**
+     * Counter for correct matches of relevant (=starting with level letter) animals.
+     */
+    int correctMatches;
+
+    /**
+     * Explanation for current level.
+     */
+    int currentInstruction;
+
+    /**
+     * Step in color change of letter.
+     */
+    int colorChange;
+
+    /**
+     * Indicates if mediaPlayer can play or if an uninterruptable instruction is running.
+     */
+    boolean allowedToStartMediaPlayer;
+
+    /**
+     * Indicates if current animal starts with level letter.
+     */
+    boolean relevant;
+
+    /**
+     * Indicates whether inactivity handler is active.
+     */
+    boolean isRunning;
+
+    /**
+     * If an instruction is running due to the inactivity handler it can be interrupted.
+     */
+    boolean handler;
+
+    /**
+     * Image of current animal.
+     */
     ImageView animal;
-    LinearLayout match, middle, noMatch;
+
+    /**
+     * Screen area where animal is supposed to be dragged.
+     */
+    LinearLayout match;
+
+    /**
+     * Screen area where animal spawns.
+     */
+    LinearLayout middle;
+
+    /**
+     * Screen area where animal is not supposed to be dragged.
+     */
+    LinearLayout noMatch;
+
+    /**
+     * Repeats level instruction or asks "Bist du noch da?" after 30s of inactivity.
+     */
     Handler handleInactivity;
+
+    /**
+     * Runnable for inactivity handler.
+     */
     Runnable runnable;
+
+    /**
+     * Fragments letter is divided into depending on winning number.
+     */
     ArrayList<ImageView> fragments;
-    ImageButton buttonLetter, buttonSpeaker, buttonBack;
+
+    /**
+     * Letter button playing the letter sound.
+     */
+    ImageButton buttonLetter;
+
+    /**
+     * Speaker button playing the animal name.
+     */
+    ImageButton buttonSpeaker;
+
+    /**
+     * Button bringing the user back to the StartActivity.
+     */
+    ImageButton buttonBack;
+
+    /**
+     * Colors used for color change of letter.
+     */
     static ArrayList<Integer> colors = new ArrayList<>(
         Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
             R.color.green, R.color.orange, R.color.purple));
-    static Animation zoom, flash;
+
+    /**
+     * Animation for dino.
+     */
+    static Animation zoom;
+
+    /**
+     * Animation for camera flash.
+     */
+    static Animation flash;
+
+    /**
+     * Array containing sounds for soundPool.
+     */
     static int[] sounds = new int[4];
 
+    /**
+     * Sounds played by soundPool.
+     */
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
 
+    /**
+     * Play an instruction after n seconds of user inactivity.
+     */
     abstract void inactivityHandler();
 
+    /**
+     * Display current animal in middle.
+     */
     abstract void displayAnimal();
 
+    /**
+     * {@inheritDoc} Initializes activity upon start.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
@@ -60,6 +185,9 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         init();
     }
 
+    /**
+     * {@inheritDoc} Removes color from letter on resume.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
@@ -67,6 +195,9 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         removeColor();
     }
 
+    /**
+     * {@inheritDoc} Stops inactivity handler on pause.
+     */
     @Override
     protected void onPause() {
         super.onPause();

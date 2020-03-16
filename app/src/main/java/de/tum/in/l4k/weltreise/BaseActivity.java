@@ -20,11 +20,34 @@ import java.util.ArrayList;
 
 public abstract class BaseActivity extends WindowManagementActivity {
 
+    /**
+     * Letter of current level.
+     */
     Character level;
+
+    /**
+     * Mediaplayer for playing longer sequences.
+     */
     MediaPlayer mediaPlayer = new MediaPlayer();
+
+    /**
+     * Soundpool for playing short sounds.
+     */
     SoundPool soundPool;
+
+    /**
+     * Contains all levels including their attributes.
+     */
     static ArrayList<Character> levels = new ArrayList<>();
+
+    /**
+     * Saves the state of the levels and the tutorial.
+     */
     static SharedPreferences availableLevels;
+
+    /**
+     * Animations indicating if a button is active or not.
+     */
     static Animation scale, scaleHalf;
 
     /**
@@ -32,6 +55,11 @@ public abstract class BaseActivity extends WindowManagementActivity {
      */
     boolean loaded;
 
+    /**
+     * {@inheritDoc} Loads button sounds, animations, shared preferences, and levels on creation.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -43,12 +71,19 @@ public abstract class BaseActivity extends WindowManagementActivity {
         levels = new LevelCollection(this).getLevels();
     }
 
+    /**
+     * {@inheritDoc} Mutes mediaPlayer on pause.
+     */
     @Override
     protected void onPause() {
         super.onPause();
         mediaPlayer.setVolume(0f, 0f);
     }
 
+    /**
+     * {@inheritDoc} Releases and sets mediaPlayer and soundPool to null when activity is
+     * destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

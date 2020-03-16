@@ -23,8 +23,16 @@ import androidx.core.content.ContextCompat;
 
 public class DinosActivity extends ScrollActivity {
 
+    /**
+     * Animation for when unlocked dino is clicked.
+     */
     private static Animation dino;
 
+    /**
+     * {@inheritDoc} Sets layout.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +40,9 @@ public class DinosActivity extends ScrollActivity {
         setContentView(R.layout.activity_dinos);
     }
 
+    /**
+     * {@inheritDoc} Assigns dino images depending on level state.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
@@ -39,6 +50,9 @@ public class DinosActivity extends ScrollActivity {
         assignScrollElements();
     }
 
+    /**
+     * {@inheritDoc} Removes dark tint from dino if necessary.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -116,6 +130,11 @@ public class DinosActivity extends ScrollActivity {
         }
     }
 
+    /**
+     * {@inheritDoc} Manages events depending on which view is clicked.
+     *
+     * @param view View that is clicked.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     public void onClick(View view) {
         Intent intent = new Intent(this, StartActivity.class);

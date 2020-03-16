@@ -20,6 +20,9 @@ import java.util.TreeSet;
 @SuppressWarnings("serial")
 class Animals implements Serializable {
 
+    /**
+     * Random used for drawing from animal pool.
+     */
     private static Random rand = new Random();
 
     /**

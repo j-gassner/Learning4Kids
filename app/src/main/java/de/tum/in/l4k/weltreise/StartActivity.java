@@ -34,8 +34,16 @@ import java.util.Objects;
 
 public class StartActivity extends ScrollActivity implements View.OnClickListener {
 
+    /**
+     * Detects if tutorial is currently running.
+     */
     private boolean tutorialRunning;
 
+    /**
+     * {@inheritDoc} Prepares layout and starts second half of tutorial if necessary.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -297,6 +305,11 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         });
     }
 
+    /**
+     * {@inheritDoc} Manages events depending on which view is clicked.
+     *
+     * @param view View that is clicked.
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {

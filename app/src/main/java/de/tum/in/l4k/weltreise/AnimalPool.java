@@ -13,6 +13,9 @@ import java.util.Objects;
 
 public class AnimalPool extends Application {
 
+    /**
+     * Animal pool containing all 120 animals.
+     */
     private Animals animalPool;
 
     /**

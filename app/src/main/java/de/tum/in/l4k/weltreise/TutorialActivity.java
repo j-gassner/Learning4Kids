@@ -31,17 +31,45 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     View.OnDragListener {
 
     /**
-     * Points to the element currently explained
+     * Points to the element currently explained.
      */
     private ImageView arrow;
 
     /**
-     * Indicated which animal is currently shown
+     * Indicates which animal is currently shown.
      */
     private int step;
-    private boolean letterClicked, speakerClicked, dragCorrectRight, lastDrag;
+
+    /**
+     * Indicates if letter has been clicked when it is supposed to.
+     */
+    private boolean letterClicked;
+
+    /**
+     * Indicates if speaker has been clicked when it is supposed to.
+     */
+    private boolean speakerClicked;
+
+    /**
+     * Indicates if loewe has been dragged to the right.
+     */
+    private boolean dragCorrectRight;
+
+    /**
+     * Indicates if the last drag of the tutorial has been done.
+     */
+    private boolean lastDrag;
+
+    /**
+     * Button to skip the tutorial.
+     */
     private ImageButton buttonSkip;
 
+    /**
+     * {@inheritDoc} Sets layout and initialzes inactivity handler.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +78,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         inactivityHandler();
     }
 
+    /**
+     * {@inheritDoc} Restarts tutorial on resume.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onResume() {
@@ -386,14 +417,22 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         letter.startAnimation(scale);
         playSound(sounds[sound]);
         dropAnimal(view, container);
-
     }
 
+    /**
+     * {@inheritDoc} Manages drag events of animal.
+     *
+     * @param layoutview View to be dragged, i.e. the animal.
+     * @param dragevent Drag event.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
         int action = dragevent.getAction();
         View view = (View) dragevent.getLocalState();
+        if (view == null) {
+            return false;
+        }
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
             case DragEvent.ACTION_DRAG_EXITED:
@@ -442,6 +481,11 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         return true;
     }
 
+    /**
+     * {@inheritDoc} Manages events depending on which view is clicked.
+     *
+     * @param view View that is clicked.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     public void onClick(View view) {
         // Letter button

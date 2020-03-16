@@ -34,17 +34,56 @@ import java.util.Random;
 public class GameActivity extends BaseGameActivity implements View.OnTouchListener,
     View.OnDragListener, View.OnClickListener {
 
+    /**
+     * Contains all levels and their attriutes.
+     */
     private LevelCollection levelCollection;
+
+    /**
+     * Random used to decide if relevant or distractor animal is drawn.
+     */
     private static Random rand = new Random();
+
+    /**
+     * Animal pool animals are drawn from.
+     */
     private AnimalPool animalPool;
-    private int counterCorrect, counterWrong;
+
+    /**
+     * Counts correct matches, used to detect when to praise.
+     */
+    private int counterCorrect;
+
+    /**
+     * Counts incorrect matches, used to detect when to encourage.
+     */
+    private int counterWrong;
 
     /**
      * ID of soundfile "Bist du noch da?".
      */
     private int areYouStillThere;
-    private boolean stillThere, backPressed, dinoUnlocked;
 
+    /**
+     * Decides which soundfile is played in inactivity handler.
+     */
+    private boolean stillThere;
+
+    /**
+     * Is true when back has been pressed. Avoid loading StartActivity twice.
+     */
+    private boolean backPressed;
+
+    /**
+     * Used to detect if a new dino has been unlocked.
+     */
+    private boolean dinoUnlocked;
+
+    /**
+     * {@inheritDoc} Sets layout and inactivity handler.
+     *
+     * @param savedInstanceState Instance state.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +92,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         inactivityHandler();
     }
 
+    /**
+     * {@inheritDoc} Gets level and animal pool.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
     protected void onStart() {
@@ -306,6 +348,12 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         handler.postDelayed(this::finish, 1000);
     }
 
+    /**
+     * {@inheritDoc} Manages drag events of animal.
+     *
+     * @param layoutview View to be dragged, i.e. the animal.
+     * @param dragevent Drag event.
+     */
     @RequiresApi(api = VERSION_CODES.N)
     @Override
     public boolean onDrag(View layoutview, DragEvent dragevent) {
@@ -407,6 +455,11 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         }
     }
 
+    /**
+     * {@inheritDoc} Manages events depending on which view is clicked.
+     *
+     * @param view View that is clicked.
+     */
     public void onClick(View view) {
         // Letter button
         if (view.getId() == buttonLetter.getId()) {

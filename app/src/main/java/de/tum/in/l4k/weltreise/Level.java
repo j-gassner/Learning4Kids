@@ -10,9 +10,24 @@ import android.content.Context;
 
 class Level {
 
+    /**
+     * ID of background image.
+     */
     private int backgroundID;
+
+    /**
+     * Chance of relevant animal being drawn.
+     */
     private int difficulty;
+
+    /**
+     * Whether vehicle is left or not.
+     */
     private boolean isLeft;
+
+    /**
+     * Number of fragments letter will be divided into.
+     */
     private int winningNumber;
 
     /**
