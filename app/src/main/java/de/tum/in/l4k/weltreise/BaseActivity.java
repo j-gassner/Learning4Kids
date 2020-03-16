@@ -11,7 +11,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Class serving as a base for all activities except the MainActivity.
@@ -19,18 +18,18 @@ import java.util.Arrays;
  * @author Josefine Gaßner
  */
 
-public abstract class BaseActivity extends WindowManagement {
+public abstract class BaseActivity extends WindowManagementActivity {
 
-    static ArrayList<Character> levels = new ArrayList<>(
-        Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));
-    static Character level;
+    Character level;
+    static ArrayList<Character> levels = new ArrayList<>();
+    /*Arrays.asList('f', 'l', 'r', 'm', 'n', 'i', 'e', 'a', 'o', 's', 'b', 't'));*/
     MediaPlayer mediaPlayer = new MediaPlayer();
     SoundPool soundPool;
-    SharedPreferences availableLevels;
-    Animation scale, scaleHalf;
+    static SharedPreferences availableLevels;
+    static Animation scale, scaleHalf;
 
     /**
-     * Wheter soundPool is loaded or not.
+     * Whether soundPool is loaded or not.
      */
     boolean loaded;
     enum levelState {LOCKED, UNLOCKED, COMPLETED}
@@ -42,6 +41,8 @@ public abstract class BaseActivity extends WindowManagement {
         super.onCreate(savedInstanceState);
         loadButtonSounds();
         loadAnimations();
+        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
+        levels = new LevelCollection(this).getLevels();
     }
 
     @Override
@@ -59,6 +60,16 @@ public abstract class BaseActivity extends WindowManagement {
         soundPool = null;
     }
 
+    /**
+     * Makes soundPool play a sound.
+     *
+     * @param resID ID of the soundfile.
+     */
+    void playSound(int resID) {
+        if (loaded) {
+            soundPool.play(resID, 1f, 1f, 1, 0, 1f);
+        }
+    }
     /**
      * Makes MediaPlayer play a soundfile.
      *

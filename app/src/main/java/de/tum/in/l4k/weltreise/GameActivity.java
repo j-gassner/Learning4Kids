@@ -37,8 +37,13 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     private LevelCollection levelCollection;
     private static Random rand = new Random();
     private AnimalPool animalPool;
-    private int counterCorrect, counterWrong, areYouStillThere;
-    private boolean stillThere, backPressed, dino;
+    private int counterCorrect, counterWrong;
+
+    /**
+     * ID of soundfile "Bist du noch da?".
+     */
+    private int areYouStillThere;
+    private boolean stillThere, backPressed, dinoUnlocked;
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -65,7 +70,6 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      * @param mode New state of level.
      */
     void writePreferences(Character level, int mode) {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
         editor.putInt(level.toString(), mode);
         editor.apply();
@@ -77,14 +81,13 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     void inactivityHandler() {
         handleInactivity = new Handler();
         runnable = () -> {
+            // Make instruction interruptable
+            handler = true;
             if (stillThere) {
-                // Make instruction interruptable
                 playInstruction(areYouStillThere);
-                handler = true;
                 stillThere = false;
             } else {
                 playInstruction(currentInstruction);
-                handler = true;
                 stillThere = true;
             }
             startHandler();
@@ -96,7 +99,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      */
     public void startHandler() {
         super.startHandler();
-        handleInactivity.postDelayed(runnable, 30000); //for 30 seconds
+        handleInactivity.postDelayed(runnable, 30_000); //for 30 seconds
     }
 
     /**
@@ -145,11 +148,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 isRunning = true;
             });
             afd.close();
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IllegalStateException | IOException e) {
             Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
         }
     }
@@ -183,7 +182,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
 
         // Level done
         if (correctMatches == winningNumber) {
-            sound = false;
+            allowedToStartMediaPlayer = false;
             stopHandler();
             playInstruction(R.raw.complete_sound);
             mediaPlayer.setOnCompletionListener(mp -> cameraFlash());
@@ -196,34 +195,23 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         // n% chance correct letter
         if (rand.nextInt(100) < levelCollection.getLevel(level).getDifficulty()) {
             animalID = animalPool.getAnimalPool().getAnimal(level);
-            animal.setImageResource(animalID);
-
-            // Sound
-            String name = getResources().getResourceEntryName(animalID);
-            name = name.replace("animal", "");
-            soundAnimal = getResources()
-                .getIdentifier(name + "sound", "raw", this.getPackageName());
-            findViewById(R.id.button_animal).setEnabled(true);
             relevant = true;
         } else {
             animalID = animalPool.getAnimalPool().getDistractorAnimal(level);
-            animal.setImageResource(animalID);
-
-            // Sound
-            String name = getResources().getResourceEntryName(animalID);
-            name = name.replace("animal", "");
-            soundAnimal = getResources()
-                .getIdentifier(name + "sound", "raw", this.getPackageName());
-            findViewById(R.id.button_animal).setEnabled(true);
             relevant = false;
         }
+        animal.setImageResource(animalID);
+        String name = getResources().getResourceEntryName(animalID);
+        name = name.replace("animal", "");
+        soundAnimal = getResources()
+            .getIdentifier(name + "sound", "raw", this.getPackageName());
 
         mediaPlayer.reset();
         mediaPlayer = MediaPlayer.create(this, soundAnimal);
         if (!backPressed) {
             mediaPlayer.setVolume(0.5f, 0.5f);
             mediaPlayer.start();
-            mediaPlayer.setOnCompletionListener(mp -> sound = true);
+            mediaPlayer.setOnCompletionListener(mp -> allowedToStartMediaPlayer = true);
         }
         positionAnimal(false);
 
@@ -269,9 +257,8 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
      * Updates shared preferences when level is completed.
      */
     void levelCompleted() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         if (availableLevels.getInt(level.toString(), 0) == levelState.UNLOCKED.ordinal()) {
-            dino = true;
+            dinoUnlocked = true;
         }
         writePreferences(level, levelState.COMPLETED.ordinal());
         SharedPreferences.Editor editor = availableLevels.edit();
@@ -297,9 +284,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         flash.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                if (loaded) {
-                    soundPool.play(sounds[shortSounds.CAMERA.ordinal()], 1f, 1f, 1, 0, 1f);
-                }
+                playSound(sounds[shortSounds.CAMERA.ordinal()]);
             }
             @Override
             public void onAnimationRepeat(Animation animation) {
@@ -308,7 +293,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             @Override
             public void onAnimationEnd(Animation animation) {
                 layover.setBackground(null);
-                if (dino && !backPressed) {
+                if (dinoUnlocked && !backPressed) {
                     if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
                         displayDino();
                     }
@@ -338,6 +323,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     public boolean onDrag(View layoutview, DragEvent dragevent) {
         int action = dragevent.getAction();
         View view = (View) dragevent.getLocalState();
+        if (view == null) {
+            return false;
+        }
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
             case DragEvent.ACTION_DRAG_ENTERED:
@@ -355,7 +343,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                     correctMatches++;
                     counterWrong = 0;
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
-                    showProgress(correctMatches);
+                    addProgress(correctMatches);
                     if (correctMatches == winningNumber) {
                         levelCompleted();
                         new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
@@ -436,7 +424,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         // Letter button
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-            if (!mediaPlayer.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && allowedToStartMediaPlayer) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
                 playInstruction(soundLetter);
@@ -445,7 +433,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
                 view.startAnimation(scaleHalf);
             }
         } else if (view.getId() == buttonSpeaker.getId()) {
-            if (!mediaPlayer.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && allowedToStartMediaPlayer) {
                 view.startAnimation(scale);
                 playInstruction(soundAnimal);
             } else
@@ -460,9 +448,7 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
             buttonBack.setEnabled(false);
             buttonSpeaker.setEnabled(false);
             buttonLetter.setEnabled(false);
-            if (loaded) {
-                soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
-            }
+            playSound(sounds[shortSounds.BUTTON.ordinal()]);
             Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
                 @Override

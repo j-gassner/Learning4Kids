@@ -34,7 +34,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     View.OnDragListener, View.OnClickListener {
 
     int winningNumber, soundAnimal, soundLetter, animalID, colorChange, correctMatches, currentInstruction;
-    boolean sound, relevant, isRunning, handler;
+    boolean allowedToStartMediaPlayer, relevant, isRunning, handler;
     ImageView animal;
     LinearLayout match, middle, noMatch;
     Handler handleInactivity;
@@ -44,7 +44,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         Arrays.asList(R.color.red, R.color.blue, R.color.yellow, R.color.pink,
             R.color.green, R.color.orange, R.color.purple));
     ImageButton buttonLetter, buttonSpeaker, buttonBack;
-    Animation zoom, flash;
+    static Animation zoom, flash;
     static int[] sounds = new int[4];
     enum shortSounds {BUTTON, CORRECT, WRONG, CAMERA}
 
@@ -73,7 +73,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
-     * Called when user touches the screen. Stops handler.
+     * {@inheritDoc}
+     * Called when user touches the screen. Restarts handler.
      */
     @Override
     public void onUserInteraction() {
@@ -82,7 +83,6 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
             mediaPlayer.stop();
             handler = false;
         }
-
         if (isRunning) {
             stopHandler();
             startHandler();
@@ -90,6 +90,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
     }
 
     /**
+     * {@inheritDoc}
      * Called when user touches animal with intention to drag it.
      *
      * @param view View that is touched.
@@ -153,7 +154,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      */
     void loadButtons() {
         buttonLetter = findViewById(R.id.button_letter);
-        buttonSpeaker = findViewById(R.id.button_animal);
+        buttonSpeaker = findViewById(R.id.button_speaker);
         buttonBack = findViewById(R.id.button_back);
     }
 
@@ -207,7 +208,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      *
      * @param step Which fragment will be added.
      */
-    void showProgress(int step) {
+    void addProgress(int step) {
         RelativeLayout progress = findViewById(R.id.image_progress);
         int chunkSize = progress.getHeight() / winningNumber;
         ImageView fragment = fragments.get(fragments.size() - step);
@@ -280,6 +281,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     void positionAnimal(boolean dino) {
+        // Check if animal to be positioned is a dino
         if (!dino) {
             // Center ImageView
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) animal.getLayoutParams();
@@ -328,12 +330,8 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
         View letter = findViewById(R.id.button_letter);
         progress.startAnimation(scale);
         letter.startAnimation(scale);
-
-        if (loaded) {
-            soundPool.play(sounds[sound], 1f, 1f, 1, 0, 1f);
-        }
+        playSound(sounds[sound]);
         dropAnimal(view, container);
-
     }
 
     /**
@@ -345,7 +343,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      */
     @RequiresApi(api = VERSION_CODES.N)
     void dropAnimal(View view, LinearLayout container) {
-        sound = false;
+        allowedToStartMediaPlayer = false;
         // Accept view
         ViewGroup owner = (ViewGroup) view.getParent();
         owner.removeView(view);

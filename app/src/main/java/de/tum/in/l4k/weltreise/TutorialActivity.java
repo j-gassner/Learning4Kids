@@ -79,7 +79,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      */
     public void startHandler() {
         super.startHandler();
-        handleInactivity.postDelayed(runnable, 10000); //for 10 seconds
+        handleInactivity.postDelayed(runnable, 10_000); //for 10 seconds
     }
 
     /**
@@ -149,14 +149,9 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
             afd.close();
 
-        } catch (IllegalArgumentException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IllegalStateException | IOException e) {
             Log.e("EX", "Unable to play audio queue do to exception: " + e.getMessage(), e);
         }
-
     }
 
     /**
@@ -170,7 +165,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Letter
         playInstruction(R.raw.tutorial_letter);
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             currentInstruction = R.raw.instruction_letter;
             buttonLetter.setEnabled(true);
             startHandler();
@@ -182,7 +177,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialSubmarine() {
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_submarine);
         mediaPlayer.setOnCompletionListener(mp -> tutorialAnimal());
     }
@@ -205,7 +200,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialSpeaker() {
         playInstruction(R.raw.tutorial_speaker);
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             buttonSpeaker.setEnabled(true);
             currentInstruction = R.raw.instruction_speaker;
             startHandler();
@@ -216,7 +211,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      * Explain how progress works.
      */
     void tutorialProgress() {
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_progress);
         mediaPlayer.setOnCompletionListener(mp -> tutorialFlug());
 
@@ -228,7 +223,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialFlug() {
         playInstruction(R.raw.tutorial_flug);
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             currentInstruction = R.raw.instruction_flug;
             startHandler();
             tutorialDragCorrect();
@@ -255,7 +250,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialColorChange() {
         arrow.setVisibility(View.INVISIBLE);
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_colorchange);
         mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
     }
@@ -265,10 +260,10 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialLionRight() {
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_loewe_correct);
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             currentInstruction = R.raw.instruction_loewe_correct;
             startHandler();
             tutorialDragCorrectRight();
@@ -297,7 +292,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     @RequiresApi(api = Build.VERSION_CODES.N)
     void tutorialProgressLost() {
         arrow.setVisibility(View.INVISIBLE);
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_progress_lost);
         mediaPlayer.setOnCompletionListener(mp -> displayAnimal());
     }
@@ -310,10 +305,10 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
     void tutorialDragFalse() {
         // Drag wrong
         arrow = findViewById(R.id.button_point_submarine);
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.instruction_loewe_wrong);
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             currentInstruction = R.raw.instruction_loewe_wrong;
             startHandler();
             arrow.setVisibility(View.VISIBLE);
@@ -332,13 +327,13 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         new Handler().postDelayed(() -> buttonBack.setAlpha(1.0f), 500);
         arrow = findViewById(R.id.button_point_back);
         new Handler().postDelayed(() -> arrow.setVisibility(View.VISIBLE), 500);
-        sound = false;
+        allowedToStartMediaPlayer = false;
         playInstruction(R.raw.tutorial_back);
         mediaPlayer.setOnCompletionListener(mp -> {
             currentInstruction = R.raw.instruction_back;
             startHandler();
             buttonBack.setEnabled(true);
-            sound = true;
+            allowedToStartMediaPlayer = true;
         });
     }
 
@@ -377,7 +372,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         playInstruction(soundAnimal);
 
         mediaPlayer.setOnCompletionListener(mp -> {
-            sound = true;
+            allowedToStartMediaPlayer = true;
             if (step == 0) {
                 tutorialSpeaker();
             } else if (step == 1 && !dragCorrectRight) {
@@ -403,10 +398,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         View letter = findViewById(R.id.button_letter);
         progress.startAnimation(scale);
         letter.startAnimation(scale);
-
-        if (loaded) {
-            soundPool.play(sounds[sound], 1f, 1f, 1, 0, 1f);
-        }
+        playSound(sounds[sound]);
         dropAnimal(view, container);
 
     }
@@ -429,7 +421,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     correctMatches++;
                     step++;
-                    showProgress(correctMatches);
+                    addProgress(correctMatches);
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialColorChange, 500);
                 }
@@ -451,7 +443,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
 
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
                     new Handler().postDelayed(this::tutorialBack, 500);
-                    sound = true;
+                    allowedToStartMediaPlayer = true;
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
@@ -469,7 +461,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Letter button
         if (view.getId() == buttonLetter.getId()) {
             RelativeLayout progress = findViewById(R.id.image_progress);
-            if (!mediaPlayer.isPlaying() && sound) {
+            if (!mediaPlayer.isPlaying() && allowedToStartMediaPlayer) {
                 progress.startAnimation(scale);
                 view.startAnimation(scale);
                 playInstruction(soundLetter);
@@ -479,7 +471,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                         letterClicked = true;
                         tutorialSubmarine();
                     } else {
-                        sound = true;
+                        allowedToStartMediaPlayer = true;
                     }
                 });
             } else {
@@ -488,7 +480,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             }
             // Speaker button
         } else if (view.getId() == buttonSpeaker.getId()) {
-            if (!mediaPlayer.isPlaying() && sound && !lastDrag) {
+            if (!mediaPlayer.isPlaying() && allowedToStartMediaPlayer && !lastDrag) {
                 view.startAnimation(scale);
                 playInstruction(soundAnimal);
                 mediaPlayer.setOnCompletionListener(mp -> {
@@ -497,7 +489,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                         arrow.setVisibility(View.INVISIBLE);
                         tutorialProgress();
                     } else {
-                        sound = true;
+                        allowedToStartMediaPlayer = true;
                     }
                 });
             } else {
@@ -511,8 +503,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
             buttonLetter.setEnabled(false);
             buttonSpeaker.setEnabled(false);
             buttonBack.setEnabled(false);
-            if (loaded)
-                soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
+            playSound(sounds[shortSounds.BUTTON.ordinal()]);
             Intent intent = new Intent(this, StartActivity.class);
             scale.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -532,9 +523,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
         // Back
         else {
             stopHandler();
-            if (loaded) {
-                soundPool.play(sounds[shortSounds.BUTTON.ordinal()], 1f, 1f, 1, 0, 1f);
-            }
+            playSound(sounds[shortSounds.BUTTON.ordinal()]);
             buttonBack.setEnabled(false);
             buttonSkip.setEnabled(false);
             buttonLetter.setEnabled(false);

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * @author Josefine Gaßner
  */
 
-public abstract class WindowManagement extends AppCompatActivity {
+public abstract class WindowManagementActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public abstract class WindowManagement extends AppCompatActivity {
     /**
      * Enables immersive sticky mode and hides system UI
      */
-    void hideSystemUI() {
+    protected void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(

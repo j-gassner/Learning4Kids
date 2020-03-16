@@ -9,7 +9,7 @@ import android.os.Handler;
  * Class for the first screen the user sees containing the L4K logo. Starts tutorial or main menu
  * depending on level states.
  */
-public class MainActivity extends WindowManagement {
+public class MainActivity extends WindowManagementActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends WindowManagement {
         SharedPreferences availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         Intent intent;
 
-        // Start tutorial on first start
+        // Start tutorial if it or the first level are not completed yet.
         if (!availableLevels.getBoolean("Tutorial", false) && availableLevels.getInt("f", 1) != 2) {
             intent = new Intent(this, TutorialActivity.class);
         } else {

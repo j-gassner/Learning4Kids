@@ -126,9 +126,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         alertDialogBuilder
             .setMessage("Wirklich alles zurücksetzen?")
             .setPositiveButton("Ja", (dialog, id) -> {
-                if (loaded) {
-                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                }
+                playSound(button);
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
@@ -136,11 +134,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                 touchy();
             })
             .setNegativeButton("Nein", (dialog, id) -> {
-                // if this button is clicked, just close
-                // the dialog_shape box and do nothing
-                if (loaded) {
-                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                }
+                playSound(button);
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
@@ -195,7 +189,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      * Checks state of level and sets image of image buttons accordingly.
      */
     public void assignScrollElements() {
-        //findViewById(R.id.button_unlock).setEnabled(false);
+        findViewById(R.id.button_unlock).setEnabled(false);
         for (char button : levels) {
             int idImage;
             int idButton = getResources()
@@ -226,9 +220,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      * @param reset Whether reset was pressed.
      */
     void writeInitialLevels(boolean reset) {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
-
         // Create SharedPreference
         if (!availableLevels.contains("f") || reset) {
             for (char level : levels) {
@@ -254,14 +246,10 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
      * Unlocks all levels via invisible button is lower left corner. For testing only.
      */
     void unlockLevels() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         SharedPreferences.Editor editor = availableLevels.edit();
-
-        // Create SharedPreference
         for (char level : levels) {
             editor.putInt(Character.toString(level), levelState.COMPLETED.ordinal());
         }
-        //editor.putInt("f", levelState.UNLOCKED.ordinal());
         editor.apply();
         assignScrollElements();
     }
@@ -331,8 +319,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     scale.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded)
-                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            playSound(button);
                         }
                         @Override
                         public void onAnimationRepeat(Animation animation) {
@@ -354,9 +341,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     scale.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded) {
-                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                            }
+                            playSound(button);
                         }
                         @Override
                         public void onAnimationRepeat(Animation animation) {
@@ -384,8 +369,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     scale.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded)
-                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            playSound(button);
                         }
                         @Override
                         public void onAnimationRepeat(Animation animation) {
@@ -407,8 +391,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     scale.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
-                            if (loaded)
-                                soundPool.play(button, 1f, 1f, 1, 0, 1f);
+                            playSound(button);
                         }
                         @Override
                         public void onAnimationRepeat(Animation animation) {
@@ -471,9 +454,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    if (loaded) {
-                        soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                    }
+                    playSound(button);
                 }
                 @Override
                 public void onAnimationRepeat(Animation animation) {

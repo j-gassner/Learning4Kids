@@ -59,7 +59,7 @@ class Animals implements Serializable {
      * Deep copies animalMap to animalMapCurrent so that it contains all animals again.
      */
     void reset() {
-        this.animalMapCurrent = copy(this.animalMap);
+        this.animalMapCurrent = deepCopyHashMap(this.animalMap);
     }
 
     /**
@@ -70,7 +70,7 @@ class Animals implements Serializable {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     Integer getAnimal(char currentLetter) {
-        cleanUp();
+        removeEmptyEntries();
         ArrayList<Integer> animals = animalMapCurrent.get(currentLetter);
 
         //assert animals != null;
@@ -91,7 +91,7 @@ class Animals implements Serializable {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     Integer getDistractorAnimal(char currentLetter) {
-        cleanUp();
+        removeEmptyEntries();
         Set<Character> keySet = new TreeSet<>(animalMapCurrent.keySet());
 
         // No distractor animals left
@@ -112,7 +112,7 @@ class Animals implements Serializable {
      * Removes empty entries from animalMapCurrent.
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void cleanUp() {
+    private void removeEmptyEntries() {
         animalMapCurrent.entrySet().removeIf(level -> level.getValue().size() == 0);
     }
 
@@ -122,7 +122,7 @@ class Animals implements Serializable {
      * @param original HashMap to be copied.
      * @return Deepcopy of original.
      */
-    private static HashMap<Character, ArrayList<Integer>> copy(
+    private static HashMap<Character, ArrayList<Integer>> deepCopyHashMap(
         HashMap<Character, ArrayList<Integer>> original) {
         HashMap<Character, ArrayList<Integer>> copy = new HashMap<>();
         for (Map.Entry<Character, ArrayList<Integer>> entry : original.entrySet()) {

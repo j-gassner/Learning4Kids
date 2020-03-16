@@ -1,7 +1,8 @@
 package de.tum.in.l4k.weltreise;
 
 import android.content.Context;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * Class containing the letter, difficulty, position of match, and winningNumber of each level.
@@ -11,7 +12,8 @@ import java.util.HashMap;
 
 class LevelCollection {
 
-    private HashMap<Character, Level> levels = new HashMap<>();
+    // Linked to keep order of keys
+    private static final LinkedHashMap<Character, Level> levels = new LinkedHashMap<>();
 
     /**
      * Constructor initializing the different levels.
@@ -34,10 +36,19 @@ class LevelCollection {
     }
 
     /**
+     *
      * @param level Letter of level requested.
      * @return Level starting with specified character.
      */
     Level getLevel(Character level) {
         return levels.get(level);
     }
+
+    /**
+     * @return ArrayList of all levels.
+     */
+    ArrayList<Character> getLevels() {
+        return new ArrayList<>(levels.keySet());
+    }
+
 }

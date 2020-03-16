@@ -28,12 +28,12 @@ public abstract class ScrollActivity extends BaseActivity {
     /**
      * Animation for locked functionality.
      */
-    protected Animation locked;
+    static Animation locked;
 
     /**
      * Sound for button press.
      */
-    protected int button;
+    int button;
 
     /**
      * Snaps scrollview.

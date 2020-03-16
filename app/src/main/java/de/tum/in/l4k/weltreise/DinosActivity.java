@@ -23,7 +23,7 @@ import androidx.core.content.ContextCompat;
 
 public class DinosActivity extends ScrollActivity {
 
-    private Animation dino;
+    private static Animation dino;
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     @Override
@@ -58,7 +58,6 @@ public class DinosActivity extends ScrollActivity {
      * Checks whether a level is completed and sets dino images accordingly.
      */
     public void assignScrollElements() {
-        availableLevels = getSharedPreferences("availableLevels", MODE_PRIVATE);
         for (char level : levels) {
             int idImage;
             int idButton = getResources()
@@ -129,9 +128,7 @@ public class DinosActivity extends ScrollActivity {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
-                if (loaded) {
-                    soundPool.play(button, 1f, 1f, 1, 0, 1f);
-                }
+                playSound(button);
                 scale.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {

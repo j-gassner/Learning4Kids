@@ -62,7 +62,7 @@
       android:src="@drawable/f_letter_outline" />
 
     <ImageButton
-      android:id="@+id/button_animal"
+      android:id="@+id/button_speaker"
       android:layout_width="100dp"
       android:layout_height="100dp"
       android:layout_gravity="center_horizontal"
