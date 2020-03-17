@@ -94,6 +94,7 @@ class Animals implements Serializable {
     Integer getDistractorAnimal(char currentLetter) {
         removeEmptyEntries();
         Set<Character> keySet = new TreeSet<>(animalMapCurrent.keySet());
+        keySet.remove(currentLetter);
 
         // No distractor animals left
         if (keySet.size() == 0) {
@@ -101,7 +102,6 @@ class Animals implements Serializable {
             return getDistractorAnimal(currentLetter);
         }
 
-        keySet.remove(currentLetter);
         ArrayList<Character> letters = new ArrayList<>(keySet);
         Character distractor = letters.get(rand.nextInt(letters.size()));
 
