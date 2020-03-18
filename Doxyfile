@@ -1,10 +1,12 @@
 PROJECT_NAME           = "Tierische Weltreise"
 PROJECT_NUMBER         = 1.0.0
 OUTPUT_DIRECTORY       = doc_doxygen/
-INPUT                  = app/src/main/java \ README.md
+INPUT                  = app/src/main/java/ \
+                        README.md
 FILE_PATTERNS          = *.java \
-                      *.md
+                        *.md
 RECURSIVE              = YES
+HIDE_SCOPE_NAMES       = YES
 USE_MDFILE_AS_MAINPAGE = README.md
 EXTRACT_PACKAGE         = YES # default NO
 EXTRACT_PRIVATE        = YES # default NO
