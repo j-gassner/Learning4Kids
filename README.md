@@ -1,13 +1,13 @@
 # Tierische Weltreise
 
-This is a Java literacy app for the project Learning4Kids: http://www.psy.lmu.de/ffp/forschung/ag-niklas/learning-4kids/index.html
+This is a Java literacy app for the project [Learning4Kids](http://www.psy.lmu.de/ffp/forschung/ag-niklas/learning-4kids/index.html).
 
 It is developed to run on the Samsung Galaxy Tab A SM-T510.
 
 ## Requirements
 The project was built in Android Studio 3.6.1 using Gradle version 5.6.4.
 
-The minimum required Android API version is 24.
+The minimum required Android API level is 24.
 
 ## Documentation
 You can build a Doxygen documentation by running the following command in the root directory:
