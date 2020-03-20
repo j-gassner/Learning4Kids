@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
@@ -264,6 +266,9 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
         animal.setOnTouchListener(null);
         animal.setVisibility(View.VISIBLE);
         animalID = ResourceManager.getDrawableIdDino(this, level);
+        // Remove dark overlay
+        Drawable draw = ContextCompat.getDrawable(this, animalID);
+        Objects.requireNonNull(draw).clearColorFilter();
         animal.setImageResource(animalID);
         positionAnimal(true);
         animal.setY(animal.getY() - 100);
