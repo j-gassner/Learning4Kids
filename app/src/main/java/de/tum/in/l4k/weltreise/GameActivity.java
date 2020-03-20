@@ -255,11 +255,13 @@ public class GameActivity extends BaseGameActivity implements View.OnTouchListen
     /**
      * Displays dino with an animation and praise.
      */
+    @SuppressLint("ClickableViewAccessibility")
     void displayDino() {
         ViewGroup owner = (ViewGroup) animal.getParent();
         owner.removeView(animal);
         LinearLayout dino = findViewById(R.id.layout_top);
         dino.addView(animal);
+        animal.setOnTouchListener(null);
         animal.setVisibility(View.VISIBLE);
         animalID = ResourceManager.getDrawableIdDino(this, level);
         animal.setImageResource(animalID);

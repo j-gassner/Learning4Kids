@@ -6,14 +6,14 @@
     "apkData": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 1,
-      "versionName": "1.0",
+      "versionCode": 2,
+      "versionName": "1.1",
       "enabled": true,
-      "outputFile": "de.tum.in.l4k.weltreise-v1(1.0)-release.apk",
+      "outputFile": "de.tum.in.l4k.weltreise-v2(1.1)-release.apk",
       "fullName": "release",
       "baseName": "release"
     },
-    "path": "de.tum.in.l4k.weltreise-v1(1.0)-release.apk",
+    "path": "de.tum.in.l4k.weltreise-v2(1.1)-release.apk",
     "properties": {}
   }
 ]
