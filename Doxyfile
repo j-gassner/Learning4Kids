@@ -7,6 +7,7 @@ FILE_PATTERNS          = *.java \
                         *.md
 RECURSIVE              = YES
 HIDE_SCOPE_NAMES       = YES
+COMPACT_LATEX          = YES
 USE_MDFILE_AS_MAINPAGE = README.md
 EXTRACT_PACKAGE         = YES # default NO
 EXTRACT_PRIVATE        = YES # default NO
