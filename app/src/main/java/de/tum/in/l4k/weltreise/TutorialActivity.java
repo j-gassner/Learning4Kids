@@ -425,6 +425,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 LinearLayout container = (LinearLayout) layoutview;
                 // Match
                 if (relevant && container.getId() == match.getId() && !dragCorrectRight) {
+                    stopHandler();
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     correctMatches++;
                     step++;
@@ -434,6 +435,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 }
                 // No match
                 else if (!relevant && container.getId() == noMatch.getId() && dragCorrectRight) {
+                    stopHandler();
                     dragAnimal(view, container, shortSounds.CORRECT.ordinal());
                     changeColor();
                     new Handler().postDelayed(() -> animal.setVisibility(View.INVISIBLE), 500);
@@ -441,6 +443,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 }
                 // Wrong
                 else if (container.getId() != middle.getId()) {
+                    stopHandler();
                     lastDrag = true;
                     dragAnimal(view, container, shortSounds.WRONG.ordinal());
 
@@ -478,6 +481,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 playInstruction(soundLetter);
                 mediaPlayer.setOnCompletionListener(mp -> {
                     if (!letterClicked) {
+                        stopHandler();
                         arrow.setVisibility(View.INVISIBLE);
                         letterClicked = true;
                         tutorialSubmarine();
@@ -496,6 +500,7 @@ public class TutorialActivity extends BaseGameActivity implements View.OnTouchLi
                 playInstruction(soundAnimal);
                 mediaPlayer.setOnCompletionListener(mp -> {
                     if (!speakerClicked) {
+                        stopHandler();
                         speakerClicked = true;
                         arrow.setVisibility(View.INVISIBLE);
                         tutorialProgress();

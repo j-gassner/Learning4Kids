@@ -245,7 +245,7 @@ public abstract class BaseGameActivity extends BaseActivity implements View.OnTo
      * Stops handler handling user inactivity.
      */
     public void stopHandler() {
-        isRunning = false;
+        isRunning = handler = false;
         handleInactivity.removeCallbacks(runnable);
     }
 

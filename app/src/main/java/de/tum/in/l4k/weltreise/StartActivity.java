@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,6 +55,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
         // Activity comes from tutorial
         if (tutorial) {
+            // Disable scrolling
+            final HorizontalScrollView horizontalScrollView = findViewById(R.id.scroll_horizontal);
+            horizontalScrollView.setOnTouchListener((view, event) -> true);
             tutorialRunning = true;
             SharedPreferences.Editor editor = availableLevels.edit();
             editor.putBoolean("Tutorial", true);
@@ -298,6 +302,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
         mediaPlayer.setOnCompletionListener(mp -> {
             arrow.setVisibility(View.INVISIBLE);
             tutorialRunning = false;
+            findViewById(R.id.scroll_horizontal).setOnTouchListener(null);
         });
     }
 
@@ -332,6 +337,7 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
                     view.startAnimation(scale);
                 } else {
                     view.startAnimation(scaleHalf);
+                    touchy();
                 }
                 return;
             case R.id.button_reset:
@@ -422,13 +428,16 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        snap(true);
+                        if (!tutorialRunning) {
+                            snap(true);
+                        }
                         touchy();
                     }
                 });
                 view.startAnimation(scaleHalf);
                 return;
             case R.id.scroll_right:
+
                 scaleHalf.setAnimationListener(new AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -440,7 +449,9 @@ public class StartActivity extends ScrollActivity implements View.OnClickListene
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        snap(false);
+                        if (!tutorialRunning) {
+                            snap(false);
+                        }
                         touchy();
                     }
                 });
